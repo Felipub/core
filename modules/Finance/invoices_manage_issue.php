@@ -64,6 +64,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Finance/invoices_manage_is
 					FROM gibbonFinanceInvoice 
 					JOIN gibbonSchoolYear ON (gibbonSchoolYear.gibbonSchoolYearID=gibbonFinanceInvoice.gibbonSchoolYearID)
 					LEFT JOIN gibbonFinanceInvoicee ON (gibbonFinanceInvoice.gibbonFinanceInvoiceeID=gibbonFinanceInvoicee.gibbonFinanceInvoiceeID) 
+                    LEFT JOIN gibbonFinanceInvoiceeCompany ON (gibbonFinanceInvoicee.gibbonFinanceInvoiceeCompanyID=gibbonFinanceInvoiceeCompany.gibbonFinanceInvoiceeCompanyID)
 					LEFT JOIN gibbonFinanceBillingSchedule ON (gibbonFinanceBillingSchedule.gibbonFinanceBillingScheduleID=gibbonFinanceInvoice.gibbonFinanceBillingScheduleID)
 					LEFT JOIN gibbonPerson ON (gibbonPerson.gibbonPersonID=gibbonFinanceInvoicee.gibbonPersonID)
 					WHERE gibbonFinanceInvoice.gibbonSchoolYearID=:gibbonSchoolYearID 

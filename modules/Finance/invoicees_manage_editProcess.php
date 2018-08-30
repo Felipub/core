@@ -52,12 +52,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Finance/invoicees_manage_e
             //Proceed!
             $invoiceTo = $_POST['invoiceTo'];
             if ($invoiceTo == 'Company') {
-                $companyName = $_POST['companyName'];
-                $companyContact = $_POST['companyContact'];
-                $companyAddress = $_POST['companyAddress'];
-                $companyEmail = $_POST['companyEmail'];
+                $companyID = $_POST['company'];
                 $companyCCFamily = $_POST['companyCCFamily'];
-                $companyPhone = $_POST['companyPhone'];
                 $companyAll = $_POST['companyAll'];
                 $gibbonFinanceFeeCategoryIDList = null;
                 if ($companyAll == 'N') {
@@ -71,12 +67,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Finance/invoicees_manage_e
                     }
                 }
             } else {
-                $companyName = null;
-                $companyContact = null;
-                $companyAddress = null;
-                $companyEmail = null;
+                $companyID = null;
                 $companyCCFamily = null;
-                $companyPhone = null;
                 $companyAll = null;
                 $gibbonFinanceFeeCategoryIDList = null;
             }
@@ -86,8 +78,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Finance/invoicees_manage_e
             } else {
                 //Write to database
                 try {
-                    $data = array('invoiceTo' => $invoiceTo, 'companyName' => $companyName, 'companyContact' => $companyContact, 'companyAddress' => $companyAddress, 'companyEmail' => $companyEmail, 'companyCCFamily' => $companyCCFamily, 'companyPhone' => $companyPhone, 'companyAll' => $companyAll, 'gibbonFinanceFeeCategoryIDList' => $gibbonFinanceFeeCategoryIDList, 'gibbonFinanceInvoiceeID' => $gibbonFinanceInvoiceeID);
-                    $sql = 'UPDATE gibbonFinanceInvoicee SET invoiceTo=:invoiceTo, companyName=:companyName, companyContact=:companyContact, companyAddress=:companyAddress, companyEmail=:companyEmail, companyCCFamily=:companyCCFamily, companyPhone=:companyPhone, companyAll=:companyAll, gibbonFinanceFeeCategoryIDList=:gibbonFinanceFeeCategoryIDList WHERE gibbonFinanceInvoiceeID=:gibbonFinanceInvoiceeID';
+                    $data = array('invoiceTo' => $invoiceTo, 'companyID' => $companyID, 'companyCCFamily' => $companyCCFamily, 'companyAll' => $companyAll, 'gibbonFinanceFeeCategoryIDList' => $gibbonFinanceFeeCategoryIDList, 'gibbonFinanceInvoiceeID' => $gibbonFinanceInvoiceeID);
+                    $sql = 'UPDATE gibbonFinanceInvoicee SET invoiceTo=:invoiceTo, 	gibbonFinanceInvoiceeCompanyID=:companyID, companyCCFamily=:companyCCFamily, companyAll=:companyAll, gibbonFinanceFeeCategoryIDList=:gibbonFinanceFeeCategoryIDList WHERE gibbonFinanceInvoiceeID=:gibbonFinanceInvoiceeID';
                     $result = $connection2->prepare($sql);
                     $result->execute($data);
                 } catch (PDOException $e) {

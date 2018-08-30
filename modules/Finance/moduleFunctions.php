@@ -896,7 +896,14 @@ function invoiceContents($guid, $connection2, $gibbonFinanceInvoiceID, $gibbonSc
 
     try {
         $data = array('gibbonSchoolYearID' => $gibbonSchoolYearID, 'gibbonSchoolYearID2' => $gibbonSchoolYearID, 'gibbonFinanceInvoiceID' => $gibbonFinanceInvoiceID);
-        $sql = 'SELECT gibbonPerson.gibbonPersonID, studentID, officialName, surname, preferredName, gibbonFinanceInvoice.*, companyContact, companyEmail, companyName, companyAddress, gibbonRollGroup.name AS rollgroup FROM gibbonFinanceInvoice JOIN gibbonFinanceInvoicee ON (gibbonFinanceInvoice.gibbonFinanceInvoiceeID=gibbonFinanceInvoicee.gibbonFinanceInvoiceeID) JOIN gibbonPerson ON (gibbonFinanceInvoicee.gibbonPersonID=gibbonPerson.gibbonPersonID) JOIN gibbonStudentEnrolment ON (gibbonStudentEnrolment.gibbonPersonID=gibbonPerson.gibbonPersonID) JOIN gibbonRollGroup ON (gibbonStudentEnrolment.gibbonRollGroupID=gibbonRollGroup.gibbonRollGroupID) WHERE gibbonStudentEnrolment.gibbonSchoolYearID=:gibbonSchoolYearID2 AND gibbonFinanceInvoice.gibbonSchoolYearID=:gibbonSchoolYearID AND gibbonFinanceInvoiceID=:gibbonFinanceInvoiceID';
+        $sql = 'SELECT gibbonPerson.gibbonPersonID, studentID, officialName, surname, preferredName, gibbonFinanceInvoice.*, companyContact, companyEmail, companyName, companyAddress, gibbonRollGroup.name AS rollgroup 
+                    FROM gibbonFinanceInvoice 
+                        JOIN gibbonFinanceInvoicee ON (gibbonFinanceInvoice.gibbonFinanceInvoiceeID=gibbonFinanceInvoicee.gibbonFinanceInvoiceeID)
+                        JOIN gibbonFinanceInvoiceeCompany ON (gibbonFinanceInvoicee.gibbonFinanceInvoiceeCompanyID=gibbonFinanceInvoiceeCompany.gibbonFinanceInvoiceeCompanyID)
+                        JOIN gibbonPerson ON (gibbonFinanceInvoicee.gibbonPersonID=gibbonPerson.gibbonPersonID) 
+                        JOIN gibbonStudentEnrolment ON (gibbonStudentEnrolment.gibbonPersonID=gibbonPerson.gibbonPersonID) 
+                        JOIN gibbonRollGroup ON (gibbonStudentEnrolment.gibbonRollGroupID=gibbonRollGroup.gibbonRollGroupID) 
+                    WHERE gibbonStudentEnrolment.gibbonSchoolYearID=:gibbonSchoolYearID2 AND gibbonFinanceInvoice.gibbonSchoolYearID=:gibbonSchoolYearID AND gibbonFinanceInvoiceID=:gibbonFinanceInvoiceID';
         $result = $connection2->prepare($sql);
         $result->execute($data);
     } catch (PDOException $e) {
