@@ -1030,7 +1030,11 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                             echo dateConvertBack($guid, $row['visaExpiryDate']);
                         }
                         echo '</td>';
-                        echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
+
+                        echo "<td style='width: 34%; vertical-align: top'>";
+                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Caste').'</span><br/>';
+                        echo $row['caste'];
+                        echo '</td>';
 
                         echo '</td>';
                         echo '</tr>';
@@ -1174,6 +1178,33 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                         echo '</h4>';
 
                         echo "<table class='smallIntBorder' cellspacing='0' style='width: 100%'>";
+
+                        echo '<tr>';
+                        echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Profession').'</span><br/>';
+                        echo $row['profession'];
+                        echo '</td>';
+                        echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Employer').'</span><br/>';
+                        echo $row['employer'];
+                        echo '</td>';
+                        echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Job Title').'</span><br/>';
+                        echo $row['jobTitle'];
+                        echo '</td>';
+                        echo '</tr>';
+                        
+                        echo '<tr>';
+                        echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Salary').'</span><br/>';
+                        echo $row['salary'];
+                        echo '</td>';
+                        echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        echo '</td>';
+                        echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        echo '</td>';
+                        echo '</tr>';
+
                         echo '<tr>';
                         echo "<td style='width: 33%; vertical-align: top'>";
                         echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Transport').'</span><br/>';
@@ -1467,12 +1498,15 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                                     echo '</tr>';
 
                                     echo '<tr>';
+
+                                    echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                                    echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Salary').'</span><br/>';
+                                    echo $rowMember['salary'];
+                                    echo '</td>';
+
                                     echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
                                     echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Vehicle Registration').'</span><br/>';
                                     echo $rowMember['vehicleRegistration'];
-                                    echo '</td>';
-                                    echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
-
                                     echo '</td>';
                                     echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
 

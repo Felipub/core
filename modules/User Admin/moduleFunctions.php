@@ -160,7 +160,7 @@ function renderCustomFieldRow($connection2, $guid, $row, $value = null, $fieldNa
         if ($row['required'] == 'Y' and $ignoreRequired == false) { //is required
                     $return .= '<script type="text/javascript">';
             $return .= 'var '.$fieldNameSuffix.'custom'.$row['gibbonPersonFieldID']."=new LiveValidation('".$fieldNameSuffix.'custom'.$row['gibbonPersonFieldID']."');";
-            $return .= $fieldNameSuffix.'custom'.$row['gibbonPersonFieldID'].".add(Validate.Exclusion, { within: ['Please select...'], failureMessage: \"".__($guid, 'Select something!').'"});';
+            $return .= $fieldNameSuffix.'custom'.$row['gibbonPersonFieldID'].".add(Validate.Exclusion, { within: ['Please select...'], failureMessage: \"".__($guid, 'Select somethings!').'"});';
             $return .= '</script>';
         }
     }

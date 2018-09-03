@@ -423,6 +423,15 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edi
 					$row->addTextField('religion')->maxLength(30);
 				}
 
+			$castes = getSettingByScope($connection2, 'User Admin', 'castes');
+			$row = $form->addRow();
+				$row->addLabel('caste', __('Caste'));
+				if (!empty($castes)) {
+					$row->addSelect('caste')->fromString($castes)->placeholder();
+				} else {
+					$row->addTextField('caste')->maxLength(30);
+				}
+
 			$nationalityList = getSettingByScope($connection2, 'User Admin', 'nationality');
 			$row = $form->addRow();
 				$row->addLabel('citizenship1', __('Citizenship 1'));
@@ -493,7 +502,7 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edi
 				$row->addDate('visaExpiryDate');
 
 			// EMPLOYMENT
-			if ($parent) {
+			if ($parent || $student) {
 				$form->addRow()->addHeading(__('Employment'));
 
 				$row = $form->addRow();
@@ -507,6 +516,10 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edi
 				$row = $form->addRow();
 					$row->addLabel('jobTitle', __('Job Title'));
 					$row->addTextField('jobTitle')->maxLength(30);
+
+                $row = $form->addRow();
+					$row->addLabel('salary', __('Salary'));
+					$row->addTextField('salary')->maxLength(30);
 			}
 
 			// EMERGENCY CONTACTS
