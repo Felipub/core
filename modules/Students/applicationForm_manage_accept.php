@@ -546,11 +546,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/applicationForm_m
                     $failPayment = true;
                     $invoiceTo = $values['payment'];
                     if ($invoiceTo == 'Company') {
-                        $companyName = $values['companyName'];
-                        $companyContact = $values['companyContact'];
-                        $companyAddress = $values['companyAddress'];
-                        $companyEmail = $values['companyEmail'];
-                        $companyPhone = $values['companyPhone'];
+                        $companyID = $values['companyID'];
                         $companyAll = $values['companyAll'];
                         $gibbonFinanceFeeCategoryIDList = null;
                         if ($companyAll == 'N') {
@@ -564,18 +560,14 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/applicationForm_m
                             }
                         }
                     } else {
-                        $companyName = null;
-                        $companyContact = null;
-                        $companyAddress = null;
-                        $companyEmail = null;
-                        $companyPhone = null;
+                        $companyID = null;
                         $companyAll = null;
                         $gibbonFinanceFeeCategoryIDList = null;
                     }
                     $paymentOK = true;
                     try {
-                        $data = array('gibbonPersonID' => $gibbonPersonID, 'invoiceTo' => $invoiceTo, 'companyName' => $companyName, 'companyContact' => $companyContact, 'companyAddress' => $companyAddress, 'companyEmail' => $companyEmail, 'companyPhone' => $companyPhone, 'companyAll' => $companyAll, 'gibbonFinanceFeeCategoryIDList' => $gibbonFinanceFeeCategoryIDList);
-                        $sql = 'INSERT INTO gibbonFinanceInvoicee SET gibbonPersonID=:gibbonPersonID, invoiceTo=:invoiceTo, companyName=:companyName, companyContact=:companyContact, companyAddress=:companyAddress, companyEmail=:companyEmail, companyPhone=:companyPhone, companyAll=:companyAll, gibbonFinanceFeeCategoryIDList=:gibbonFinanceFeeCategoryIDList';
+                        $data = array('gibbonPersonID' => $gibbonPersonID, 'invoiceTo' => $invoiceTo, 'companyID' => $companyID, 'companyAll' => $companyAll, 'gibbonFinanceFeeCategoryIDList' => $gibbonFinanceFeeCategoryIDList);
+                        $sql = 'INSERT INTO gibbonFinanceInvoicee SET gibbonPersonID=:gibbonPersonID, invoiceTo=:invoiceTo, gibbonFinanceInvoiceeCompanyID=:companyID, companyAll=:companyAll, gibbonFinanceFeeCategoryIDList=:gibbonFinanceFeeCategoryIDList';
                         $result = $connection2->prepare($sql);
                         $result->execute($data);
                     } catch (PDOException $e) {

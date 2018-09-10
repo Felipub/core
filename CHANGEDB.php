@@ -959,12 +959,10 @@ $sql[$count][0] = '16.0.01';
 $sql[$count][1] = "
 INSERT INTO `gibbonAction`(`gibbonActionID`,`gibbonModuleID`,`name`, `precedence`,`category`,`description`,`URLList`,`entryURL`,`entrySidebar`,`menuShow`,`defaultPermissionAdmin`,`defaultPermissionTeacher`,`defaultPermissionStudent`,`defaultPermissionParent`,`defaultPermissionSupport`,`categoryPermissionStaff`,`categoryPermissionStudent`,`categoryPermissionParent` ,`categoryPermissionOther`) VALUES (NULL , '0135', 'Manage Companies', '0', 'Billing', 'Allows users to view and edit particular payers of fees.','companies_manage.php,companies_manage_edit.php,companies_manage_add.php','companies_manage.php', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N', 'Y', 'N', 'N', 'N');end
 INSERT INTO `gibbonPermission` (`permissionID` ,`gibbonRoleID` ,`gibbonActionID`) VALUES (NULL , '001', '0000910');end
-ALTER TABLE `gibbonFinanceInvoicee` 
-  DROP `companyName`,
-  DROP `companyContact`,
-  DROP `companyAddress`,
-  DROP `companyEmail`,
-  DROP `companyPhone`;end
+ALTER TABLE `gibbonFinanceInvoicee` ADD `gibbonFinanceInvoiceeCompanyID` INT(6) UNSIGNED ZEROFILL NULL AFTER `gibbonFinanceInvoiceeID`;end
+ALTER TABLE `gibbonFinanceInvoicee` DROP `companyName`, DROP `companyContact`, DROP `companyAddress`, DROP `companyEmail`, DROP `companyPhone`;end
+ALTER TABLE `gibbonApplicationForm` ADD `gibbonFinanceInvoiceeCompanyID` INT(6) UNSIGNED ZEROFILL NULL AFTER `payment`;end
+ALTER TABLE `gibbonApplicationForm` DROP `companyName`, DROP `companyContact`, DROP `companyAddress`, DROP `companyEmail`, DROP `companyPhone`;end
 CREATE TABLE `gibbonFinanceInvoiceeCompany` (
   `gibbonFinanceInvoiceeCompanyID` int(6) UNSIGNED ZEROFILL NOT NULL,
   `companyName` varchar(100) DEFAULT NULL,

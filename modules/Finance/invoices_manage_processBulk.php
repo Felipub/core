@@ -235,7 +235,8 @@ if ($gibbonSchoolYearID == '' or $action == '') { echo 'Fatal error loading this
                             if ($row['invoiceTo'] == 'Company') {
                                 try {
                                     $dataCompany = array('gibbonFinanceInvoiceeID' => $row['gibbonFinanceInvoiceeID']);
-                                    $sqlCompany = 'SELECT * FROM gibbonFinanceInvoicee WHERE gibbonFinanceInvoiceeID=:gibbonFinanceInvoiceeID';
+                                    $sqlCompany = 'SELECT * FROM gibbonFinanceInvoicee 
+                                                   LEFT JOIN gibbonFinanceInvoiceeCompany ON (gibbonFinanceInvoicee.gibbonFinanceInvoiceeCompanyID=gibbonFinanceInvoiceeCompany.gibbonFinanceInvoiceeCompanyID) WHERE gibbonFinanceInvoiceeID=:gibbonFinanceInvoiceeID';
                                     $resultCompany = $connection2->prepare($sqlCompany);
                                     $resultCompany->execute($dataCompany);
                                 } catch (PDOException $e) {
