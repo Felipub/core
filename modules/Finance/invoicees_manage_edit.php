@@ -52,7 +52,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Finance/invoicees_manage_e
     } else {
         try {
             $data = array('gibbonFinanceInvoiceeID' => $gibbonFinanceInvoiceeID);
-            $sql = 'SELECT surname, preferredName, status, gibbonFinanceInvoicee.* FROM gibbonFinanceInvoicee JOIN gibbonPerson ON (gibbonFinanceInvoicee.gibbonPersonID=gibbonPerson.gibbonPersonID) WHERE gibbonFinanceInvoiceeID=:gibbonFinanceInvoiceeID';
+            $sql = 'SELECT surname, preferredName, status, gibbonFinanceInvoicee.*, gibbonFinanceInvoicee.gibbonFinanceInvoiceeCompanyID as company FROM gibbonFinanceInvoicee JOIN gibbonPerson ON (gibbonFinanceInvoicee.gibbonPersonID=gibbonPerson.gibbonPersonID) WHERE gibbonFinanceInvoiceeID=:gibbonFinanceInvoiceeID';
             $result = $connection2->prepare($sql);
             $result->execute($data);
         } catch (PDOException $e) {
@@ -101,29 +101,23 @@ if (isActionAccessible($guid, $connection2, '/modules/Finance/invoicees_manage_e
             $form->toggleVisibilityByClass('paymentCompany')->onRadio('invoiceTo')->when('Company');
 
             // COMPANY DETAILS
+			$data = array();
+			$sql = "SELECT * FROM gibbonFinanceInvoiceeCompany ORDER BY companyName";
+			$result = $pdo->executeQuery($data, $sql);
+                    
+			$allCompanies = ($result && $result->rowCount() > 0)? $result->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE) : array();
+
+            foreach ($allCompanies as $key => $value) {
+                $availableCompanies[$key] = $value['companyName'];
+            }
+
             $row = $form->addRow()->addClass('paymentCompany');
                 $row->addLabel('companyName', __('Company Name'));
-                $row->addTextField('companyName')->isRequired()->maxLength(100);
-
-            $row = $form->addRow()->addClass('paymentCompany');
-                $row->addLabel('companyContact', __('Company Contact Person'));
-                $row->addTextField('companyContact')->isRequired()->maxLength(100);
-
-            $row = $form->addRow()->addClass('paymentCompany');
-                $row->addLabel('companyAddress', __('Company Address'));
-                $row->addTextField('companyAddress')->isRequired()->maxLength(255);
-
-            $row = $form->addRow()->addClass('paymentCompany');
-                $row->addLabel('companyEmail', __('Company Emails'))->description(__('Comma-separated list of email address'));
-                $row->addTextField('companyEmail')->isRequired();
-
+                $row->addSelect('company')->fromArray($availableCompanies)->isRequired()->placeholder();
+            
             $row = $form->addRow()->addClass('paymentCompany');
                 $row->addLabel('companyCCFamily', __('CC Family?'))->description(__('Should the family be sent a copy of billing emails?'));
                 $row->addYesNo('companyCCFamily')->selected('N');
-
-            $row = $form->addRow()->addClass('paymentCompany');
-                $row->addLabel('companyPhone', __('Company Phone'));
-                $row->addTextField('companyPhone')->maxLength(20);
 
             // COMPANY FEE CATEGORIES
             $sqlFees = "SELECT gibbonFinanceFeeCategoryID as value, name FROM gibbonFinanceFeeCategory WHERE active='Y' AND NOT gibbonFinanceFeeCategoryID=1 ORDER BY name";
@@ -156,7 +150,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Finance/invoicees_manage_e
 
 
             echo $form->getOutput();
-
         }
     }
 }
