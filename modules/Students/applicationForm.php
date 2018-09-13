@@ -839,8 +839,13 @@ if ($proceed == false) {
 
         $row = $form->addRow()->addClass('paymentCompany');
             $row->addLabel('companyName', __('Company Name'));
+
+        if (!empty($allCompanies)) {           
             $row->addSelect('company')->fromArray($availableCompanies)->isRequired()->placeholder();
-            
+        } else {
+            $row->addSelect('company')->disabled()->placeholder();                    
+        }    
+
         $row = $form->addRow()->addClass('paymentCompany');
             $row->addLabel('companyCCFamily', __('CC Family?'))->description(__('Should the family be sent a copy of billing emails?'));
             $row->addYesNo('companyCCFamily')->selected('N');
