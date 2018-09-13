@@ -965,8 +965,10 @@ ALTER TABLE `gibbonFinanceInvoicee`
   DROP `companyAddress`,
   DROP `companyEmail`,
   DROP `companyPhone`;end
+ALTER TABLE `gibbonFinanceInvoicee` ADD `gibbonFinanceInvoiceeCompanyID` int(6) UNSIGNED ZEROFILL NULL DEFAULT NULL;end
+ALTER TABLE `gibbonFinanceInvoicee` ADD KEY `gibbonFinanceInvoiceeCompanyID` (`gibbonFinanceInvoiceeCompanyID`);end
 CREATE TABLE `gibbonFinanceInvoiceeCompany` (
-  `gibbonFinanceInvoiceeCompanyID` int(6) UNSIGNED ZEROFILL NOT NULL,
+  `gibbonFinanceInvoiceeCompanyID` int(6) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `companyName` varchar(100) DEFAULT NULL,
   `companyContact` varchar(100) DEFAULT NULL,
   `companyAddress` varchar(255) DEFAULT NULL,
@@ -977,14 +979,15 @@ CREATE TABLE `gibbonFinanceInvoiceeCompany` (
   `gibbonPersonIDUpdate` INT( 10 ) UNSIGNED ZEROFILLNULL DEFAULT NULL ,
   `timestampUpdate` TIMESTAMP NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;end
-ALTER TABLE `gibbonFinanceInvoicee` ADD KEY `gibbonFinanceInvoiceeCompanyID` (`gibbonFinanceInvoiceeCompanyID`);end
-ALTER TABLE `gibbonFinanceInvoiceeCompany` ADD UNIQUE `companyName` ( `companyName` )COMMENT '';end
-ALTER TABLE `gibbonFinanceInvoiceeCompany` MODIFY `gibbonFinanceInvoiceeCompanyID` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;end
+ALTER TABLE `gibbonFinanceInvoiceeCompany`
+  ADD PRIMARY KEY (  `gibbonFinanceInvoiceeCompanyID` ),
+  ADD UNIQUE `companyName` ( `companyName` )COMMENT '',
+  MODIFY `gibbonFinanceInvoiceeCompanyID` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;end
 ALTER TABLE `gibbonPerson` ADD  `salary` INT UNSIGNED NULL AFTER  `jobTitle` ;end
 ALTER TABLE `gibbonPersonUpdate` ADD  `salary` INT UNSIGNED NULL AFTER  `jobTitle` ;end
 ALTER TABLE `gibbonPerson` ADD  `caste` ENUM(  '',  'Scheduled Caste',  'General',  'Other Backward Class',  'Economically Backward Class' ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT  '' AFTER  `religion` ;end
 ALTER TABLE `gibbonPersonUpdate` ADD  `caste` ENUM(  '',  'Scheduled Caste',  'General',  'Other Backward Class',  'Economically Backward Class' ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT  '' AFTER  `religion` ;end
 ALTER TABLE `gibbonFamily` ADD  `members` INT UNSIGNED NULL COMMENT  'Number of members in the family' AFTER  `status` ;end
 ALTER TABLE `gibbonFamilyUpdate` ADD  `members` INT UNSIGNED NULL AFTER  `status`;end
-INSERT INTO `gibbondb`.`gibbonSetting` (`gibbonSettingID` ,`scope`,`name` ,`nameDisplay` ,`description` ,`value`) VALUES (NULL , 'User Admin', 'castes', 'Castes', 'Comma-separated list of castes available in system',',Scheduled Caste,General,Other Backward Class,Economically Backward Class ');end
+INSERT INTO `gibbonSetting` (`scope`, `name`, `nameDisplay`, `description`, `value`) VALUES ('User Admin', 'castes', 'Castes', 'Comma-separated list of castes available in system', ',Not apply,Scheduled Caste,Other Backward Class,Economically Backward Class,General,Other');end
 ";
