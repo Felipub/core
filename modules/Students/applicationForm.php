@@ -843,12 +843,12 @@ if ($proceed == false) {
         if (!empty($allCompanies)) {           
             $row->addSelect('company')->fromArray($availableCompanies)->isRequired()->placeholder();
         } else {
-            $row->addSelect('company')->disabled()->placeholder();                    
+            $row->addSelect('company')->placeholder();                    
         }    
 
         $row = $form->addRow()->addClass('paymentCompany');
             $row->addLabel('companyCCFamily', __('CC Family?'))->description(__('Should the family be sent a copy of billing emails?'));
-            $row->addYesNo('companyCCFamily')->selected('N');
+            $row->addYesNo('companyCCFamily')->selected('N')->loadFrom($application);
 
         // COMPANY FEE CATEGORIES
         $sqlFees = "SELECT gibbonFinanceFeeCategoryID as value, name FROM gibbonFinanceFeeCategory WHERE active='Y' AND NOT gibbonFinanceFeeCategoryID=1 ORDER BY name";
