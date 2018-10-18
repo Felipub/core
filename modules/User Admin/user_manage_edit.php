@@ -99,10 +99,15 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edi
 			// BASIC INFORMATION
 			$form->addRow()->addHeading(__('Basic Information'));
 
-			$row = $form->addRow();
-				$row->addLabel('title', __('Title'));
-				$row->addSelectTitle('title');
-
+            if ($student){
+                $form->addHiddenValue('title', '');
+            }
+            else {
+                $row = $form->addRow();
+                    $row->addLabel('title', __('Title'));
+                    $row->addSelectTitle('title');
+            }
+                
 			$row = $form->addRow();
 				$row->addLabel('surname', __('Surname'))->description(__('Family name as shown in ID documents.'));
 				$row->addTextField('surname')->isRequired()->maxLength(30);
@@ -398,12 +403,13 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edi
 				$row->addLabel('countryOfBirth', __('Country of Birth'));
 				$row->addSelectCountry('countryOfBirth');
 
-			$row = $form->addRow();
-				$row->addLabel('birthCertificateScan', __('Birth Certificate Scan'))->description(__('Less than 1440px by 900px').'. '.__('Accepts PDF files.'));
-				$row->addFileUpload('birthCertificateScan')
-					->accepts('.jpg,.jpeg,.gif,.png,.pdf')
-					->setMaxUpload(false)
-					->setAttachment('birthCertificateScanCurrent', $_SESSION[$guid]['absoluteURL'], $values['birthCertificateScan']);
+			//HIDE//$row = $form->addRow();
+			//HIDE//	$row->addLabel('birthCertificateScan', __('Birth Certificate Scan'))->description(__('Less than 1440px by 900px').'. '.__('Accepts PDF files.'));
+			//HIDE//	$row->addFileUpload('birthCertificateScan')
+			//HIDE//		->accepts('.jpg,.jpeg,.gif,.png,.pdf')
+			//HIDE//		->setMaxUpload(false)
+			//HIDE//		->setAttachment('birthCertificateScanCurrent', $_SESSION[$guid]['absoluteURL'], $values['birthCertificateScan']);
+            $form->addHiddenValue('birthCertificateScan', '');
 
 			$ethnicities = getSettingByScope($connection2, 'User Admin', 'ethnicity');
 			$row = $form->addRow();
@@ -423,15 +429,6 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edi
 					$row->addTextField('religion')->maxLength(30);
 				}
 
-			$castes = getSettingByScope($connection2, 'User Admin', 'castes');
-			$row = $form->addRow();
-				$row->addLabel('caste', __('Caste'));
-				if (!empty($castes)) {
-					$row->addSelect('caste')->fromString($castes)->placeholder();
-				} else {
-					$row->addTextField('caste')->maxLength(30);
-				}
-
 			$nationalityList = getSettingByScope($connection2, 'User Admin', 'nationality');
 			$row = $form->addRow();
 				$row->addLabel('citizenship1', __('Citizenship 1'));
@@ -445,12 +442,13 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edi
 				$row->addLabel('citizenship1Passport', __('Citizenship 1 Passport Number'));
 				$row->addTextField('citizenship1Passport')->maxLength(30);
 
-			$row = $form->addRow();
-				$row->addLabel('citizenship1PassportScan', __('Citizenship 1 Passport Scan'))->description(__('Less than 1440px by 900px').'. '.__('Accepts PDF files.'));
-				$row->addFileUpload('citizenship1PassportScan')
-					->accepts('.jpg,.jpeg,.gif,.png,.pdf')
-					->setMaxUpload(false)
-					->setAttachment('citizenship1PassportScanCurrent', $_SESSION[$guid]['absoluteURL'], $values['citizenship1PassportScan']);
+			//HIDE//$row = $form->addRow();
+			//HIDE//	$row->addLabel('citizenship1PassportScan', __('Citizenship 1 Passport Scan'))->description(__('Less than 1440px by 900px').'. '.__('Accepts PDF files.'));
+			//HIDE//	$row->addFileUpload('citizenship1PassportScan')
+			//HIDE//		->accepts('.jpg,.jpeg,.gif,.png,.pdf')
+			//HIDE//		->setMaxUpload(false)
+			//HIDE//		->setAttachment('citizenship1PassportScanCurrent', $_SESSION[$guid]['absoluteURL'], $values['citizenship1PassportScan']);
+            $form->addHiddenValue('citizenship1PassportScan', '');
 
 			$row = $form->addRow();
 				$row->addLabel('citizenship2', __('Citizenship 2'));
@@ -564,10 +562,11 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edi
 			// MISCELLANEOUS
 			$form->addRow()->addHeading(__('Miscellaneous'));
 
-			$sql = "SELECT gibbonHouseID as value, name FROM gibbonHouse ORDER BY name";
-			$row = $form->addRow();
-				$row->addLabel('gibbonHouseID', __('House'));
-				$row->addSelect('gibbonHouseID')->fromQuery($pdo, $sql)->placeholder();
+			//HIDE//$sql = "SELECT gibbonHouseID as value, name FROM gibbonHouse ORDER BY name";
+			//HIDE//$row = $form->addRow();
+			//HIDE//	$row->addLabel('gibbonHouseID', __('House'));
+			//HIDE//	$row->addSelect('gibbonHouseID')->fromQuery($pdo, $sql)->placeholder();
+            $form->addHiddenValue('gibbonHouseID', '');
 
             if ($student) {
                 $row = $form->addRow();
