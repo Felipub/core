@@ -85,7 +85,7 @@ else {
             } catch (PDOException $e) {
             }
 
-            if ($row['failCount'] == 3) {
+            if ($row['failCount'] == 30) {
                 // Raise a new notification event
                 $event = new NotificationEvent('User Admin', 'Login - Failed');
 
