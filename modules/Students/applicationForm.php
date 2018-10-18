@@ -219,7 +219,7 @@ if ($proceed == false) {
     $row = $form->addRow();
         $row->addLabel('nameInCharacters', __('Name In Characters'))->description(__('Chinese or other character-based name.'));
         $row->addTextField('nameInCharacters')->maxLength(20);
-
+        
     $row = $form->addRow();
         $row->addLabel('gender', __('Gender'));
         $row->addSelectGender('gender')->isRequired();
@@ -265,42 +265,47 @@ if ($proceed == false) {
         }
 
     $countryName = (isset($_SESSION[$guid]['country']))? $_SESSION[$guid]['country'].' ' : '';
-    $row = $form->addRow();
-        $row->addLabel('citizenship1Passport', __('Citizenship Passport Number'))->description('');
-        $row->addTextField('citizenship1Passport')->maxLength(30);
+            //$row = $form->addRow();
+            //    $row->addLabel('citizenship1Passport', __('Citizenship Passport Number'))->description('');
+            //    $row->addTextField('citizenship1Passport')->maxLength(30);
+    $form->addHiddenValue('citizenship1Passport', '');
 
     $row = $form->addRow();
         $row->addLabel('nationalIDCardNumber', $countryName.__('National ID Card Number'));
         $row->addTextField('nationalIDCardNumber')->maxLength(30);
 
-    $row = $form->addRow();
-        $row->addLabel('residencyStatus', $countryName.__('Residency/Visa Type'));
-        $residencyStatusList = getSettingByScope($connection2, 'User Admin', 'residencyStatus');
-        if (!empty($residencyStatusList)) {
-            $row->addSelect('residencyStatus')->fromString($residencyStatusList)->placeholder();
-        } else {
-            $row->addTextField('residencyStatus')->maxLength(30);
-        }
+    //HIDE//$row = $form->addRow();
+    //HIDE//   $row->addLabel('residencyStatus', $countryName.__('Residency/Visa Type'));
+    //HIDE//    $residencyStatusList = getSettingByScope($connection2, 'User Admin', 'residencyStatus');
+    //HIDE//   if (!empty($residencyStatusList)) {
+    //HIDE//       $row->addSelect('residencyStatus')->fromString($residencyStatusList)->placeholder();
+    //HIDE//   } else {
+    //HIDE//       $row->addTextField('residencyStatus')->maxLength(30);
+    //HIDE//   }
+    $form->addHiddenValue('residencyStatus', '');
 
-    $row = $form->addRow();
-        $row->addLabel('visaExpiryDate', $countryName.__('Visa Expiry Date'))->description($_SESSION[$guid]['i18n']['dateFormat'])->prepend(__('Format:'))->append(__('If relevant.'));
-        $row->addDate('visaExpiryDate');
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('visaExpiryDate', $countryName.__('Visa Expiry Date'))->description($_SESSION[$guid]['i18n']['dateFormat'])->prepend(__('Format:'))->append(__('If relevant.'));
+    //HIDE//    $row->addDate('visaExpiryDate');
+    //HIDE//
+    $form->addHiddenValue('visaExpiryDate', '');
 
     // STUDENT CONTACT
     $form->addRow()->addSubheading(__('Student Contact'));
 
-    $row = $form->addRow();
-        $row->addLabel('email', __('Email'));
-        $email = $row->addEmail('email')->maxLength(50);
-        if ($uniqueEmailAddress == 'Y') {
-            $email->isUnique('./publicRegistrationCheck.php');
-        }
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('email', __('Email'));
+    //HIDE//    $email = $row->addEmail('email')->maxLength(50);
+    //HIDE//    if ($uniqueEmailAddress == 'Y') {
+    //HIDE//        $email->isUnique('./publicRegistrationCheck.php');
+    //HIDE//    }
+    $form->addHiddenValue('email', '');
 
-    for ($i = 1; $i < 3; ++$i) {
+    //HIDE//for ($i = 1; $i < 3; ++$i) {
         $row = $form->addRow();
-            $row->addLabel('', __('Phone').' '.$i)->description(__('Type, country code, number.'));
-            $row->addPhoneNumber('phone'.$i);
-    }
+            $row->addLabel('Phone', __('Phone'))->description(__('Type, country code, number.'));
+            $row->addPhoneNumber('phone1');
+    //HIDE//}
 
     // SPECIAL EDUCATION & MEDICAL
     $senOptionsActive = getSettingByScope($connection2, 'Application Form', 'senOptionsActive');
@@ -598,28 +603,33 @@ if ($proceed == false) {
                 $row->addLabel("parent{$i}nationalIDCardNumber", $countryName.__('National ID Card Number'));
                 $row->addTextField("parent{$i}nationalIDCardNumber")->maxLength(30)->loadFrom($application);
 
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addLabel("parent{$i}residencyStatus", $countryName.__('Residency/Visa Type'));
-                if (!empty($residencyStatusList)) {
-                    $row->addSelect("parent{$i}residencyStatus")->fromString($residencyStatusList)->placeholder()->loadFrom($application);
-                } else {
-                    $row->addTextField("parent{$i}residencyStatus")->maxLength(30)->loadFrom($application);
-                }
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addLabel("parent{$i}residencyStatus", $countryName.__('Residency/Visa Type'));
+            //HIDE//    if (!empty($residencyStatusList)) {
+            //HIDE//        $row->addSelect("parent{$i}residencyStatus")->fromString($residencyStatusList)->placeholder()->loadFrom($application);
+            //HIDE//    } else {
+            //HIDE//        $row->addTextField("parent{$i}residencyStatus")->maxLength(30)->loadFrom($application);
+            //HIDE//    }
+            $form->addHiddenValue('parent{$i}residencyStatus', '');
 
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addLabel("parent{$i}visaExpiryDate", $countryName.__('Visa Expiry Date'))->description($_SESSION[$guid]['i18n']['dateFormat'])->prepend(__('Format:'))->append(__('If relevant.'));
-                $row->addDate("parent{$i}visaExpiryDate")->loadFrom($application);
+                    
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addLabel("parent{$i}visaExpiryDate", $countryName.__('Visa Expiry Date'))->description($_SESSION[$guid]['i18n']['dateFormat'])->prepend(__('Format:'))->append(__('If relevant.'));
+            //HIDE//    $row->addDate("parent{$i}visaExpiryDate")->loadFrom($application);
+            $form->addHiddenValue('parent{$i}visaExpiryDate', '');
 
+                    
             // PARENT CONTACT
             $row = $form->addRow()->setClass("parentSection{$i}");
                 $row->addSubheading(__('Parent/Guardian')." $i ".__('Contact'));
-
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addLabel("parent{$i}email", __('Email'));
-                $email = $row->addEmail("parent{$i}email")->isRequired($i == 1)->maxLength(50)->loadFrom($application);
-                if ($uniqueEmailAddress == 'Y') {
-                    $email->isUnique('./publicRegistrationCheck.php', array('fieldName' => 'email'));
-                }
+            
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addLabel("parent{$i}email", __('Email'));
+            //HIDE//    $email = $row->addEmail("parent{$i}email")->isRequired($i == 1)->maxLength(50)->loadFrom($application);
+            //HIDE//    if ($uniqueEmailAddress == 'Y') {
+            //HIDE//        $email->isUnique('./publicRegistrationCheck.php', array('fieldName' => 'email'));
+            //HIDE//    }
+            $form->addHiddenValue('parent{$i}email', '');
 
             for ($y = 1; $y < 3; ++$y) {
                 $row = $form->addRow()->setClass("parentSection{$i}");
@@ -633,7 +643,7 @@ if ($proceed == false) {
 
             $row = $form->addRow()->setClass("parentSection{$i}");
                 $row->addLabel("parent{$i}profession", __('Profession'));
-                $row->addTextField("parent{$i}profession")->isRequired($i == 1)->maxLength(30)->loadFrom($application);
+                $row->addTextField("parent{$i}profession")->maxLength(30)->loadFrom($application);
 
             $row = $form->addRow()->setClass("parentSection{$i}");
                 $row->addLabel("parent{$i}employer", __('Employer'));
@@ -839,11 +849,16 @@ if ($proceed == false) {
 
         $row = $form->addRow()->addClass('paymentCompany');
             $row->addLabel('companyName', __('Company Name'));
+
+        if (!empty($allCompanies)) {           
             $row->addSelect('company')->fromArray($availableCompanies)->isRequired()->placeholder();
-            
+        } else {
+            $row->addSelect('company')->placeholder();                    
+        }    
+
         $row = $form->addRow()->addClass('paymentCompany');
             $row->addLabel('companyCCFamily', __('CC Family?'))->description(__('Should the family be sent a copy of billing emails?'));
-            $row->addYesNo('companyCCFamily')->selected('N');
+            $row->addYesNo('companyCCFamily')->selected('N')->loadFrom($application);
 
         // COMPANY FEE CATEGORIES
         $sqlFees = "SELECT gibbonFinanceFeeCategoryID as value, name FROM gibbonFinanceFeeCategory WHERE active='Y' AND NOT gibbonFinanceFeeCategoryID=1 ORDER BY name";
@@ -912,26 +927,27 @@ if ($proceed == false) {
     }
 
 
-    // MISCELLANEOUS
-    $form->addRow()->addHeading(__('Miscellaneous'));
-
-    $howDidYouHear = getSettingByScope($connection2, 'Application Form', 'howDidYouHear');
-    $howDidYouHearList = explode(',', $howDidYouHear);
-
-    $row = $form->addRow();
-        $row->addLabel('howDidYouHear', __('How Did You Hear About Us?'));
-
-    if (empty($howDidYouHear)) {
-        $row->addTextField('howDidYouHear')->isRequired()->maxLength(30)->loadFrom($application);
-    } else {
-        $row->addSelect('howDidYouHear')->fromArray($howDidYouHearList)->isRequired()->placeholder()->loadFrom($application);
-
-        $form->toggleVisibilityByClass('tellUsMore')->onSelect('howDidYouHear')->whenNot(__('Please select...'));
-
-        $row = $form->addRow()->addClass('tellUsMore');
-            $row->addLabel('howDidYouHearMore', __('Tell Us More'))->description(__('The name of a person or link to a website, etc.'));
-            $row->addTextField('howDidYouHearMore')->maxLength(255)->loadFrom($application);
-    }
+    //HIDE//// MISCELLANEOUS
+    //HIDE//$form->addRow()->addHeading(__('Miscellaneous'));
+    //HIDE//
+    //HIDE//$howDidYouHear = getSettingByScope($connection2, 'Application Form', 'howDidYouHear');
+    //HIDE//$howDidYouHearList = explode(',', $howDidYouHear);
+    //HIDE//
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('howDidYouHear', __('How Did You Hear About Us?'));
+    //HIDE//
+    //HIDE//if (empty($howDidYouHear)) {
+    //HIDE//    $row->addTextField('howDidYouHear')->isRequired()->maxLength(30)->loadFrom($application);
+    //HIDE//} else {
+    //HIDE//    $row->addSelect('howDidYouHear')->fromArray($howDidYouHearList)->isRequired()->placeholder()->loadFrom($application);
+    //HIDE//
+    //HIDE//    $form->toggleVisibilityByClass('tellUsMore')->onSelect('howDidYouHear')->whenNot(__('Please select...'));
+    //HIDE//
+    //HIDE//    $row = $form->addRow()->addClass('tellUsMore');
+    //HIDE//        $row->addLabel('howDidYouHearMore', __('Tell Us More'))->description(__('The name of a person or link to a website, etc.'));
+    //HIDE//        $row->addTextField('howDidYouHearMore')->maxLength(255)->loadFrom($application);
+    //HIDE//}
+    $form->addHiddenValue('howDidYouHear', 'Others');
 
     // PRIVACY
     $privacySetting = getSettingByScope($connection2, 'User Admin', 'privacy');
@@ -956,14 +972,15 @@ if ($proceed == false) {
             $row->addCheckbox('agreement')->description(__('Yes'))->setValue('on')->isRequired();
     }
 
-    // OFFICE ONLY
-    if (isActionAccessible($guid, $connection2, '/modules/Students/applicationForm_manage.php')) {
-        $form->addRow()->addHeading(__('For Office Use'));
-
-        $row = $form->addRow();
-            $row->addLabel('skipEmailNotification', '<b>'.__('Skip sending a notification email to parents?').'</b>');
-            $row->addCheckbox('skipEmailNotification')->description(__('Yes'))->setValue('on')->checked('on');
-    }
+    //HIDE//// OFFICE ONLY
+    //HIDE//if (isActionAccessible($guid, $connection2, '/modules/Students/applicationForm_manage.php')) {
+    //HIDE//    $form->addRow()->addHeading(__('For Office Use'));
+    //HIDE//
+    //HIDE//    $row = $form->addRow();
+    //HIDE//        $row->addLabel('skipEmailNotification', '<b>'.__('Skip sending a notification email to parents?').'</b>');
+    //HIDE//        $row->addCheckbox('skipEmailNotification')->description(__('Yes'))->setValue('on')->checked('on');
+    //HIDE//}
+    $form->addHiddenValue('skipEmailNotification', 'Yes');
 
     $row = $form->addRow();
         $row->addFooter();

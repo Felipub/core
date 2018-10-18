@@ -522,16 +522,16 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                         echo '</tr>';
                         echo '<tr>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Website').'</span><br/>';
-                        if ($row['website'] != '') {
-                            echo "<i><a href='".$row['website']."'>".$row['website'].'</a></i>';
-                        }
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Website').'</span><br/>';
+                        //HIDE//if ($row['website'] != '') {
+                        //HIDE//    echo "<i><a href='".$row['website']."'>".$row['website'].'</a></i>';
+                        //HIDE//}
                         echo '</td>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Email').'</span><br/>';
-                        if ($row['email'] != '') {
-                            echo "<i><a href='mailto:".$row['email']."'>".$row['email'].'</a></i>';
-                        }
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Email').'</span><br/>';
+                        //HIDE//if ($row['email'] != '') {
+                        //HIDE//    echo "<i><a href='mailto:".$row['email']."'>".$row['email'].'</a></i>';
+                        //HIDE//}
                         echo '</td>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
                         echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'School History').'</span><br/>';
@@ -562,10 +562,10 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                         echo '</tr>';
                         echo '<tr>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Locker Number').'</span><br/>';
-                        if ($row['lockerNumber'] != '') {
-                            echo $row['lockerNumber'];
-                        }
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Locker Number').'</span><br/>';
+                        //HIDE//if ($row['lockerNumber'] != '') {
+                        //HIDE//    echo $row['lockerNumber'];
+                        //HIDE//}
                         echo '</td>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
                         echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Student ID').'</span><br/>';
@@ -574,15 +574,15 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                         }
                         echo '</td>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'House').'</span><br/>';
-                        try {
-                            $dataDetail = array('gibbonHouseID' => $row['gibbonHouseID']);
-                            $sqlDetail = 'SELECT * FROM gibbonHouse WHERE gibbonHouseID=:gibbonHouseID';
-                            $resultDetail = $connection2->prepare($sqlDetail);
-                            $resultDetail->execute($dataDetail);
-                        } catch (PDOException $e) {
-                            echo "<div class='error'>".$e->getMessage().'</div>';
-                        }
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'House').'</span><br/>';
+                        //HIDE//try {
+                        //HIDE//    $dataDetail = array('gibbonHouseID' => $row['gibbonHouseID']);
+                        //HIDE//    $sqlDetail = 'SELECT * FROM gibbonHouse WHERE gibbonHouseID=:gibbonHouseID';
+                        //HIDE//    $resultDetail = $connection2->prepare($sqlDetail);
+                        //HIDE//    $resultDetail->execute($dataDetail);
+                        //HIDE//} catch (PDOException $e) {
+                        //HIDE//    echo "<div class='error'>".$e->getMessage().'</div>';
+                        //HIDE//}
                         if ($resultDetail->rowCount() == 1) {
                             $rowDetail = $resultDetail->fetch();
                             echo $rowDetail['name'];
@@ -837,22 +837,22 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                         }
                         echo '<tr>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Email').'</span><br/>';
-                        if ($row['email'] != '') {
-                            echo "<i><a href='mailto:".$row['email']."'>".$row['email'].'</a></i>';
-                        }
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Email').'</span><br/>';
+                        //HIDE//if ($row['email'] != '') {
+                        //HIDE//    echo "<i><a href='mailto:".$row['email']."'>".$row['email'].'</a></i>';
+                        //HIDE//}
                         echo '</td>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Alternate Email').'</span><br/>';
-                        if ($row['emailAlternate'] != '') {
-                            echo "<i><a href='mailto:".$row['emailAlternate']."'>".$row['emailAlternate'].'</a></i>';
-                        }
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Alternate Email').'</span><br/>';
+                        //HIDE//if ($row['emailAlternate'] != '') {
+                        //HIDE//    echo "<i><a href='mailto:".$row['emailAlternate']."'>".$row['emailAlternate'].'</a></i>';
+                        //HIDE//}
                         echo '</td>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top' colspan=2>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Website').'</span><br/>';
-                        if ($row['website'] != '') {
-                            echo "<i><a href='".$row['website']."'>".$row['website'].'</a></i>';
-                        }
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Website').'</span><br/>';
+                        //HIDE//if ($row['website'] != '') {
+                        //HIDE//    echo "<i><a href='".$row['website']."'>".$row['website'].'</a></i>';
+                        //HIDE//}
                         echo '</td>';
                         echo '</tr>';
                         if ($row['address1'] != '') {
@@ -959,8 +959,8 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                             echo "<a target='_blank' href='".$_SESSION[$guid]['absoluteURL'].'/'.$row['birthCertificateScan']."'>View Birth Certificate</a>";
                         echo '</td>';
                         echo "<td style='width: 33%; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Ethnicity').'</span><br/>';
-                        echo $row['ethnicity'];
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Ethnicity').'</span><br/>';
+                        //HIDE//echo $row['ethnicity'];
                         echo '</td>';
                         echo "<td style='width: 34%; vertical-align: top'>";
                         echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Religion').'</span><br/>';
@@ -969,21 +969,21 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                         echo '</tr>';
                         echo '<tr>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Citizenship 1').'</span><br/>';
-                        if ($row['citizenship1'] != '')
-                            echo $row['citizenship1']."<br/>";
-                        if ($row['citizenship1Passport'] != '')
-                            echo $row['citizenship1Passport']."<br/>";
-                        if ($row['citizenship1PassportScan'] != '')
-                            echo "<a target='_blank' href='".$_SESSION[$guid]['absoluteURL'].'/'.$row['citizenship1PassportScan']."'>View Passport</a>";
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Citizenship 1').'</span><br/>';
+                        //HIDE//if ($row['citizenship1'] != '')
+                        //HIDE//    echo $row['citizenship1']."<br/>";
+                        //HIDE//if ($row['citizenship1Passport'] != '')
+                        //HIDE//    echo $row['citizenship1Passport']."<br/>";
+                        //HIDE//if ($row['citizenship1PassportScan'] != '')
+                        //HIDE//    echo "<a target='_blank' href='".$_SESSION[$guid]['absoluteURL'].'/'.$row['citizenship1PassportScan']."'>View Passport</a>";
                         echo '</td>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Citizenship 2').'</span><br/>';
-                        echo $row['citizenship2'];
-                        if ($row['citizenship2Passport'] != '') {
-                            echo '<br/>';
-                            echo $row['citizenship2Passport'];
-                        }
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Citizenship 2').'</span><br/>';
+                        //HIDE//echo $row['citizenship2'];
+                        //HIDE//if ($row['citizenship2Passport'] != '') {
+                        //HIDE//    echo '<br/>';
+                        //HIDE//    echo $row['citizenship2Passport'];
+                        //HIDE//}
                         echo '</td>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
                         if ($_SESSION[$guid]['country'] == '') {
@@ -1011,30 +1011,30 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                         echo $row['languageThird'];
                         echo '</td>';
                         echo '</tr>';
-                        echo '<tr>';
-                        echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        if ($_SESSION[$guid]['country'] == '') {
-                            echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Residency/Visa Type').'</span><br/>';
-                        } else {
-                            echo "<span style='font-size: 115%; font-weight: bold'>".$_SESSION[$guid]['country'].' '.__($guid, 'Residency/Visa Type').'</span><br/>';
-                        }
-                        echo $row['residencyStatus'];
-                        echo '</td>';
-                        echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        if ($_SESSION[$guid]['country'] == '') {
-                            echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Visa Expiry Date').'</span><br/>';
-                        } else {
-                            echo "<span style='font-size: 115%; font-weight: bold'>".$_SESSION[$guid]['country'].' '.__($guid, 'Visa Expiry Date').'</span><br/>';
-                        }
-                        if ($row['visaExpiryDate'] != '') {
-                            echo dateConvertBack($guid, $row['visaExpiryDate']);
-                        }
-                        echo '</td>';
+                        //HIDE//echo '<tr>';
+                        //HIDE//echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        //HIDE//if ($_SESSION[$guid]['country'] == '') {
+                        //HIDE//    echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Residency/Visa Type').'</span><br/>';
+                        //HIDE//} else {
+                        //HIDE//    echo "<span style='font-size: 115%; font-weight: bold'>".$_SESSION[$guid]['country'].' '.__($guid, 'Residency/Visa Type').'</span><br/>';
+                        //HIDE//}
+                        //HIDE//echo $row['residencyStatus'];
+                        //HIDE//echo '</td>';
+                        //HIDE//echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        //HIDE//if ($_SESSION[$guid]['country'] == '') {
+                        //HIDE//    echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Visa Expiry Date').'</span><br/>';
+                        //HIDE//} else {
+                        //HIDE//    echo "<span style='font-size: 115%; font-weight: bold'>".$_SESSION[$guid]['country'].' '.__($guid, 'Visa Expiry Date').'</span><br/>';
+                        //HIDE//}
+                        //HIDE//if ($row['visaExpiryDate'] != '') {
+                        //HIDE//    echo dateConvertBack($guid, $row['visaExpiryDate']);
+                        //HIDE//}
+                        //HIDE//echo '</td>';
 
-                        echo "<td style='width: 34%; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Caste').'</span><br/>';
-                        echo $row['caste'];
-                        echo '</td>';
+                        //HIDE//echo "<td style='width: 34%; vertical-align: top'>";
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Caste').'</span><br/>';
+                        //HIDE//echo $row['caste'];
+                        //HIDE//echo '</td>';
 
                         echo '</td>';
                         echo '</tr>';
@@ -1111,19 +1111,19 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                         echo '</td>';
                         echo '<tr>';
                         echo "<td style='padding-top: 15px ; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'House').'</span><br/>';
-                        try {
-                            $dataDetail = array('gibbonHouseID' => $row['gibbonHouseID']);
-                            $sqlDetail = 'SELECT * FROM gibbonHouse WHERE gibbonHouseID=:gibbonHouseID';
-                            $resultDetail = $connection2->prepare($sqlDetail);
-                            $resultDetail->execute($dataDetail);
-                        } catch (PDOException $e) {
-                            echo "<div class='error'>".$e->getMessage().'</div>';
-                        }
-                        if ($resultDetail->rowCount() == 1) {
-                            $rowDetail = $resultDetail->fetch();
-                            echo $rowDetail['name'];
-                        }
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'House').'</span><br/>';
+                        //HIDE//try {
+                        //HIDE//    $dataDetail = array('gibbonHouseID' => $row['gibbonHouseID']);
+                        //HIDE//    $sqlDetail = 'SELECT * FROM gibbonHouse WHERE gibbonHouseID=:gibbonHouseID';
+                        //HIDE//    $resultDetail = $connection2->prepare($sqlDetail);
+                        //HIDE//    $resultDetail->execute($dataDetail);
+                        //HIDE//} catch (PDOException $e) {
+                        //HIDE//    echo "<div class='error'>".$e->getMessage().'</div>';
+                        //HIDE//}
+                        //HIDE//if ($resultDetail->rowCount() == 1) {
+                        //HIDE//    $rowDetail = $resultDetail->fetch();
+                        //HIDE//    echo $rowDetail['name'];
+                        //HIDE//}
                         echo '</td>';
                         echo "<td style='width: 33%; padding-top: 15px; vertical-align: top'>";
                         echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Student ID').'</span><br/>';
@@ -1152,77 +1152,77 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                         echo '</tr>';
                         echo '</table>';
 
-                        echo '<h4>';
-                        echo __($guid, 'System Data');
-                        echo '</h4>';
+                        //HIDE//echo '<h4>';
+                        //HIDE//echo __($guid, 'System Data');
+                        //HIDE//echo '</h4>';
 
-                        echo "<table class='smallIntBorder' cellspacing='0' style='width: 100%'>";
-                        echo '<tr>';
-                        echo "<td width: 33%; style='vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Username').'</span><br/>';
-                        echo $row['username'];
-                        echo '</td>';
-                        echo "<td style='width: 33%; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Can Login?').'</span><br/>';
-                        echo ynExpander($guid, $row['canLogin']);
-                        echo '</td>';
-                        echo "<td style='width: 34%; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Last IP Address').'</span><br/>';
-                        echo $row['lastIPAddress'];
-                        echo '</td>';
-                        echo '</tr>';
-                        echo '</table>';
+                        //HIDE//echo "<table class='smallIntBorder' cellspacing='0' style='width: 100%'>";
+                        //HIDE//echo '<tr>';
+                        //HIDE//echo "<td width: 33%; style='vertical-align: top'>";
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Username').'</span><br/>';
+                        //HIDE//echo $row['username'];
+                        //HIDE//echo '</td>';
+                        //HIDE//echo "<td style='width: 33%; vertical-align: top'>";
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Can Login?').'</span><br/>';
+                        //HIDE//echo ynExpander($guid, $row['canLogin']);
+                        //HIDE//echo '</td>';
+                        //HIDE//echo "<td style='width: 34%; vertical-align: top'>";
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Last IP Address').'</span><br/>';
+                        //HIDE//echo $row['lastIPAddress'];
+                        //HIDE//echo '</td>';
+                        //HIDE//echo '</tr>';
+                        //HIDE//echo '</table>';
 
-                        echo '<h4>';
-                        echo __($guid, 'Miscellaneous');
-                        echo '</h4>';
+                        //HIDE//echo '<h4>';
+                        //HIDE//echo __($guid, 'Miscellaneous');
+                        //HIDE//echo '</h4>';
 
-                        echo "<table class='smallIntBorder' cellspacing='0' style='width: 100%'>";
+                        //HIDE//echo "<table class='smallIntBorder' cellspacing='0' style='width: 100%'>";
 
-                        echo '<tr>';
-                        echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Profession').'</span><br/>';
-                        echo $row['profession'];
-                        echo '</td>';
-                        echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Employer').'</span><br/>';
-                        echo $row['employer'];
-                        echo '</td>';
-                        echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Job Title').'</span><br/>';
-                        echo $row['jobTitle'];
-                        echo '</td>';
-                        echo '</tr>';
+                        //HIDE//echo '<tr>';
+                        //HIDE//echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Profession').'</span><br/>';
+                        //HIDE//echo $row['profession'];
+                        //HIDE//echo '</td>';
+                        //HIDE//echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Employer').'</span><br/>';
+                        //HIDE//echo $row['employer'];
+                        //HIDE//echo '</td>';
+                        //HIDE//echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Job Title').'</span><br/>';
+                        //HIDE//echo $row['jobTitle'];
+                        //HIDE//echo '</td>';
+                        //HIDE//echo '</tr>';
                         
-                        echo '<tr>';
-                        echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Salary').'</span><br/>';
-                        echo $row['salary'];
-                        echo '</td>';
-                        echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo '</td>';
-                        echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
-                        echo '</td>';
-                        echo '</tr>';
+                        //HIDE//echo '<tr>';
+                        //HIDE//echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Salary').'</span><br/>';
+                        //HIDE//echo $row['salary'];
+                        //HIDE//echo '</td>';
+                        //HIDE//echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        //HIDE//echo '</td>';
+                        //HIDE//echo "<td $class style='width: 33%; padding-top: 15px; vertical-align: top'>";
+                        //HIDE//echo '</td>';
+                        //HIDE//echo '</tr>';
 
-                        echo '<tr>';
-                        echo "<td style='width: 33%; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Transport').'</span><br/>';
-                        echo $row['transport'];
-                        if ($row['transportNotes'] != '') {
-                            echo '<br/>';
-                            echo $row['transportNotes'];
-                        }
-                        echo '</td>';
-                        echo "<td style='width: 33%; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Vehicle Registration').'</span><br/>';
-                        echo $row['vehicleRegistration'];
-                        echo '</td>';
-                        echo "<td style='width: 33%; vertical-align: top'>";
-                        echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Locker Number').'</span><br/>';
-                        echo $row['lockerNumber'];
-                        echo '</td>';
-                        echo '</tr>';
+                        //HIDE//echo '<tr>';
+                        //HIDE//echo "<td style='width: 33%; vertical-align: top'>";
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Transport').'</span><br/>';
+                        //HIDE//echo $row['transport'];
+                        //HIDE//if ($row['transportNotes'] != '') {
+                        //HIDE//    echo '<br/>';
+                        //HIDE//    echo $row['transportNotes'];
+                        //HIDE//}
+                        //HIDE//echo '</td>';
+                        //HIDE//echo "<td style='width: 33%; vertical-align: top'>";
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Vehicle Registration').'</span><br/>';
+                        //HIDE//echo $row['vehicleRegistration'];
+                        //HIDE//echo '</td>';
+                        //HIDE//echo "<td style='width: 33%; vertical-align: top'>";
+                        //HIDE//echo "<span style='font-size: 115%; font-weight: bold'>".__($guid, 'Locker Number').'</span><br/>';
+                        //HIDE//echo $row['lockerNumber'];
+                        //HIDE//echo '</td>';
+                        //HIDE//echo '</tr>';
 
                         $privacySetting = getSettingByScope($connection2, 'User Admin', 'privacy');
                         if ($privacySetting == 'Y') {

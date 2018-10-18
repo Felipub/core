@@ -519,7 +519,8 @@ if ($proceed == false) {
             }
         }
         if ($surname == '' or $firstName == '' or $preferredName == '' or $officialName == '' or $gender == '' or $dob == '' or $languageHomePrimary == '' or $languageFirst == '' or $countryOfBirth == '' or $citizenship1 == '' or $gibbonSchoolYearIDEntry == '' or $dateStart == '' or $gibbonYearGroupIDEntry == '' or $sen == '' or $howDidYouHear == '' or (isset($_POST['agreement']) and $agreement != 'Y') or $familyFail) {
-            $URL .= '&return=error1';
+                                                                        $URL .= '&return=error1';
+                                                                        die('$surname '.$surname.' $firstName '.$firstName. ' $preferredName ' .$preferredName.' $officialName '.$officialName.' $gender '.$gender.' $dob '.$dob .' $languageHomePrimary '. $languageHomePrimary.' $languageFirst '.$languageFirst.' $countryOfB '.$countryOfBirth.' $citizenship1 '.$citizenship1.' $gibbonSchoolYearIDEntry '.$gibbonSchoolYearIDEntry.' $dateStart '.$dateStart.' $gibbonYearGroupIDEntry '.$gibbonYearGroupIDEntry.' $sen '.$sen.' $howDidYouHear '.$howDidYouHear.' $familyFail '.$familyFail);
             header("Location: {$URL}");
         } else {
             //DEAL WITH CUSTOM FIELDS
