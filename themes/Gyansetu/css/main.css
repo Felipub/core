@@ -225,7 +225,7 @@ div.minorLinks {
 	padding-top: 0px;
 	margin-top: 10px;
 	margin-bottom: 0px;
-	color: #fff;
+	color: #aaa;
 	font-size: 80%;
 	font-weight: normal;
 }
@@ -241,7 +241,7 @@ img.minorLinkIconLarge {
 	max-height: 65px ;
 }
 div.minorLinks a {
-	color: #fff;
+	color: #aaa;
 }
 div.minorLinks a:hover {
 	color: #aaa;
