@@ -208,17 +208,20 @@ if ($proceed == false) {
         $row->addLabel('firstName', __('First Name'))->description(__('First name as shown in ID documents.'));
         $row->addTextField('firstName')->isRequired()->maxLength(30);
 
-    $row = $form->addRow();
-        $row->addLabel('preferredName', __('Preferred Name'))->description(__('Most common name, alias, nickname, etc.'));
-        $row->addTextField('preferredName')->isRequired()->maxLength(30);
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('preferredName', __('Preferred Name'))->description(__('Most common name, alias, nickname, etc.'));
+    //HIDE//    $row->addTextField('preferredName')->isRequired()->maxLength(30);
+    $form->addHiddenValue('preferredName', '');
 
-    $row = $form->addRow();
-        $row->addLabel('officialName', __('Official Name'))->description(__('Full name as shown in ID documents.'));
-        $row->addTextField('officialName')->isRequired()->maxLength(150)->setTitle('Please enter full name as shown in ID documents');
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('officialName', __('Official Name'))->description(__('Full name as shown in ID documents.'));
+    //HIDE//    $row->addTextField('officialName')->isRequired()->maxLength(150)->setTitle('Please enter full name as shown in ID documents');
+    $form->addHiddenValue('officialName', '');
 
-    $row = $form->addRow();
-        $row->addLabel('nameInCharacters', __('Name In Characters'))->description(__('Chinese or other character-based name.'));
-        $row->addTextField('nameInCharacters')->maxLength(20);
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('nameInCharacters', __('Name In Characters'))->description(__('Chinese or other character-based name.'));
+    //HIDE//    $row->addTextField('nameInCharacters')->maxLength(20);
+    $form->addHiddenValue('nameInCharacters', '');
         
     $row = $form->addRow();
         $row->addLabel('gender', __('Gender'));
@@ -228,50 +231,58 @@ if ($proceed == false) {
         $row->addLabel('dob', __('Date of Birth'))->description($_SESSION[$guid]['i18n']['dateFormat'])->prepend(__('Format:'));
         $row->addDate('dob')->isRequired();
 
-    // STUDENT BACKGROUND
-    $form->addRow()->addSubheading(__('Student Background'));
+    //HIDE//// STUDENT BACKGROUND
+    //HIDE//$form->addRow()->addSubheading(__('Student Background'));
 
-    $row = $form->addRow();
-        $row->addLabel('languageHomePrimary', __('Home Language - Primary'))->description(__('The primary language used in the student\'s home.'));
-        $row->addSelectLanguage('languageHomePrimary')->isRequired();
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('languageHomePrimary', __('Home Language - Primary'))->description(__('The primary language used in the student\'s home.'));
+    //HIDE//    $row->addSelectLanguage('languageHomePrimary')->isRequired();
+    $form->addHiddenValue('languageHomePrimary', '');
 
-    $row = $form->addRow();
-        $row->addLabel('languageHomeSecondary', __('Home Language - Secondary'));
-        $row->addSelectLanguage('languageHomeSecondary')->placeholder('');
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('languageHomeSecondary', __('Home Language - Secondary'));
+    //HIDE//    $row->addSelectLanguage('languageHomeSecondary')->placeholder('');
+    $form->addHiddenValue('languageHomeSecondary', '');
 
-    $row = $form->addRow();
-        $row->addLabel('languageFirst', __('First Language'))->description(__('Student\'s native/first/mother language.'));
-        $row->addSelectLanguage('languageFirst')->isRequired();
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('languageFirst', __('First Language'))->description(__('Student\'s native/first/mother language.'));
+    //HIDE//    $row->addSelectLanguage('languageFirst')->isRequired();
+    $form->addHiddenValue('languageFirst', '');
 
-    $row = $form->addRow();
-        $row->addLabel('languageSecond', __('Second Language'));
-        $row->addSelectLanguage('languageSecond')->placeholder('');
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('languageSecond', __('Second Language'));
+    //HIDE//    $row->addSelectLanguage('languageSecond')->placeholder('');
+    $form->addHiddenValue('languageSecond', '');
 
-    $row = $form->addRow();
-        $row->addLabel('languageThird', __('Third Language'));
-        $row->addSelectLanguage('languageThird')->placeholder('');
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('languageThird', __('Third Language'));
+    //HIDE//    $row->addSelectLanguage('languageThird')->placeholder('');
+    $form->addHiddenValue('languageThird', '');
 
-    $row = $form->addRow();
-        $row->addLabel('countryOfBirth', __('Country of Birth'));
-        $row->addSelectCountry('countryOfBirth')->isRequired();
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('countryOfBirth', __('Country of Birth'));
+    //HIDE//    $row->addSelectCountry('countryOfBirth')->isRequired();
+    $form->addHiddenValue('countryOfBirth', '');
 
-    $row = $form->addRow();
-        $row->addLabel('citizenship1', __('Citizenship'));
-        $nationalityList = getSettingByScope($connection2, 'User Admin', 'nationality');
-        if (!empty($nationalityList)) {
-            $row->addSelect('citizenship1')->isRequired()->fromString($nationalityList)->placeholder(__('Please select...'));
-        } else {
-            $row->addSelectCountry('citizenship1')->isRequired();
-        }
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('citizenship1', __('Citizenship'));
+    //HIDE//    $nationalityList = getSettingByScope($connection2, 'User Admin', 'nationality');
+    //HIDE//    if (!empty($nationalityList)) {
+    //HIDE//        $row->addSelect('citizenship1')->isRequired()->fromString($nationalityList)->placeholder(__('Please select...'));
+    //HIDE//    } else {
+    //HIDE//        $row->addSelectCountry('citizenship1')->isRequired();
+    //HIDE//    }
+    $form->addHiddenValue('citizenship1', '');
 
     $countryName = (isset($_SESSION[$guid]['country']))? $_SESSION[$guid]['country'].' ' : '';
-            //$row = $form->addRow();
-            //    $row->addLabel('citizenship1Passport', __('Citizenship Passport Number'))->description('');
-            //    $row->addTextField('citizenship1Passport')->maxLength(30);
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $row->addLabel('citizenship1Passport', __('Citizenship Passport Number'))->description('');
+    //HIDE//    $row->addTextField('citizenship1Passport')->maxLength(30);
     $form->addHiddenValue('citizenship1Passport', '');
 
     $row = $form->addRow();
-        $row->addLabel('nationalIDCardNumber', $countryName.__('National ID Card Number'));
+    //OLD//    $row->addLabel('nationalIDCardNumber', $countryName.__('National ID Card Number'));
+        $row->addLabel('nationalIDCardNumber', __('ID Card Number'));
         $row->addTextField('nationalIDCardNumber')->maxLength(30);
 
     //HIDE//$row = $form->addRow();
@@ -303,8 +314,10 @@ if ($proceed == false) {
 
     //HIDE//for ($i = 1; $i < 3; ++$i) {
         $row = $form->addRow();
-            $row->addLabel('Phone', __('Phone'))->description(__('Type, country code, number.'));
-            $row->addPhoneNumber('phone1');
+    //OLD//        $row->addLabel('Phone', __('Phone'))->description(__('Type, country code, number.'));
+        $row->addLabel('Phone', __('Phone')); //NEW//
+    //OLD//        $row->addPhoneNumber('phone1');
+            $row->addTextField('phone1'); //NEW//
     //HIDE//}
 
     // SPECIAL EDUCATION & MEDICAL
@@ -333,10 +346,11 @@ if ($proceed == false) {
         $form->addHiddenValue('sen', 'N');
     }
 
-    $row = $form->addRow();
-        $column = $row->addColumn();
-        $column->addLabel('', __('Medical Information'))->description(__('Please indicate any medical conditions.'));
-        $column->addTextArea('medicalInformation')->setRows(5)->setClass('fullWidth');
+    //HIDE//$row = $form->addRow();
+    //HIDE//    $column = $row->addColumn();
+    //HIDE//    $column->addLabel('', __('Medical Information'))->description(__('Please indicate any medical conditions.'));
+    //HIDE//    $column->addTextArea('medicalInformation')->setRows(5)->setClass('fullWidth');
+    $form->addHiddenValue('medicalInformation', '');
 
 
     // STUDENT EDUCATION
@@ -356,10 +370,11 @@ if ($proceed == false) {
         }
         $row->addSelect('gibbonSchoolYearIDEntry')->fromQuery($pdo, $sql, $data)->isRequired()->placeholder(__('Please select...'));
 
-    $row = $form->addRow();
-        $row->addLabel('dateStart', __('Intended Start Date'))->description(__('Student\'s intended first day at school.'))->append('<br/>'.__('Format:'))->append(' '.$_SESSION[$guid]['i18n']['dateFormat']);
-        $row->addDate('dateStart')->isRequired();
-
+    //HIDE//$row = $form->addRow();
+    //HIDE//   $row->addLabel('dateStart', __('Intended Start Date'))->description(__('Student\'s intended first day at school.'))->append('<br/>'.__('Format:'))->append(' '.$_SESSION[$guid]['i18n']['dateFormat']);
+    //HIDE//   $row->addDate('dateStart')->isRequired();
+    $form->addHiddenValue('dateStart', '');
+                
     $row = $form->addRow();
         $row->addLabel('gibbonYearGroupIDEntry', __('Year Group at Entry'))->description('Which year level will student enter.');
         $sql = "SELECT gibbonYearGroupID as value, name FROM gibbonYearGroup ORDER BY sequenceNumber";
@@ -390,9 +405,10 @@ if ($proceed == false) {
     $header = $table->addHeaderRow();
     $header->addContent(__('School Name'));
     $header->addContent(__('Address'));
-    $header->addContent(sprintf(__('Grades%1$sAttended'), '<br/>'));
-    $header->addContent(sprintf(__('Language of%1$sInstruction'), '<br/>'));
-    $header->addContent(__('Joining Date'))->append('<br/><small>'.$_SESSION[$guid]['i18n']['dateFormat'].'</small>');
+    //OLD//$header->addContent(sprintf(__('Grades%1$sAttended'), '<br/>'));
+    $header->addContent(sprintf(__('Class%1$sAttended'), '<br/>')); //NEW//
+    //HIDE//$header->addContent(sprintf(__('Language of%1$sInstruction'), '<br/>'));
+    //HIDE//$header->addContent(__('Joining Date'))->append('<br/><small>'.$_SESSION[$guid]['i18n']['dateFormat'].'</small>');
 
     // Grab some languages, for auto-complete
     $results = $pdo->executeQuery(array(), "SELECT name FROM gibbonLanguage ORDER BY name");
@@ -403,8 +419,8 @@ if ($proceed == false) {
         $row->addTextField('schoolName'.$i)->maxLength(50)->setSize(18);
         $row->addTextField('schoolAddress'.$i)->maxLength(255)->setSize(20);
         $row->addTextField('schoolGrades'.$i)->maxLength(20)->setSize(8);
-        $row->addTextField('schoolLanguage'.$i)->autocomplete($languages)->setSize(10);
-        $row->addDate('schoolDate'.$i)->setSize(10);
+        //HIDE//$row->addTextField('schoolLanguage'.$i)->autocomplete($languages)->setSize(10);
+        //HIDE//$row->addDate('schoolDate'.$i)->setSize(10);
     }
 
     // CUSTOM FIELDS FOR STUDENT
@@ -496,9 +512,10 @@ if ($proceed == false) {
                 $row->addLabel('parent1surname', __('Surname'))->description(__('Family name as shown in ID documents.'));
                 $row->addTextField('parent1surname')->setValue($parent1surname)->maxLength(30)->readOnly();
 
-            $row = $form->addRow();
-                $row->addLabel('parent1preferredName', __('Preferred Name'))->description(__('Most common name, alias, nickname, etc.'));
-                $row->addTextField('parent1preferredName')->setValue($parent1preferredName)->maxLength(30)->readOnly();
+            //HIDE//$row = $form->addRow();
+            //HIDE//    $row->addLabel('parent1preferredName', __('Preferred Name'))->description(__('Most common name, alias, nickname, etc.'));
+            //HIDE//    $row->addTextField('parent1preferredName')->setValue($parent1preferredName)->maxLength(30)->readOnly();
+            $form->addHiddenValue('parent1preferredName', '');
 
             $row = $form->addRow();
                 $row->addLabel('parent1relationship', __('Relationship'));
@@ -508,8 +525,8 @@ if ($proceed == false) {
             $existingFields = (!empty($parent1fields))? unserialize($parent1fields) : null;
             $resultFields = getCustomFields($connection2, $guid, false, false, true, false, true, null);
             if ($resultFields->rowCount() > 0) {
-                $row = $form->addRow();
-                $row->addSubheading(__('Parent/Guardian').' 1 '.__('Other Information'));
+            //HIDE//    $row = $form->addRow();
+            //HIDE//    $row->addSubheading(__('Parent/Guardian').' 1 '.__('Other Information'));
 
                 while ($rowFields = $resultFields->fetch()) {
                     $name = "parent1custom".$rowFields['gibbonPersonFieldID'];
@@ -559,17 +576,17 @@ if ($proceed == false) {
                 $row->addLabel("parent{$i}firstName", __('First Name'))->description(__('First name as shown in ID documents.'));
                 $row->addTextField("parent{$i}firstName")->isRequired()->maxLength(30)->loadFrom($application);
 
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addLabel("parent{$i}preferredName", __('Preferred Name'))->description(__('Most common name, alias, nickname, etc.'));
-                $row->addTextField("parent{$i}preferredName")->isRequired()->maxLength(30)->loadFrom($application);
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addLabel("parent{$i}preferredName", __('Preferred Name'))->description(__('Most common name, alias, nickname, etc.'));
+            //HIDE//    $row->addTextField("parent{$i}preferredName")->isRequired()->maxLength(30)->loadFrom($application);
 
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addLabel("parent{$i}officialName", __('Official Name'))->description(__('Full name as shown in ID documents.'));
-                $row->addTextField("parent{$i}officialName")->isRequired()->maxLength(150)->loadFrom($application);
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addLabel("parent{$i}officialName", __('Official Name'))->description(__('Full name as shown in ID documents.'));
+            //HIDE//    $row->addTextField("parent{$i}officialName")->isRequired()->maxLength(150)->loadFrom($application);
 
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addLabel("parent{$i}nameInCharacters", __('Name In Characters'))->description(__('Chinese or other character-based name.'));
-                $row->addTextField("parent{$i}nameInCharacters")->maxLength(20)->loadFrom($application);
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addLabel("parent{$i}nameInCharacters", __('Name In Characters'))->description(__('Chinese or other character-based name.'));
+            //HIDE//    $row->addTextField("parent{$i}nameInCharacters")->maxLength(20)->loadFrom($application);
 
             $row = $form->addRow()->setClass("parentSection{$i}");
                 $row->addLabel("parent{$i}gender", __('Gender'));
@@ -580,24 +597,24 @@ if ($proceed == false) {
                 $row->addSelectRelationship("parent{$i}relationship")->isRequired();
 
             // PARENT PERSONAL BACKGROUND
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addSubheading(__('Parent/Guardian')." $i ".__('Personal Background'));
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addSubheading(__('Parent/Guardian')." $i ".__('Personal Background'));
 
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addLabel("parent{$i}languageFirst", __('First Language'));
-                $row->addSelectLanguage("parent{$i}languageFirst")->placeholder()->loadFrom($application);
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addLabel("parent{$i}languageFirst", __('First Language'));
+            //HIDE//    $row->addSelectLanguage("parent{$i}languageFirst")->placeholder()->loadFrom($application);
 
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addLabel("parent{$i}languageSecond", __('Second Language'));
-                $row->addSelectLanguage("parent{$i}languageSecond")->placeholder()->loadFrom($application);
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addLabel("parent{$i}languageSecond", __('Second Language'));
+            //HIDE//    $row->addSelectLanguage("parent{$i}languageSecond")->placeholder()->loadFrom($application);
 
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addLabel("parent{$i}citizenship1", __('Citizenship'));
-                if (!empty($nationalityList)) {
-                    $row->addSelect("parent{$i}citizenship1")->fromString($nationalityList)->placeholder()->loadFrom($application);
-                } else {
-                    $row->addSelectCountry("parent{$i}citizenship1")->loadFrom($application);
-                }
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addLabel("parent{$i}citizenship1", __('Citizenship'));
+            //HIDE//    if (!empty($nationalityList)) {
+            //HIDE//        $row->addSelect("parent{$i}citizenship1")->fromString($nationalityList)->placeholder()->loadFrom($application);
+            //HIDE//    } else {
+            //HIDE//        $row->addSelectCountry("parent{$i}citizenship1")->loadFrom($application);
+            //HIDE//    }
 
             $row = $form->addRow()->setClass("parentSection{$i}");
                 $row->addLabel("parent{$i}nationalIDCardNumber", $countryName.__('National ID Card Number'));
@@ -620,8 +637,8 @@ if ($proceed == false) {
 
                     
             // PARENT CONTACT
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addSubheading(__('Parent/Guardian')." $i ".__('Contact'));
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addSubheading(__('Parent/Guardian')." $i ".__('Contact'));
             
             //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
             //HIDE//    $row->addLabel("parent{$i}email", __('Email'));
@@ -631,30 +648,33 @@ if ($proceed == false) {
             //HIDE//    }
             $form->addHiddenValue('parent{$i}email', '');
 
-            for ($y = 1; $y < 3; ++$y) {
+            //OLD//for ($y = 1; $y < 3; ++$y) {
+            for ($y = 1; $y <= 1; ++$y) { //NEW//
                 $row = $form->addRow()->setClass("parentSection{$i}");
-                    $row->addLabel("parent{$i}phone{$y}", __('Phone').' '.$y)->description(__('Type, country code, number.'));
-                    $row->addPhoneNumber("parent{$i}phone{$y}")->setRequired($i == 1 && $y == 1)->loadFrom($application);
+            //OLD//    $row->addLabel("parent{$i}phone{$y}", __('Phone').' '.$y)->description(__('Type, country code, number.'));
+                $row->addLabel("parent{$i}phone{$y}", __('Phone')); //NEW//
+            //OLD//    $row->addPhoneNumber("parent{$i}phone{$y}")->setRequired($i == 1 && $y == 1)->loadFrom($application);
+                $row->addTextField("parent{$i}phone{$y}")->setRequired($i == 1 && $y == 1)->loadFrom($application);//NEW//
             }
 
             // PARENT EMPLOYMENT
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addSubheading(__('Parent/Guardian')." $i ".__('Employment'));
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addSubheading(__('Parent/Guardian')." $i ".__('Employment'));
 
             $row = $form->addRow()->setClass("parentSection{$i}");
                 $row->addLabel("parent{$i}profession", __('Profession'));
                 $row->addTextField("parent{$i}profession")->maxLength(30)->loadFrom($application);
 
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addLabel("parent{$i}employer", __('Employer'));
-                $row->addTextField("parent{$i}employer")->maxLength(30)->loadFrom($application);
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addLabel("parent{$i}employer", __('Employer'));
+            //HIDE//    $row->addTextField("parent{$i}employer")->maxLength(30)->loadFrom($application);
 
             // CUSTOM FIELDS FOR PARENTS
             $existingFields = (isset($application["parent{$i}fields"]))? unserialize($application["parent{$i}fields"]) : null;
             $resultFields = getCustomFields($connection2, $guid, false, false, true, false, true, null);
             if ($resultFields->rowCount() > 0) {
-                $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addSubheading(__('Parent/Guardian')." $i ".__('Other Information'));
+            //HIDE//    $row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addSubheading(__('Parent/Guardian')." $i ".__('Other Information'));
 
                 while ($rowFields = $resultFields->fetch()) {
                     $name = "parent{$i}custom".$rowFields['gibbonPersonFieldID'];

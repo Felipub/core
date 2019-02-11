@@ -70,8 +70,10 @@ if ($proceed == false) {
         //GET STUDENT FIELDS
         $surname = $_POST['surname'];
         $firstName = trim($_POST['firstName']);
-        $preferredName = trim($_POST['preferredName']);
-        $officialName = trim($_POST['officialName']);
+        //OLD//$preferredName = trim($_POST['preferredName']);
+        $preferredName = $firstName; //GS//
+        //OLD//$officialName = trim($_POST['officialName']);
+        $officialName = $firstName.' '.$surname; //GS//
         $nameInCharacters = $_POST['nameInCharacters'];
         $gender = $_POST['gender'];
         $dob = $_POST['dob'];
@@ -122,7 +124,8 @@ if ($proceed == false) {
         if (isset($_POST['dayType'])) {
             $dayType = $_POST['dayType'];
         }
-        $dateStart = dateConvert($guid, $_POST['dateStart']);
+        //OLD//$dateStart = dateConvert($guid, $_POST['dateStart']);
+        $dateStart = date("Y-m-d"); //GS//
         $gibbonYearGroupIDEntry = $_POST['gibbonYearGroupIDEntry'];
         $referenceEmail = null;
         if (isset($_POST['referenceEmail'])) {
