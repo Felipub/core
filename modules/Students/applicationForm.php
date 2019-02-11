@@ -561,8 +561,8 @@ if ($proceed == false) {
             }
 
             // PARENT PERSONAL DATA
-            $row = $form->addRow()->setClass("parentSection{$i}");
-                $row->addSubheading(__('Parent/Guardian')." $i ".__('Personal Data'));
+            //HIDE//$row = $form->addRow()->setClass("parentSection{$i}");
+            //HIDE//    $row->addSubheading(__('Parent/Guardian')." $i ".__('Personal Data'));
 
             $row = $form->addRow()->setClass("parentSection{$i}");
                 $row->addLabel("parent{$i}title", __('Title'));
