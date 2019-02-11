@@ -22,6 +22,9 @@ use Gibbon\Comms\NotificationEvent;
 include '../../gibbon.php';
 require '../../lib/PHPMailer/PHPMailerAutoload.php';
 
+//DEBUG//ini_set('display_errors',1);
+//DEBUG//error_reporting(E_ALL);
+
 //Check to see if system settings are set from databases
 if (empty($_SESSION[$guid]['systemSettingsSet'])) {
     getSystemSettings($guid, $connection2);
@@ -134,18 +137,41 @@ if ($proceed == false) {
         $schoolName1 = $_POST['schoolName1'];
         $schoolAddress1 = $_POST['schoolAddress1'];
         $schoolGrades1 = $_POST['schoolGrades1'];
-        $schoolLanguage1 = $_POST['schoolLanguage1'];
-        $schoolDate1 = $_POST['schoolDate1'];
+        if (isset($_POST['schoolLanguage1'])) {
+            $schoolLanguage1 = $_POST['schoolLanguage1'];
+        }
+        else {
+            $schoolLanguage1 = '';
+        }
+
+        if (isset($_POST['schoolDate1'])) {
+            $schoolDate1 = $_POST['schoolDate1'];
+        }
+        else {
+            $schoolDate1 = '';
+        }
         if ($schoolDate1 == '') {
             $schoolDate1 = null;
         } else {
             $schoolDate1 = dateConvert($guid, $schoolDate1);
         }
+
         $schoolName2 = $_POST['schoolName2'];
         $schoolAddress2 = $_POST['schoolAddress2'];
         $schoolGrades2 = $_POST['schoolGrades2'];
-        $schoolLanguage2 = $_POST['schoolLanguage2'];
-        $schoolDate2 = $_POST['schoolDate2'];
+        if (isset($_POST['schoolLanguage2'])) {
+            $schoolLanguage2 = $_POST['schoolLanguage2'];
+        }
+        else
+        {
+            $schoolLanguage2 = '';
+        }
+        if (isset($_POST['schoolDate2'])) {
+            $schoolDate2 = $_POST['schoolDate2'];
+        }
+        else {
+            $schoolDate2 = '';
+        }
         if ($schoolDate2 == '') {
             $schoolDate2 = null;
         } else {
@@ -190,13 +216,15 @@ if ($proceed == false) {
             $parent1firstName = trim($_POST['parent1firstName']);
         }
         $parent1preferredName = null;
-        if (isset($_POST['parent1preferredName'])) {
-            $parent1preferredName = trim($_POST['parent1preferredName']);
-        }
+        //OLD//if (isset($_POST['parent1preferredName'])) {
+        //OLD//    $parent1preferredName = trim($_POST['parent1preferredName']);
+        //OLD//}
+        $parent1preferredName = $parent1firstName;//GS//
         $parent1officialName = null;
-        if (isset($_POST['parent1officialName'])) {
-            $parent1officialName = trim($_POST['parent1officialName']);
-        }
+        //OLD//if (isset($_POST['parent1officialName'])) {
+        //OLD//    $parent1officialName = trim($_POST['parent1officialName']);
+        //OLD//}
+        $parent1officialName = $parent1firstName;//GS//
         $parent1nameInCharacters = null;
         if (isset($_POST['parent1nameInCharacters'])) {
             $parent1nameInCharacters = $_POST['parent1nameInCharacters'];
@@ -521,9 +549,9 @@ if ($proceed == false) {
                 }
             }
         }
-        if ($surname == '' or $firstName == '' or $preferredName == '' or $officialName == '' or $gender == '' or $dob == '' or $languageHomePrimary == '' or $languageFirst == '' or $countryOfBirth == '' or $citizenship1 == '' or $gibbonSchoolYearIDEntry == '' or $dateStart == '' or $gibbonYearGroupIDEntry == '' or $sen == '' or $howDidYouHear == '' or (isset($_POST['agreement']) and $agreement != 'Y') or $familyFail) {
-                                                                        $URL .= '&return=error1';
-            //DEBUG//die('$surname '.$surname.' $firstName '.$firstName. ' $preferredName ' .$preferredName.' $officialName '.$officialName.' $gender '.$gender.' $dob '.$dob .' $languageHomePrimary '. $languageHomePrimary.' $languageFirst '.$languageFirst.' $countryOfB '.$countryOfBirth.' $citizenship1 '.$citizenship1.' $gibbonSchoolYearIDEntry '.$gibbonSchoolYearIDEntry.' $dateStart '.$dateStart.' $gibbonYearGroupIDEntry '.$gibbonYearGroupIDEntry.' $sen '.$sen.' $howDidYouHear '.$howDidYouHear.' $familyFail '.$familyFail);
+        if ($surname == '' or $firstName == '' or $preferredName == '' or $officialName == '' or $gender == '' or $dob == '' or /*DISABLE $languageHomePrimary == '' or $languageFirst == '' or $countryOfBirth == '' or $citizenship1 == '' or*/ $gibbonSchoolYearIDEntry == '' or $dateStart == '' or $gibbonYearGroupIDEntry == '' or $sen == '' or $howDidYouHear == '' or (isset($_POST['agreement']) and $agreement != 'Y') or $familyFail) {
+            $URL .= '&return=error1';
+            //DEBUG//die('$surname '.$surname.' $firstName '.$firstName. ' $preferredName ' .$preferredName.' $officialName '.$officialName.' $gender '.$gender.' $dob '.$dob.' $gibbonSchoolYearIDEntry '.$gibbonSchoolYearIDEntry.' $dateStart '.$dateStart.' $gibbonYearGroupIDEntry '.$gibbonYearGroupIDEntry.' $sen '.$sen.' $howDidYouHear '.$howDidYouHear.' $familyFail '.$familyFail); 
             header("Location: {$URL}");
         } else {
             //DEAL WITH CUSTOM FIELDS
