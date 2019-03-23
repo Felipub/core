@@ -54,7 +54,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Activities/activities_mana
     $criteria = $activityGateway->newQueryCriteria()
         ->searchBy($activityGateway->getSearchableColumns(), $search)
         ->filterBy('term', $gibbonSchoolYearTermID)
-        ->sortBy($dateType != 'Date' ? 'gibbonSchoolYearTermIDList' : 'programStart', 'DESC')
+        ->sortBy($dateType != 'Date' ? 'gibbonSchoolYearTermIDList' : 'programStart', $dateType != 'Date' ? 'ASC' : 'DESC')
         ->sortBy('name');
 
     $criteria->fromArray($_POST);
@@ -65,7 +65,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Activities/activities_mana
 
     $paymentOn = getSettingByScope($connection2, 'Activities', 'payment') != 'None' and getSettingByScope($connection2, 'Activities', 'payment') != 'Single';
 
-    $form = Form::create('search', $_SESSION[$guid]['absoluteURL'].'/index.php', 'get');
+    $form = Form::create('searchForm', $_SESSION[$guid]['absoluteURL'].'/index.php', 'get');
     $form->setClass('noIntBorder fullWidth');
 
     $form->addHiddenValue('q', "/modules/".$_SESSION[$guid]['module']."/activities_manage.php");

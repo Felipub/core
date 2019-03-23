@@ -27,13 +27,16 @@ jQuery(function($){
     /**
      * Bluk Actions: show/hide the bulk action panel, highlight selected
      */
-    $(document).on('click, change', '.dataTable .bulkCheckbox :checkbox', function () {
-        var checkboxes = $(this).parents('.dataTable').find('.bulkCheckbox :checkbox');
+    $(document).on('click, change', '.bulkActionForm .bulkCheckbox :checkbox', function () {
+        var checkboxes = $(this).parents('.bulkActionForm').find('.bulkCheckbox :checkbox');
         var checkedCount = checkboxes.filter(':checked').length;
 
         if (checkedCount > 0) {
             $('.bulkActionCount span').html(checkedCount);
             $('.bulkActionPanel').fadeIn(150);
+
+            // Trigger a showhide event on any nested inputs to update their visibility & validation state
+            $('.bulkActionPanel :input').trigger('showhide');
         } else {
             $('.bulkActionPanel').fadeOut(75);
         }
@@ -212,7 +215,7 @@ CustomBlocks.prototype.init = function() {
     _.refresh();
 };
 
-CustomBlocks.prototype.addBlock = function(data = {}) {
+CustomBlocks.prototype.addBlock = function(data) {
     var _ = this;
 
     _.blockCount++;
@@ -237,7 +240,7 @@ CustomBlocks.prototype.removeBlock = function(block) {
     });
 };
 
-CustomBlocks.prototype.initBlock = function(block, data = {}) {
+CustomBlocks.prototype.initBlock = function(block, data) {
     var _ = this;
 
     block.blockNumber = _.blockCount;
@@ -248,7 +251,7 @@ CustomBlocks.prototype.initBlock = function(block, data = {}) {
     _.addBlockEvents(block);
 };
 
-CustomBlocks.prototype.loadBlockInputData = function(block, data = {}) {
+CustomBlocks.prototype.loadBlockInputData = function(block, data) {
     var _ = this;
 
     for (key in data) {
@@ -399,7 +402,9 @@ DataTable.prototype.init = function() {
 
     // Add Filter
     $(_.table).on('change', '.filters', function() {
-        var [filter, value] = $(this).val().split(':');
+        var filterData = $(this).val().split(':');
+        var filter = filterData[0];
+        var value = filterData[1];
 
         _.filters.filterBy[filter] = value;
         _.filters.page = 1;
@@ -426,8 +431,14 @@ DataTable.prototype.init = function() {
 DataTable.prototype.refresh = function() {
     var _ = this;
 
+    var submitted = setTimeout(function() {
+        $('.pagination', _.table).prepend('<span class="submitted"></span>');
+    }, 500);
+
     $(_.table).load(_.path, _.filters, function(responseText, textStatus, jqXHR) { 
+        $('.bulkActionPanel').hide();
         tb_init('a.thickbox'); 
+        clearTimeout(submitted);
     });
 };
 
