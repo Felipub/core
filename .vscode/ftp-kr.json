@@ -1,16 +1,13 @@
 {
     "remotePath": "core_gyansetu",
     "host": "ftp.shef.ngo",
-    "username": "felipetp@shef.ngo",
-    "password": "ftppasswordforshef.ngo",
+    "username": "manjeet@shef.ngo",
+    "password": "RocketPrompt",
     "port": 21,
     "protocol": "ftp",
     "fileNameEncoding": "utf8",
-    "autoUpload": true,
+    "autoUpload": false,
     "autoDelete": false,
     "autoDownload": false,
-    "ignore": [
-        ".git",
-        "/.vscode"
-    ]
+    "ignore": [".git", "/.vscode"]
 }
