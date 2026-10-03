@@ -57,3 +57,7 @@
 # black list some files and folders
 # in the module folders
 **/.DS_Store
+
+# Runtime logs must stay local even in whitelisted core modules.
+**/error_log
+**/*.log

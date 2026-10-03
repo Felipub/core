@@ -1,0 +1,16 @@
+{
+  "remotePath": "core_gyansetu",
+  "host": "ftp.example.org",
+  "username": "YOUR_FTP_USERNAME",
+  "password": "",
+  "port": 21,
+  "protocol": "ftp",
+  "fileNameEncoding": "utf8",
+  "autoUpload": false,
+  "autoDelete": false,
+  "autoDownload": false,
+  "ignore": [
+    ".git",
+    "/.vscode"
+  ]
+}

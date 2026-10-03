@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>GyanSetu — Visual Workflow Guide</title>
+  <style>
+    @page { size: A4; margin: 13mm 14mm 15mm; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #17324d; font-family: "Segoe UI", Arial, sans-serif; font-size: 10.5pt; line-height: 1.42; }
+    h1, h2, h3, p { margin-top: 0; } h1 { font-size: 31pt; line-height: 1.05; color: #123b5d; margin-bottom: 9mm; }
+    h2 { font-size: 22pt; color: #123b5d; margin-bottom: 5mm; } h3 { font-size: 13pt; color: #087f8c; margin-bottom: 2mm; }
+    p { margin-bottom: 3mm; } .page { min-height: 267mm; page-break-after: always; position: relative; } .page:last-child { page-break-after: auto; }
+    .eyebrow { color: #e88b19; font-size: 10pt; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase; }
+    .lead { color: #45657b; font-size: 13pt; line-height: 1.5; } .hero { width: 100%; height: 112mm; object-fit: cover; border-radius: 7mm; margin: 5mm 0 7mm; }
+    .chips { display: flex; gap: 3mm; flex-wrap: wrap; } .chip { color: white; background: #087f8c; border-radius: 20px; padding: 2mm 4mm; font-size: 9pt; font-weight: 700; }
+    .flow { display: table; width: 100%; table-layout: fixed; margin: 8mm 0; } .step { display: table-cell; vertical-align: middle; text-align: center; background: #edf8f8; border: 1px solid #b9dddd; padding: 5mm 2mm; font-weight: 700; }
+    .arrow { display: table-cell; width: 7mm; text-align: center; vertical-align: middle; color: #e88b19; font-size: 18pt; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; } .card { border: 1px solid #d6e3ea; border-radius: 4mm; padding: 5mm; background: #fff; }
+    .card.tint { background: #f4fafb; } .role { border-left: 4mm solid #087f8c; } .role.admin { border-color: #173f68; } .role.support { border-color: #e88b19; } .role.teacher { border-color: #087f8c; } .role.record { border-color: #5b74b8; }
+    ul, ol { margin: 2mm 0 0; padding-left: 6mm; } li { margin-bottom: 1.7mm; } .route { margin: 3mm 0 5mm; padding: 3mm 4mm; border-radius: 3mm; background: #173f68; color: white; font-weight: 700; }
+    .note { margin-top: 5mm; padding: 4mm; border-radius: 3mm; background: #fff5e7; border-left: 3mm solid #e88b19; }
+    .future { margin-top: 5mm; padding: 4mm; border-radius: 3mm; background: #eef3ff; border-left: 3mm solid #5b74b8; }
+    table { width: 100%; border-collapse: collapse; font-size: 9.2pt; } th { color: white; background: #173f68; text-align: left; padding: 3mm; } td { border-bottom: 1px solid #d6e3ea; padding: 3mm; vertical-align: top; }
+    tr:nth-child(even) td { background: #f4fafb; } .check { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm 8mm; } .check div { border-bottom: 1px solid #d6e3ea; padding: 2.5mm 0; }
+    .num { display: inline-block; width: 7mm; height: 7mm; border-radius: 50%; background: #e88b19; color: white; text-align: center; line-height: 7mm; font-weight: 800; margin-right: 2mm; }
+    .footer { position: absolute; bottom: 0; left: 0; right: 0; color: #789; font-size: 8pt; display: flex; justify-content: space-between; border-top: 1px solid #d6e3ea; padding-top: 2mm; } .small { font-size: 9pt; color: #587082; }
+  </style>
+</head>
+<body>
+  <section class="page">
+    <div class="eyebrow">Visual workflow guide</div>
+    <h1>How GyanSetu<br>Works</h1>
+    <p class="lead">A practical overview of the real workflows used by <b>Teachers</b>, <b>Administrators</b>, and <b>Support Staff</b>—and how student records move through the system.</p>
+    <img class="hero" src="flujo-roles.png" alt="Illustration of the GyanSetu education ecosystem">
+    <div class="chips"><span class="chip">Administration</span><span class="chip">Support</span><span class="chip">Teaching</span><span class="chip">Student Records</span></div>
+    <div class="footer"><span>GyanSetu · Visual Workflow Guide</span><span>1</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">The key idea</div>
+    <h2>One shared student record, several operational roles</h2>
+    <p class="lead">GyanSetu is primarily a staff-operated information system. Administrators, Support Staff, and Teachers contribute different information to the same student record.</p>
+    <div class="flow"><div class="step">Application or creation</div><div class="arrow">›</div><div class="step">Verification</div><div class="arrow">›</div><div class="step">Enrolment</div><div class="arrow">›</div><div class="step">Attendance & support</div><div class="arrow">›</div><div class="step">Transition or exit</div></div>
+    <div class="grid2">
+      <div class="card role admin"><h3>Administrator</h3><p>Configures the organisation, manages access, and supervises the complete system.</p></div>
+      <div class="card role support"><h3>Support Staff</h3><p>Maintains student data and keeps day-to-day programme operations accurate.</p></div>
+      <div class="card role teacher"><h3>Teacher</h3><p>Works with assigned groups and records attendance and relevant student follow-up.</p></div>
+      <div class="card role record"><h3>Student record</h3><p>Stores personal, family, enrolment, centre, attendance, and programme information. It is not a student-facing account flow.</p></div>
+    </div>
+    <div class="note"><b>Current operating model:</b> students do not sign in or use GyanSetu directly. The system is used by staff to manage their records and programme participation.</div>
+    <div class="footer"><span>Overall model</span><span>2</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Daily workflow</div>
+    <h2>Teacher · Attendance and student follow-up</h2>
+    <div class="route">Staff Dashboard → assigned centre/group → attendance → follow-up</div>
+    <div class="grid2">
+      <div class="card tint"><h3>Start of the day</h3><ol><li>Review assigned groups and notices.</li><li>Open the relevant centre or group.</li><li>Take attendance.</li><li>Save and confirm that the register is complete.</li></ol></div>
+      <div class="card"><h3>Student follow-up</h3><ol><li>Open the permitted student profile.</li><li>Review attendance history.</li><li>Check relevant personal or programme information.</li><li>Record or communicate concerns through the agreed process.</li></ol></div>
+      <div class="card"><h3>What Teachers use</h3><ul><li>Staff Dashboard.</li><li>Assigned centre/group lists.</li><li>Attendance registration.</li><li>Permitted student profiles.</li><li>Relevant operational reports.</li></ul></div>
+      <div class="card tint"><h3>What is not part of the current flow</h3><ul><li>Lesson Planner.</li><li>Student homework or submissions.</li><li>Student-facing resources.</li><li>Student login and self-service.</li><li>Formal assessment workflow.</li></ul></div>
+    </div>
+    <div class="note"><b>Teacher boundary:</b> Teachers mainly work with their assigned groups. GyanSetu hides the Admin menu category for the Teacher role and restricts attendance group selection.</div>
+    <div class="future"><b>Possible future improvement:</b> a lightweight assessment process may be useful, but it is not currently part of the operational workflow and would require a separate design decision.</div>
+    <div class="footer"><span>Teacher</span><span>3</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">System governance</div>
+    <h2>Administrator · Configuration and control</h2>
+    <div class="route">Structure → users → enrolment → permissions → monitoring → rollover</div>
+    <div class="grid2">
+      <div class="card role admin"><h3>Prepare the system</h3><ul><li>School years and periods.</li><li>Levels and centres/groups.</li><li>Classes and organisational structure.</li><li>Attendance codes and settings.</li></ul></div>
+      <div class="card role admin"><h3>Manage staff access</h3><ul><li>Create staff accounts.</li><li>Assign roles and permissions.</li><li>Enable or block login access.</li><li>Assign Teachers and responsible staff.</li></ul></div>
+      <div class="card role admin"><h3>Admit a student</h3><ol><li>Review the application or new record.</li><li>Validate the information.</li><li>Create or update the student record.</li><li>Enrol in the current year, level, and centre/group.</li></ol></div>
+      <div class="card role admin"><h3>Monitor operations</h3><ul><li>Attendance and missing registers.</li><li>Student data quality.</li><li>Users and permissions.</li><li>Imports, exports, and reports.</li></ul></div>
+    </div>
+    <div class="note"><b>End of cycle:</b> create or activate the new school year, roll students forward, update levels and centres, mark transitions or exits, and verify staff assignments.</div>
+    <div class="footer"><span>Administrator</span><span>4</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Operations and data quality</div>
+    <h2>Support Staff · The operational bridge</h2>
+    <div class="route">Application → verification → enrolment → data checks → follow-up</div>
+    <div class="grid2">
+      <div class="card role support"><h3>Applications and records</h3><ul><li>Review incoming information.</li><li>Correct personal details.</li><li>Validate guardians and contacts.</li><li>Complete programme-specific fields.</li></ul></div>
+      <div class="card role support"><h3>Enrolment</h3><ul><li>Confirm the current school year.</li><li>Assign the correct level.</li><li>Assign the centre/group.</li><li>Verify that the student appears in staff lists.</li></ul></div>
+      <div class="card role support"><h3>Follow-up</h3><ul><li>Find incomplete attendance registers.</li><li>Review prolonged absences.</li><li>Support student welfare processes.</li><li>Keep records up to date.</li></ul></div>
+      <div class="card role support"><h3>Reporting</h3><ul><li>Student lists.</li><li>Demographic and attendance data.</li><li>Operational exports.</li><li>Data-quality checks and queries.</li></ul></div>
+    </div>
+    <div class="note"><b>Permissions matter:</b> Support Staff share the staff dashboard foundation, but not every Support Staff account has the same menu. Visible actions depend on permissions assigned by an Administrator.</div>
+    <div class="footer"><span>Support Staff</span><span>5</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Managed record lifecycle</div>
+    <h2>Student records · No student login flow</h2>
+    <div class="flow"><div class="step">Application</div><div class="arrow">›</div><div class="step">Verified record</div><div class="arrow">›</div><div class="step">Year, level & centre</div><div class="arrow">›</div><div class="step">Attendance & support</div><div class="arrow">›</div><div class="step">Progression or exit</div></div>
+    <div class="grid2">
+      <div class="card role record"><h3>Information held</h3><ul><li>Personal and family information.</li><li>Guardians and contact details.</li><li>Current school year enrolment.</li><li>Level and centre/group.</li><li>Attendance and relevant support data.</li><li>Transition or leaving information.</li></ul></div>
+      <div class="card role record"><h3>Explicitly not used</h3><ul><li>Student authentication.</li><li>Student Dashboard.</li><li>Timetable and Planner access.</li><li>Lessons and resources.</li><li>Homework and deadlines.</li><li>Own results, notices, or reports.</li></ul></div>
+    </div>
+    <div class="note"><b>Important:</b> creating a student user record is not the same as enrolling the student. For operational visibility, the record must be linked to the current school year, a level, and a centre/group.</div>
+    <h3 style="margin-top:8mm">How to describe this accurately</h3>
+    <p class="lead">The student record is the shared operational record that connects admissions, enrolment, attendance, support, reporting, progression, and exit. Students themselves do not interact with the system.</p>
+    <div class="footer"><span>Student records</span><span>6</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Coordination</div>
+    <h2>Who does what</h2>
+    <table><thead><tr><th>Stage</th><th>Main owner</th><th>Outcome</th></tr></thead><tbody>
+      <tr><td>Organisational setup</td><td>Administrator</td><td>Defines the operating structure.</td></tr>
+      <tr><td>Application and verification</td><td>Support Staff / Administrator</td><td>A reliable, complete student record.</td></tr>
+      <tr><td>Enrolment and assignment</td><td>Support Staff / Administrator</td><td>Student appears in the correct year, level, and group.</td></tr>
+      <tr><td>Daily attendance</td><td>Teacher</td><td>Accurate attendance for assigned groups.</td></tr>
+      <tr><td>Attendance monitoring</td><td>Support Staff</td><td>Missing registers and prolonged absences are followed up.</td></tr>
+      <tr><td>Operational reporting</td><td>Support Staff / Administrator</td><td>Reliable lists, summaries, and exports.</td></tr>
+      <tr><td>Permissions and rollover</td><td>Administrator</td><td>Secure access and continuity between years.</td></tr>
+      <tr><td>Direct system use</td><td>Staff only</td><td>Students do not log in or use system features.</td></tr>
+    </tbody></table>
+    <h3 style="margin-top:8mm">Quick diagnosis when something is missing</h3>
+    <div class="check">
+      <div><span class="num">1</span> Is the correct staff role active?</div><div><span class="num">2</span> Does the role have permission?</div>
+      <div><span class="num">3</span> Is the current school year selected?</div><div><span class="num">4</span> Is the student enrolled in that year?</div>
+      <div><span class="num">5</span> Is the level correct?</div><div><span class="num">6</span> Is the centre/group correct?</div>
+      <div><span class="num">7</span> Is the Teacher assigned to that group?</div><div><span class="num">8</span> Is the staff account active?</div>
+    </div>
+    <div class="future"><b>Future consideration—not current practice:</b> GyanSetu contains assessment-related modules inherited from Gibbon. Before enabling them, define the educational purpose, minimum data set, responsible role, reporting need, and training required.</div>
+    <div class="note"><b>Development shortcut:</b> trace each feature through <b>active role and permission → menu action → page/process → database record</b>.</div>
+    <p class="small" style="margin-top:6mm">Based on the actual operating model supplied by the GyanSetu team and the local Gibbon customisations.</p>
+    <div class="footer"><span>Quick reference</span><span>7</span></div>
+  </section>
+</body>
+</html>

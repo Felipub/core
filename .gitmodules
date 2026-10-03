@@ -1,6 +1,2 @@
-[submodule "i18n"]
-	path = i18n
-	url = https://github.com/GibbonEdu/i18n.git
-[submodule "resources/build"]
-	path = resources/build
-	url = https://github.com/GibbonEdu/build.git
+# The 2026-10-03 server baseline tracks i18n and resources/build directly.
+# See docs/BASELINE-2026-10-03.md for provenance and exclusions.

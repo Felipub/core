@@ -38,10 +38,18 @@ node_modules
 
 # Extra stuff for Gyansetu
 mysqltosheets
-resources
-i18n
 .vscode/ftp-kr.sync.cache.json
 .vscode/ftp-kr.diff*
+
+# Local credentials and server-generated files (kept locally)
+/.vscode/ftp-kr.json
+/.vscode/ftp-sync.json
+/backup_script.sh
+error_log
+*.log
+/.git-rewrite/
+/.htaccess.lock-*
+/.htaccess.phpupgrader.*
 
 # Large local backup artifacts
 core_gyansetu_bak_2022-05-17.zip
