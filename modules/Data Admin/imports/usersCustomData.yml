@@ -1,0 +1,120 @@
+details:
+    type: usersCustomData
+    name: Custom Fields - Data
+    desc: Data for custom fields (tunned by Felipe on 15-05-2019)
+    category: Custom Fields
+    table: gibbonPerson
+    modes: { update: true, insert: false }
+access:
+    module: User Admin
+    action: Manage Users
+primaryKey:
+    gibbonPersonID
+uniqueKeys:
+    - gibbonPersonID
+table:
+    gibbonPersonID:
+        name: "Person"
+        desc: "Username"
+        args: { filter: nospaces, required: true }
+        relationship: { table: gibbonPerson, key: gibbonPersonID, field: username  }
+    Caste:
+        name: "Caste"
+        desc: "Caste of the person"
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Student has the exact date of birth:
+        name: "Student has the exact date of birth"
+        desc: "Does the student have the exact date of birth"
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Family size:
+        name: "Family size"
+        desc: "Number of people living at home"
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Family income:
+        name: "Family income"
+        desc: "Total money that comes in the family monthly in rupees."
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Job title:
+        name: "Job title"
+        desc: "If is working, what is the job title."
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Salary:
+        name: "Salary"
+        desc: "Monthly salary in rupees"
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Work start time:
+        name: "Work start time"
+        desc: "Time when starts job"
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Work end time:
+        name: "Work end time"
+        desc: "Time when goes out of work"
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Year started schooling:
+        name: "Year started schooling"
+        desc: "What year did the student start any school"
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Year student dropped out:
+        name: "Year student dropped out"
+        desc: "What year did the student leave the last school"
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Is he-she in another school:
+        name: "Is he-she in another school"
+        desc: "Whether the student is currently enrolled in another school."
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Name of current school:
+        name: "Name of current school"
+        desc: "In case the student is going to a school, name of it."
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Type of current school:
+        name: "Type of current school"
+        desc: "In case the student is enrolled to another school, the type of it."
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Class in current school:
+        name: "Class in current school"
+        desc: "What class is he student enrolled in?"
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Reason for coming to the center:
+        name: "Reason for coming to the center"
+        desc: "If the student is enrolled into a school, then why does he/she comes to the NEC?"
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Reason for not attending school:
+        name: "Reason for not attending school"
+        desc: "Why the student is not going to a formal school."
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Email password:
+        name: "Email password"
+        desc: ""
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    PAN Card:
+        name: "PAN Card"
+        desc: ""
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Bank name:
+        name: "Bank name"
+        desc: ""
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Bank Branch:
+        name: "Bank Branch"
+        desc: ""
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Bank IFSC code:
+        name: "Bank IFSC code"
+        desc: ""
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Bank account number:
+        name: "Bank account number"
+        desc: ""
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Education:
+        name: "Education"
+        desc: ""
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    Qualification:
+        name: "Qualification"
+        desc: ""
+        args: { filter: string, readonly: true, required: false, serialize: fields }
+    fields:
+        name: "Custom Fields"
+        desc: ""
+        args: { filter: customfield, serialize: fields, custom: true }

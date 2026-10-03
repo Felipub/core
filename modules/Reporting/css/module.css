@@ -1,0 +1,359 @@
+@charset "UTF-8";
+/* CSS Document */
+
+div {
+    /*font-size: small;*/
+}
+
+button {
+    background-color: black;
+    color: white !important;
+    font-size: large;
+    padding: 4px;
+}
+
+.smalltext {
+	font-size:small;
+        font-family:sans-serif;
+}
+
+.statusbar, .classbox, .studbox {
+	width:610px;
+}
+
+.classbox, .studbox {
+	padding:4px;
+	border:1px solid #CCCCCC;
+}
+
+.classbox {
+	 overflow:scroll;
+	 height:600px;
+}
+
+.statusbar {
+	color:white;
+	font-weight:bold;
+	font-size:small;;
+	padding:6px;
+}
+
+.subtextbox, .subtextboxnoedit, .reportbox {
+	width:570px;
+}
+
+.subtextbox, .subtextboxnoedit {
+	text-align:left;
+	padding:4px;
+	border: 1px solid #CCCCCC;
+	overflow:scroll;
+}
+
+.subtextboxnoedit {
+	height:80px;
+}
+
+.textbox {
+	padding:3px;
+}
+
+.innerbox {
+	width:480px;
+}
+
+textarea {
+	float:none;
+	margin-left:0;
+}
+
+.instruct {
+    padding:4px;
+    background-color: #c8fade;
+    color: #6c4a02;
+    margin-bottom:8px;
+    font-size:small;
+}
+
+.replenbar {
+    width: 558px;
+    color:#333;
+    background-color:#CCCCCC;
+    padding: 4px 6px 4px 6px;
+}
+
+.studentname {
+    padding:4px;
+    color:#900;
+    font-weight:bold;
+    background-color:#F3F3F3;
+    margin-bottom:2px;
+}
+
+.subjectname {
+	padding:4px;
+	color:#999999;
+	font-weight:bold;
+}
+.teachername {
+    padding:0 4px 4px 4px;
+    font-style:italic;
+}
+
+.reportbox {
+    padding:4px;
+    margin-bottom:4px;
+}
+.reportend {
+    clear:both;
+    border-bottom: 1px solid #990000;
+}
+.photobox {
+	float:left;
+	width:85px;
+	text-align:center;
+	font-size:x-small;
+}
+
+.studlist {
+	padding-top:1px;
+	padding-bottom:1px;
+	font-size:12px;
+}
+
+.complete {
+	color:blue;
+}
+
+.partial {
+	color:green;
+}
+
+.notstarted {
+	color:red;
+}
+
+/* extra status styles */
+div.editing, div.standard {
+    font-size: 12px;
+    padding: 10px;
+    margin: 10px 0px 15px 0px;
+    box-shadow: 2px 2px 2px rgba(50,50,50,0.15);
+}
+
+div.editing {
+    border-left: 6px solid #0066CC;
+    color:#333333;
+    background-color:#77FBF7;
+	
+    font-size: 12px;
+    padding: 10px;
+    box-shadow: 2px 2px 2px rgba(50,50,50,0.15);
+        
+}
+
+div.standard {
+    border: 1px solid #999999;
+    color:#333333;
+    background-color:#CCCCCC;
+}
+
+.greyback {
+	background-color:#CCCCCC;
+}
+
+.header {
+	border-bottom: solid 1px #DDDDDD;
+	width:100%;
+}
+
+.head, .bighead {
+	font-weight:bold;
+	background-color: #CC0000 ;
+	color: #ffffff ;
+	padding:3px;
+}
+
+.head {
+	font-size:smaller;
+}
+
+select {
+	font-size: x-small;
+	/* height: 18px; */
+	float:none;
+    
+}
+
+input[type="text"], input[type="password"], input[type="file"] {
+	height:18px;
+	font-size: x-small;
+	float:none;
+}
+
+h1, h2, h3 {
+    /* border-bottom:none; */
+}
+
+.leftcol {
+	width: 40%;
+	float:left;
+}
+
+.rightcol {
+	width: 58%;
+	float:left;
+}
+
+.statuscol1, .statuscol2, .statuscol3, .statuscol4, .statuscol5 {
+    float:left;
+    height:24px;
+    padding:2px;
+}
+.statuscol1 {
+    width:50px;
+}
+
+.statuscol2 {
+    width:120px;
+}
+
+.statuscol3 {
+    width:120px;
+}
+
+.statuscol4 {
+    width:80px;
+}
+
+.statuscol5 {
+    width:60px;
+}
+
+.holder {
+    border:solid 1px gray;
+    background-color:#FFBBBB;
+    width:100px;
+}
+
+.createleft, .createright {
+    float:left;
+    padding:4px;
+
+}
+.createleft {
+    width:150px;
+}
+
+.createright {
+    width:100px;
+}
+
+.arrodd {
+    background-color:#F3F3F3;
+}
+
+.arreven {
+    background-color:#F8F8F8;
+}
+
+.typerow {
+    padding:3px;
+    height:18px;
+    width:130px;
+}
+
+.uoititle {
+    margin-top:12px;
+    font-weight:bold;
+    font-style:italic;
+}
+
+
+/* template design */
+/* div.mce-listbox button, div.mce-menubtn button { padding-top: 2px!important ; padding-bottom: 2px!important } */
+#template_table table, #template_table th, #template_table td {
+    border-collapse: collapse;
+    border: 1px solid #cccccc;
+    padding: 4px;
+}
+
+#template_table .col1 {
+    width: 50px;
+    text-align: center;
+}
+
+#template_table .col2 {
+    width: 750px;
+}
+
+#template {
+    display: none;
+}
+
+#sectionEdit {
+    border: 2px solid #cccccc; 
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    -moz-border-top-left-radius: 5px;
+    -moz-border-top-right-radius: 5px;
+    background-color: #ffffff; 
+    display: none; 
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.button {
+    /*
+    border: 1px solid #222222;
+    background-color: #CCCCCC;
+    height: 28px;
+    min-width: 55px;
+    color: #ffffff;
+    font-weight: bold;
+    margin: 2px ;
+    font-size: 13px ;
+    */
+}
+
+.button:hover {
+    color: #eeeeee;
+}
+
+#sectionTypePanel {
+    margin-top:-24px; 
+    margin-bottom: 4px; 
+    padding-top:12px; 
+    border-top: 1px solid #dddddd;
+}
+
+.sectionAction {
+    float: right;
+}
+
+#freemium {
+    border: 1px solid #cccccc;
+    text-align: center;
+    /*background-color: #ffffff;*/
+    /*
+    padding:4px;
+    font-size: x-small; 
+    color: #888888; 
+    background-color: #eeeeee;
+    */
+}
+
+table.tableNoBorder {
+    border:none;
+    background-color: transparent;
+    font-size: x-small;
+}
+
+table.tableNoBorder tr {
+    background-color:green;
+}
+
+table.tableNoBorder td {
+    border:none;
+    padding: 2px;
+}

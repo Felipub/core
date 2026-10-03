@@ -1,0 +1,161 @@
+Gibbon Generic ARR
+v2.24
+fixes for gibbon v22
+bug fix for admin criteria
+
+v2.23
+fixed error on Gibbon v18 when creating folder to save reports
+
+v2.22
+changed subject page to allow for grades where the gradeID is text rather than numbers
+
+v2.21
+prevent repeated sections from being created if repeated start of year
+
+v2.20
+fixed issues with start of year
+
+v2.19
+start of year check
+
+v2.18
+set subject order when creating PDF
+
+v2.17
+bug fixes - pdf creation, proof reading, mailing
+change to Gibbon v17
+
+v2.16
+takes term from gibbon rather than just number1-3
+
+v2.15
+permission problem with subject order
+
+v2.14
+fixed problem when inserting tables into textareas in template design
+
+v2.13
+fixed bug in archive where files which to not exist were showing
+
+v2.12
+fixed bug in design section
+
+v2.11
+fixed issue in copying criteria
+
+v2.10
+fixed missing bottom link in pastoral
+fixed problem deleting sections in design
+
+v2.09
+prevent admin sections from showing anything if no year selected
+
+v2.08
+fixed bug when there is more than one design template and a section is deleted from one template all sections from other template were deleted
+
+v2.07
+added subject ordering
+some bug fixes and interface changes
+
+v2.06
+fixed bug to allow multiple text sections on design page
+
+v2.05
+fixed bug duplicating insertion fields on design page
+
+v2.04
+
+v2.03
+bug fix in admin define
+
+v2.02
+browser detect for zip download
+
+v2.00
+various fixes
+
+v1.24
+display message when reports are closed
+fix bug that allowed only one grade per student per criterion
+
+v1.23
+removed warning messages
+
+v1.22
+bug fix in PDF create
+
+v1.21
+allow criteria to have different grade scales
+
+v1.20
+undeclared variable in proof reading module
+
+v1.19
+fixed bug in the roll group select function
+fixed problem in creating PDF on some servers
+
+v1.18
+fixed bug in class teacher list
+
+v1.17
+fixed bug in subject teacher list
+
+v1.16
+tidied up some code
+made send mail page look pretty
+
+v1.15
+Added cell padding to PDF
+
+v1.14
+corrected error in design section delete
+added option to select orientation
+add option to display as columns instead of rows
+add option to email PDFs to parents
+add extra columns for grades for criteria
+
+v1.13
+made criteriatable sortable
+added rollOrder to list of insertable fields
+
+v1.12
+removed drop table from manifest
+
+v1.11
+really stopped repeated reports!
+
+v1.10
+stop repeated reports when more than one teacher has class
+
+v1.09
+fixed bug creating blank PDF
+
+v1.08
+Update to query to show teacher name on proof reading page
+
+v1.06
+PDF not being created.  this populates sectiontype table
+
+v1.05
+further bug fixes on template designer 
+- prevent duplicate binding onclick events
+Changed indexes in arrReport to allow multiple reports in each term.  
+Index changed so that reports in same year cannot have same name - possibly should be unique for every report.
+
+v1.04
+Further bug fixes on template designer
+
+v1.03
+Bug fixes on template designer
+
+v1.02
+replaced image_75 with image_240
+
+v1.01
+Added advert in sidebar
+
+v1.00
+
+
+
+

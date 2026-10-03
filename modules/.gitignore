@@ -54,6 +54,23 @@
 !/User Admin
 !/User Admin/**
 
+# deployed custom modules
+!/Data Admin
+!/Data Admin/**
+!/Reporting
+!/Reporting/**
+!/Query Builder
+!/Query Builder/**
+
 # black list some files and folders
 # in the module folders
 **/.DS_Store
+
+# Runtime logs must stay local even in whitelisted core modules.
+**/error_log
+**/*.log
+
+# Dependency trees and editor/server artifacts
+**/vendor/
+**/_notes/
+**/logfile.txt
