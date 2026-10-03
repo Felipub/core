@@ -12,6 +12,7 @@ themes/*
 !themes/Default
 !themes/Legacy
 !themes/2021
+!themes/Gyansetu
 
 # Tests Folder
 tests/log/*
@@ -27,7 +28,7 @@ Thumb.db
 nbproject/
 
 # Vendor Libraries
-/vendor
+**/vendor/
 
 # Var Folder
 var/*
