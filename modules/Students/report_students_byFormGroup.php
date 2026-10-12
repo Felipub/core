@@ -19,6 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 use Gibbon\Forms\Form;
 use Gibbon\Forms\DatabaseFormFactory;
+use Gibbon\Forms\Prefab\BulkActionForm;
 use Gibbon\Tables\Prefab\ReportTable;
 use Gibbon\Services\Format;
 use Gibbon\Domain\Students\StudentGateway;
@@ -33,6 +34,12 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/report_students_b
     $page->addError(__('You do not have access to this action.'));
 } else {
     //Proceed!
+
+    if (!empty($page->return)) {
+        $page->return->addReturns([
+            'success0' => __('Selected student(s) have been marked as Passed Out successfully.'),
+        ]);
+    }
 
     $gibbonFormGroupID = (isset($_GET['gibbonFormGroupID']) ? $_GET['gibbonFormGroupID'] : null);
     $view = isset($_GET['view']) ? $_GET['view'] : 'basic';
@@ -80,7 +87,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/report_students_b
     $students = $studentGateway->queryStudentEnrolmentByFormGroup($criteria, $gibbonFormGroupID != '*' ? $gibbonFormGroupID : null);
 
     // DATA TABLE
-    $table = ReportTable::createPaginated('studentsByFormGroup', $criteria)->setViewMode($viewMode, $gibbon->session);
+    $table = ReportTable::createPaginated('studentsByFormGroup', $criteria)->withData($students)->setViewMode($viewMode, $gibbon->session);
     $table->setTitle(__('Report Data'));
     $table->setDescription(function () use ($gibbonFormGroupID, $formGroupGateway) {
         $output = '';
@@ -101,6 +108,10 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/report_students_b
         'view:basic'    => __('View').': '.__('Basic'),
         'view:extended' => __('View').': '.__('Extended'),
     ]);
+
+    if (empty($viewMode)) {
+        $table->addCheckboxColumn('gibbonPersonID');
+    }
 
     $table->addColumn('formGroup', __('Form Group'))->width('5%');
     $table->addColumn('student', __('Student'))
@@ -147,5 +158,127 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/report_students_b
         });
     }
     
-    echo $table->render($students);
+    if (empty($viewMode)) {
+        $form = BulkActionForm::create('bulkAction', $session->get('absoluteURL').'/modules/'.$session->get('module').'/report_students_byFormGroupProcessBulk.php');
+        $form->addHiddenValue('gibbonFormGroupID', $gibbonFormGroupID);
+        $form->addHiddenValue('view', $view);
+        $form->addHiddenValue('action', 'Passout');
+
+        $form->addRow()->addElement($table);
+
+        echo $form->getOutput();
+        ?>
+        <style type="text/css">
+        .bulkActionPanel { display: none !important; }
+        </style>
+        <script type="text/javascript">
+        $(function() {
+            function createButton() {
+                return $('<button type="button" id="btnPassoutBulk" class="ml-2 py-2 px-3 rounded text-xxs border border-red-700 bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer transition duration-150 ease-in-out shadow-sm inline-flex items-center" style="display: none;" title="<?php echo __('Mark selected students as Passed Out'); ?>">' +
+                    '<span style="font-size: 11px; margin-right: 4px; line-height: 1;">&#10003;</span> ' +
+                    '<span><?php echo __('Passed Out'); ?></span>' +
+                    '<span class="passout-count font-bold ml-1"></span>' +
+                    '</button>');
+            }
+
+            function updateCount() {
+                var count = $('.bulkCheckbox :checkbox:checked').length;
+                var $btn = $('#btnPassoutBulk');
+                if ($btn.length === 0) return;
+
+                if (count > 0) {
+                    $btn.find('.passout-count').text('(' + count + ')');
+                    $btn.css({
+                        'background-color': '#b91c1c',
+                        'border-color': '#991b1b',
+                        'box-shadow': '0 0 0 2px rgba(239, 68, 68, 0.4)'
+                    });
+                    $btn.stop(true, true).fadeIn(150);
+                } else {
+                    $btn.find('.passout-count').text('');
+                    $btn.stop(true, true).fadeOut(150);
+                }
+            }
+
+            function attachPassedOutButton() {
+                var $clear = $('.filter.clear');
+                var $existing = $('#btnPassoutBulk');
+
+                if ($clear.length > 0) {
+                    if ($existing.length > 0 && $existing.prev().is($clear)) {
+                        return;
+                    }
+                    if ($existing.length > 0) {
+                        $existing.detach();
+                    }
+                    $clear.after(createButton());
+                } else {
+                    if ($existing.length > 0) return;
+                    var $targetNav = $('#studentsByFormGroup nav.cursor-default');
+                    if ($targetNav.length > 0) {
+                        $targetNav.first().append(createButton());
+                    } else {
+                        var $container = $('#studentsByFormGroup .flex.items-stretch').first();
+                        if ($container.length > 0) {
+                            $container.append(createButton());
+                        }
+                    }
+                }
+                updateCount();
+            }
+
+            attachPassedOutButton();
+
+            $(document).ajaxComplete(function() {
+                attachPassedOutButton();
+            });
+
+            var target = document.getElementById('studentsByFormGroup');
+            if (target && window.MutationObserver) {
+                var observer = new MutationObserver(function() {
+                    attachPassedOutButton();
+                });
+                observer.observe(target, { childList: true, subtree: true });
+            }
+
+            $(document).on('click change', '.bulkCheckbox :checkbox, .checkall', function() {
+                setTimeout(updateCount, 20);
+            });
+
+            if ($('#action').length > 0) {
+                $('#action').val('Passout');
+            }
+
+            $(document).on('click', '#btnPassoutBulk', function(e) {
+                e.preventDefault();
+                var checked = $('.bulkCheckbox :checkbox:checked');
+                var count = checked.length;
+
+                if (count === 0) {
+                    alert('Please select at least one student.\n(कृपया कम से कम एक छात्र को सेलेक्ट करें।)');
+                    return false;
+                }
+
+                var confirmMsg = 'Are you sure you want to mark ' + count + ' selected student(s) as Passed Out?\n\n(क्या आप चुने हुए ' + count + ' छात्र(ओं) को Passed Out करना चाहते हैं?)';
+                if (confirm(confirmMsg)) {
+                    if ($('#action').length === 0) {
+                        $('#bulkAction').append('<input type="hidden" name="action" id="action" value="Passout">');
+                    } else {
+                        $('#action').val('Passout');
+                    }
+
+                    var form = document.getElementById('bulkAction');
+                    if (form) {
+                        form.onsubmit = null;
+                        form.submit();
+                    }
+                }
+            });
+        });
+        </script>
+        <?php
+    } else {
+        echo $table->render($students);
+    }
 }
+

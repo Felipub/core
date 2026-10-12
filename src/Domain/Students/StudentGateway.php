@@ -401,7 +401,12 @@ class StudentGateway extends QueryableGateway
     {
         $totalEnrolment = $this->getStudentEnrolmentCount($gibbonSchoolYearID, $date);
 
-        $data = ['gibbonSchoolYearID' => $gibbonSchoolYearID, 'date' => $date];
+        if (empty($totalEnrolment)) {
+            return 0;
+        }
+
+        // $data = ['gibbonSchoolYearID' => $gibbonSchoolYearID, 'date' => $date];
+        $data = ['date' => $date];
         $sql = "SELECT COUNT(DISTINCT gibbonPersonID)
                 FROM gibbonAttendanceLogPerson
                 WHERE date=:date";
@@ -415,7 +420,12 @@ class StudentGateway extends QueryableGateway
     {
         $totalEnrolment = $this->getStudentEnrolmentCount($gibbonSchoolYearID, $date);
 
-        $data = ['gibbonSchoolYearID' => $gibbonSchoolYearID, 'date' => $date];
+        if (empty($totalEnrolment)) {
+            return 0;
+        }
+
+        // $data = ['gibbonSchoolYearID' => $gibbonSchoolYearID, 'date' => $date];
+        $data = ['date' => $date];
         $sql = "SELECT COUNT(DISTINCT gibbonPersonID)
                 FROM gibbonAttendanceLogPerson
                 WHERE date=:date

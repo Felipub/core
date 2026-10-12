@@ -276,7 +276,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
 
                     //GS//if ($subpage == 'Overview' ) {
                     if ($subpage == 'Overview' or $subpage == 'Personal' or $subpage == 'Family' or $subpage == 'Emergency Contacts' or $subpage == 'Medical' or $subpage == 'Notes') {
-                        if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage.php') == true) {
+                        if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edit.php') == true || isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage.php') == true) {
                             echo "<div class='linkTop'>";
                             echo "<a href='" . $session->get('absoluteURL') . "/index.php?q=/modules/User Admin/user_manage_edit.php&gibbonPersonID=$gibbonPersonID'>" . __('Edit') . "<img style='margin: 0 0 -4px 5px' title='" . __('Edit') . "' src='./themes/" . $session->get('gibbonThemeName') . "/img/config.png'/></a> ";
                             echo '</div>';
@@ -650,7 +650,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
 
                         $table = DataTable::createDetails('overview');
 
-                        if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage.php')) {
+                        if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edit.php') || isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage.php')) {
                             $table->addHeaderAction('edit', __('Edit User'))
                                 ->setURL('/modules/User Admin/user_manage_edit.php')
                                 ->addParam('gibbonPersonID', $gibbonPersonID)
@@ -1047,7 +1047,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view_deta
                             }
                         }
                         //GS//} elseif ($subpage == 'Emergency Contacts') {
-                        if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage.php') == true) {
+                        if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edit.php') == true || isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage.php') == true) {
                             echo "<div class='linkTop'>";
                             echo "<a href='" . $session->get('absoluteURL') . "/index.php?q=/modules/User Admin/user_manage_edit.php&gibbonPersonID=$gibbonPersonID'>" . __('Edit') . "<img style='margin: 0 0 -4px 5px' title='" . __('Edit') . "' src='./themes/" . $session->get('gibbonThemeName') . "/img/config.png'/></a> ";
                             echo '</div>';

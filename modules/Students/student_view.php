@@ -140,6 +140,12 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view.php'
             $table->setTitle(__('Choose A Student'));
             $table->modifyRows($studentGateway->getSharedUserRowHighlighter());
 
+            if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_add.php')) {
+                $table->addHeaderAction('add', __('Add Student'))
+                    ->setURL('/modules/User Admin/user_manage_add.php')
+                    ->displayLabel();
+            }
+
             if ($canViewFullProfile) {
                 $table->addMetaData('filterOptions', [
                     'all:on'        => __('All Students')
@@ -171,9 +177,14 @@ if (isActionAccessible($guid, $connection2, '/modules/Students/student_view.php'
                 ->addParam('search', $criteria->getSearchText(true))
                 ->addParam('sort', $sort)
                 ->addParam('allStudents', $canViewFullProfile ? $allStudents : '')
-                ->format(function ($row, $actions) {
+                ->format(function ($row, $actions) use ($guid, $connection2) {
                     $actions->addAction('view', __('View Details'))
                         ->setURL('/modules/Students/student_view_details.php');
+
+                    if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edit.php')) {
+                        $actions->addAction('edit', __('Edit'))
+                            ->setURL('/modules/User Admin/user_manage_edit.php');
+                    }
                 });
 
             echo $table->render($students);

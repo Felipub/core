@@ -1,0 +1,25 @@
+[27-Aug-2023 16:55:52 UTC] PHP Warning:  include(./modules/User Admin/moduleFunctions.php): failed to open stream: No such file or directory in /home1/shefng1z/public_html/core_gyansetu/modules/Students/applicationForm.php on line 29
+[27-Aug-2023 16:55:52 UTC] PHP Warning:  include(./modules/User Admin/moduleFunctions.php): failed to open stream: No such file or directory in /home1/shefng1z/public_html/core_gyansetu/modules/Students/applicationForm.php on line 29
+[27-Aug-2023 16:55:52 UTC] PHP Warning:  include(): Failed opening './modules/User Admin/moduleFunctions.php' for inclusion (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home1/shefng1z/public_html/core_gyansetu/modules/Students/applicationForm.php on line 29
+[27-Aug-2023 16:55:52 UTC] PHP Fatal error:  Uncaught Error: Call to a member function has() on null in /home1/shefng1z/public_html/core_gyansetu/modules/Students/applicationForm.php:34
+Stack trace:
+#0 {main}
+  thrown in /home1/shefng1z/public_html/core_gyansetu/modules/Students/applicationForm.php on line 34
+[07-May-2026 14:27:02 Asia/Kolkata] PHP Warning:  SQLSTATE[HY000]: General error: 2006 MySQL server has gone away in /home1/shefng1z/public_html/core_gyansetu/src/Database/Connection.php on line 208
+[07-May-2026 14:27:02 Asia/Kolkata] PHP Warning:  SQLSTATE[HY000]: General error: 2006 MySQL server has gone away in /home1/shefng1z/public_html/core_gyansetu/src/Database/Connection.php on line 208
+[07-May-2026 14:27:02 Asia/Kolkata] PHP Warning:  SQLSTATE[HY000]: General error: 2006 MySQL server has gone away in /home1/shefng1z/public_html/core_gyansetu/src/Database/Connection.php on line 208
+[07-May-2026 14:27:02 Asia/Kolkata] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 2006 MySQL server has gone away in /home1/shefng1z/public_html/core_gyansetu/functions.php:1209
+Stack trace:
+#0 /home1/shefng1z/public_html/core_gyansetu/functions.php(1209): PDOStatement->execute(Array)
+#1 /home1/shefng1z/public_html/core_gyansetu/modules/Students/applicationFormProcess.php(385): getSettingByScope(Object(PDO), 'Students', 'applicationForm...')
+#2 {main}
+  thrown in /home1/shefng1z/public_html/core_gyansetu/functions.php on line 1209
+[13-May-2026 08:09:01 Asia/Kolkata] PHP Warning:  SQLSTATE[HY000]: General error: 2006 MySQL server has gone away in /home1/shefng1z/public_html/core_gyansetu/src/Database/Connection.php on line 208
+[13-May-2026 08:09:01 Asia/Kolkata] PHP Warning:  SQLSTATE[HY000]: General error: 2006 MySQL server has gone away in /home1/shefng1z/public_html/core_gyansetu/src/Database/Connection.php on line 208
+[13-May-2026 08:09:01 Asia/Kolkata] PHP Warning:  SQLSTATE[HY000]: General error: 2006 MySQL server has gone away in /home1/shefng1z/public_html/core_gyansetu/src/Database/Connection.php on line 208
+[13-May-2026 08:09:01 Asia/Kolkata] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 2006 MySQL server has gone away in /home1/shefng1z/public_html/core_gyansetu/functions.php:1209
+Stack trace:
+#0 /home1/shefng1z/public_html/core_gyansetu/functions.php(1209): PDOStatement->execute(Array)
+#1 /home1/shefng1z/public_html/core_gyansetu/modules/Students/applicationFormProcess.php(385): getSettingByScope(Object(PDO), 'Students', 'applicationForm...')
+#2 {main}
+  thrown in /home1/shefng1z/public_html/core_gyansetu/functions.php on line 1209

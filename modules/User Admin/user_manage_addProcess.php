@@ -32,23 +32,39 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_add
     header("Location: {$URL}");
 } else {
     //Proceed!
+    $currentRole = getRoleName($_SESSION[$guid]['gibbonRoleIDCurrent'], $connection2);
+
     $title = $_POST['title'] ?? '';
     $surname = trim($_POST['surname'] ?? '');
     $firstName = trim($_POST['firstName'] ?? '');
     //GS//$preferredName = trim($_POST['preferredName'] ?? '');
     $preferredName = $firstName; //GS//
     //GS//$officialName = trim($_POST['officialName'] ?? '');
-    $officialName = trim($firstName + " " + $surname); //GS//
+    $officialName = trim($firstName . ' ' . $surname); //GS//
     //GS//$nameInCharacters = $_POST['nameInCharacters'] ?? '';
     $nameInCharacters = ''; //GS//
     $gender = $_POST['gender'] ?? '';
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['passwordNew'] ?? '';
     $passwordConfirm = $_POST['passwordConfirm'] ?? '';
-    $status = $_POST['status'] ?? '';
-    $canLogin = $_POST['canLogin'] ?? '';
-    $passwordForceReset = $_POST['passwordForceReset'] ?? '';
+    $status = $_POST['status'] ?? 'Full';
+    $canLogin = $_POST['canLogin'] ?? 'N';
+    $passwordForceReset = $_POST['passwordForceReset'] ?? 'N';
     $gibbonRoleIDPrimary = $_POST['gibbonRoleIDPrimary'] ?? '';
+
+    // If teacher is creating the user, enforce that it is strictly a Student
+    if ($currentRole == 'Teacher') {
+        $roleCategory = getRoleCategory($gibbonRoleIDPrimary, $connection2);
+        if ($roleCategory != 'Student') {
+            $URL .= '&return=error0';
+            header("Location: {$URL}");
+            exit();
+        }
+        $status = 'Full';
+        $canLogin = 'N';
+        $passwordForceReset = 'N';
+    }
+
     $dob = !empty($_POST['dob']) ? Format::dateConvert($_POST['dob']) : null;
     $email = trim($_POST['email'] ?? '');
     $emailAlternate = trim($_POST['emailAlternate'] ?? '');

@@ -59,12 +59,16 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_add
 
     $form->addHiddenValue('address', $session->get('address'));
 
+    $currentRole = getRoleName($_SESSION[$guid]['gibbonRoleIDCurrent'], $connection2);
+
     // BASIC INFORMATION
     $form->addRow()->addHeading(__('Basic Information'));
 
-    $row = $form->addRow();
-        $row->addLabel('title', __('Title'));
-        $row->addSelectTitle('title');
+    if ($currentRole != 'Teacher') {
+        $row = $form->addRow();
+            $row->addLabel('title', __('Title'));
+            $row->addSelectTitle('title');
+    }
 
     $row = $form->addRow();
         $row->addLabel('firstName', __('First Name'))->description(__('First name as shown in ID documents.'));
@@ -138,14 +142,18 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_add
         return $carry;
     }, array());
 
-    //DEBUG//var_dump($staffRoles);//DEBUG//
-    //DEBUG//var_dump($studentRoles);//DEBUG//
-    //DEBUG//var_dump($availableRoles);//DEBUG//
-    //DEBUG//die();//DEBUG//
-
-    $row = $form->addRow();
-        $row->addLabel('gibbonRoleIDPrimary', __('Primary Role'))->description(__('Controls what a user can do and see.'));
-        $row->addSelect('gibbonRoleIDPrimary')->fromArray($availableRoles)->required()->placeholder();
+    if ($currentRole == 'Teacher') {
+        // Teachers can ONLY create Student accounts
+        $studentRoleID = !empty($studentRoles) ? $studentRoles[0] : '003';
+        $row = $form->addRow();
+            $row->addLabel('gibbonRoleIDPrimaryDisplay', __('Primary Role'))->description(__('Controls what a user can do and see.'));
+            $row->addTextField('gibbonRoleIDPrimaryDisplay')->readOnly()->setValue(__('Student'));
+        $form->addHiddenValue('gibbonRoleIDPrimary', $studentRoleID);
+    } else {
+        $row = $form->addRow();
+            $row->addLabel('gibbonRoleIDPrimary', __('Primary Role'))->description(__('Controls what a user can do and see.'));
+            $row->addSelect('gibbonRoleIDPrimary')->fromArray($availableRoles)->required()->placeholder();
+    }
 
     $row = $form->addRow();
         $row->addLabel('username', __('Username'))->description(__('System login name.'));
@@ -172,20 +180,9 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_add
             ->required()
             ->maxLength(30);
 
-    //GS//$row = $form->addRow();
-    //GS//    $row->addLabel('status', __('Status'))->description(__('This determines visibility within the system.'));
-    //GS//    $row->addSelectStatus('status')->required();
-    $form->addHiddenValue('status', 'Full'); //GS//
-
-    //GS//$row = $form->addRow();
-    //GS//    $row->addLabel('canLogin', __('Can Login?'));
-    //GS//    $row->addYesNo')->required();
-    $form->addHiddenValue('canLogin', ($gibbonRoleIDPrimary == "003" | $role == "004" ? 'N' : 'Y')); //GS// Neither students nor parents can log in
-
-    //GS//$row = $form->addRow();
-    //GS//    $row->addLabel('passwordForceReset', __('Force Reset Password?'))->description(__('User will be prompted on next login.'));
-    //GS//    $row->addYesNo('passwordForceReset')->required();
-    $form->addHiddenValue('passwordForceReset', 'N'); //GS//
+    $form->addHiddenValue('status', 'Full');
+    $form->addHiddenValue('canLogin', ($currentRole == 'Teacher' ? 'N' : 'Y'));
+    $form->addHiddenValue('passwordForceReset', 'N');
 
     // CONTACT INFORMATION
     $form->addRow()->addHeading(__('Contact Information'));

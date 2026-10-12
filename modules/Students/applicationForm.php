@@ -200,10 +200,125 @@ if ($proceed == false) {
             $row->addContent($linkedApplicationText);
     }
 
-    // STUDENT PERSONAL DATA
-    $form->addRow()->addHeading(__('Student - विद्यार्थी'));
-    $form->addRow()->addSubheading(__('Student Personal Data - विद्यार्थी का विवरण'));
+    // Cache all User custom fields for quick ordered access
+    $allCustomFields = [];
+    $cfResult = $pdo->executeQuery([], "SELECT * FROM gibbonCustomField WHERE context = 'User'");
+    while ($cfRow = $cfResult->fetch()) {
+        $allCustomFields[$cfRow['gibbonCustomFieldID']] = $cfRow;
+    }
+    $studentExistingFields = !empty($application['fields']) ? json_decode($application['fields'], true) : [];
 
+    // Helper to render custom field in exact order
+    $addCustomFieldRow = function(&$form, $id, $label = null, $description = null, $required = null, $cssClass = '') use (&$allCustomFields, &$studentExistingFields) {
+        if (empty($allCustomFields[$id])) return null;
+        $field = $allCustomFields[$id];
+        if ($required !== null) {
+            $field['required'] = $required ? 'Y' : 'N';
+        }
+        $name = 'custom' . $id;
+        $fieldLabel = $label ?? __($field['name']);
+        $fieldDesc = $description ?? __($field['description']);
+        $fieldValue = $studentExistingFields[$id] ?? '';
+        if (!empty($fieldValue) && $field['type'] == 'date') {
+            $fieldValue = Format::date($fieldValue);
+        } elseif (!empty($fieldValue) && $field['type'] == 'checkboxes') {
+            $fieldValue = is_array($fieldValue) ? $fieldValue : explode(',', $fieldValue);
+        }
+
+        $row = $form->addRow();
+        if (!empty($cssClass)) {
+            $row->setClass($cssClass);
+        }
+        $lbl = $row->addLabel($name, $fieldLabel);
+        if (!empty($fieldDesc)) {
+            $lbl->description($fieldDesc);
+        }
+        $row->addCustomField($name, $field)->setValue($fieldValue);
+        return $row;
+    };
+
+    // STUDENT PHOTO UPLOAD (Top Right Corner)
+    $studentPhotoURL = !empty($application['image_240']) && file_exists($session->get('absolutePath').'/'.$application['image_240'])
+        ? $session->get('absoluteURL').'/'.$application['image_240']
+        : '';
+
+    $photoUploadHtml = '
+    <div style="display: flex; justify-content: flex-end; width: 100%; margin: 0; padding: 4px 0;">
+        <div style="display: flex; flex-direction: column; align-items: center; background: #ffffff; border: 2px dashed #93c5fd; border-radius: 8px; padding: 10px; width: 145px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.06);">
+            <div style="font-size: 11px; font-weight: 600; color: #1e40af; margin-bottom: 6px;">
+                ' . __('Student Photo') . '<br/><span style="font-size: 10px; color: #64748b;">' . __('छात्र की फोटो') . '</span>
+            </div>
+            <div id="student_photo_preview_container" onclick="document.getElementById(\'student_image_upload\').click();" title="' . __('Click to choose photo / फोटो चुनने के लिए क्लिक करें') . '" style="width: 115px; height: 135px; border-radius: 6px; overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; border: 1px solid #cbd5e1; position: relative; cursor: pointer;">
+                <img id="student_photo_preview" src="' . htmlspecialchars($studentPhotoURL) . '" alt="Student Photo" style="width: 100%; height: 100%; object-fit: cover; ' . (!empty($studentPhotoURL) ? '' : 'display: none;') . '" />
+                <div id="student_photo_placeholder" style="color: #64748b; font-size: 11px; text-align: center; padding: 4px; ' . (!empty($studentPhotoURL) ? 'display: none;' : '') . '">
+                    <svg style="width: 42px; height: 42px; margin: 0 auto 4px; display: block; fill: #94a3b8;" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    <span>' . __('Click to upload') . '<br/>' . __('फोटो अपलोड करें') . '</span>
+                </div>
+            </div>
+            <label for="student_image_upload" style="display: inline-block; cursor: pointer; background: #2563eb; color: #ffffff; font-size: 11px; font-weight: 600; padding: 5px 8px; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); width: 100%; text-align: center; box-sizing: border-box; margin: 0;">
+                ' . __('Upload / फोटो चुनें') . '
+            </label>
+            <input type="file" id="student_image_upload" name="image_240" accept="image/*" style="display: none;" onchange="previewStudentPhoto(this);" />
+            <div style="font-size: 10px; color: #94a3b8; margin-top: 3px;">JPG, JPEG, PNG</div>
+        </div>
+    </div>
+    <script type="text/javascript">
+    function previewStudentPhoto(input) {
+        if (input.files && input.files[0]) {
+            var file = input.files[0];
+            if (!file.type.match("image.*")) {
+                alert("Please select an image file (JPG, PNG, GIF).");
+                input.value = "";
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var preview = document.getElementById("student_photo_preview");
+                var placeholder = document.getElementById("student_photo_placeholder");
+                if (preview) {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                }
+                if (placeholder) {
+                    placeholder.style.display = "none";
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    </script>';
+
+    $row = $form->addRow();
+    $row->addContent($photoUploadHtml);
+
+        // STUDENT PERSONAL DATA
+    $form->addRow()->addHeading(__('Student - विद्यार्थी'));
+
+    // 1. Gyansetu Center name - ज्ञानसेतु केंद्र का नाम * (at the beginning)
+    $sqlSelect = "SELECT gibbonFormGroupID as value, name, gibbonSchoolYearID FROM gibbonFormGroup ORDER BY gibbonSchoolYearID, name";
+    $resultSelect = $pdo->executeQuery(array(), $sqlSelect);
+
+    $rollGroups = ($resultSelect->rowCount() > 0)? $resultSelect->fetchAll() : array();
+    $rollGroupsChained = array_combine(array_column($rollGroups, 'value'), array_column($rollGroups, 'gibbonSchoolYearID'));
+    $rollGroupsOptions = array_combine(array_column($rollGroups, 'value'), array_column($rollGroups, 'name'));
+
+    $row = $form->addRow();
+        $row->addLabel('gibbonFormGroupID', __('Gyansetu Center name - ज्ञानसेतु केंद्र का नाम'));
+        $row->addSelect('gibbonFormGroupID')
+            ->fromArray($rollGroupsOptions)
+            ->chainedTo('gibbonSchoolYearID', $rollGroupsChained)
+            ->required()
+            ->placeholder();
+
+    // 2. Block :
+    $addCustomFieldRow($form, '0028', __('Block :'), '');
+
+    // 3. District : Lucknow/ Ayodhya / Barabanki / Sitapur / Other
+    $addCustomFieldRow($form, '0029', __('District :'), '');
+
+
+    //GS//$form->addRow()->addSubheading(__('Student Personal Data - विद्यार्थी का विवरण'));
+    $form->addRow()->addSubheading(__('Child’s  Personal Data - विद्यार्थी का विवरण'));
     $row = $form->addRow();
         $row->addLabel('firstName', __('Name - नाम'))->description(__('First name as shown in ID documents. - पहला नाम जैसा कि आईडी दस्तावेजों में दिखाया गया है'));
         $row->addTextField('firstName')->required()->maxLength(60);
@@ -245,6 +360,9 @@ if ($proceed == false) {
             $row->addTextField('religion')->maxLength(30); //GS//
         } //GS//
 
+
+    // 9. Caste - जाति * - Caste of the person - व्यक्ति की जाति (move this field here)
+    $addCustomFieldRow($form, '0001', __('Caste - जाति'), __('Caste of the person - व्यक्ति की जाति'), true);
     // STUDENT BACKGROUND
     //GS//$form->addRow()->addSubheading(__('Student Background - छात्र पृष्ठभूमि'));
 
@@ -282,6 +400,13 @@ if ($proceed == false) {
     $nationalityList = getSettingByScope($connection2, 'User Admin', 'nationality');
     $residencyStatusList = getSettingByScope($connection2, 'User Admin', 'residencyStatus');
 
+    // 10. Personal Documents-
+    $form->addRow()->addSubheading(__('Personal Documents-'));
+
+    // 11. Does the child has Adhar Card : Y / N / Na
+    $addCustomFieldRow($form, '0030', __('Does the child has Adhar Card'), __('Y / N / Na'));
+
+    // 12. India Aadhar Card Aadhar Card Number
     // PERSONAL DOCUMENTS
     $params = ['student' => true, 'applicationForm' => true];
     $personalDocumentHandler->addPersonalDocumentsToForm($form, null, null, $params);
@@ -305,46 +430,42 @@ if ($proceed == false) {
     }
 
     // SPECIAL EDUCATION & MEDICAL
-    $senOptionsActive = getSettingByScope($connection2, 'Application Form', 'senOptionsActive');
-
-    if ($senOptionsActive == 'Y') {
-        $heading = $form->addRow()->addSubheading(__('Special Educational Needs & Medical'));
-
-        $applicationFormSENText = getSettingByScope($connection2, 'Students', 'applicationFormSENText');
-        if (!empty($applicationFormSENText)) {
-            $heading->append($applicationFormSENText);
-        }
-
-        $row = $form->addRow();
-            $row->addLabel('sen', __('Special Educational Needs (SEN)'))->description(__('Are there any known or suspected SEN concerns, or previous SEN assessments?'));
-            $row->addYesNo('sen')->required()->placeholder(__('Please select...'));
-
-        $form->toggleVisibilityByClass('senDetailsRow')->onSelect('sen')->when('Y');
-
-        $row = $form->addRow()->setClass('senDetailsRow');
-            $column = $row->addColumn();
-            $column->addLabel('senDetails', __('SEN Details'))->description(__('Provide any comments or information concerning your child\'s development and SEN history.'));
-            $column->addTextArea('senDetails')->setRows(5)->required()->setClass('fullWidth');
-
-    } else {
+    //GS//$senOptionsActive = getSettingByScope($connection2, 'Application Form', 'senOptionsActive');
+    //GS//    //GS//if ($senOptionsActive == 'Y') {
+    //GS//$heading = $form->addRow()->addSubheading(__('Special Educational Needs & Medical'));
+    //GS//    //GS//$applicationFormSENText = getSettingByScope($connection2, 'Students', 'applicationFormSENText');
+    //GS//if (!empty($applicationFormSENText)) {
+    //GS//$heading->append($applicationFormSENText);
+    //GS//}
+    //GS//    //GS//$row = $form->addRow();
+    //GS//$row->addLabel('sen', __('Special Educational Needs (SEN)'))->description(__('Are there any known or suspected SEN concerns, or previous SEN assessments?'));
+    //GS//$row->addYesNo('sen')->required()->placeholder(__('Please select...'));
+    //GS//    //GS//$form->toggleVisibilityByClass('senDetailsRow')->onSelect('sen')->when('Y');
+    //GS//    //GS//$row = $form->addRow()->setClass('senDetailsRow');
+    //GS//$column = $row->addColumn();
+    //GS//$column->addLabel('senDetails', __('SEN Details'))->description(__('Provide any comments or information concerning your child\'s development and SEN history.'));
+    //GS//$column->addTextArea('senDetails')->setRows(5)->required()->setClass('fullWidth');
+    //GS//    //GS//} else {
         $form->addHiddenValue('sen', 'N');
-    }
+    //GS//}
 
     //GS//$row = $form->addRow();
     //GS//    $row->addLabel('medical', __('Medical Conditions - चिकित्सीय स्थितियां'))->description(__('Does your child have any medical conditions or concerns? - क्या बच्चे को कोई चिकित्सीय स्थिति या चिंता है?'));
     //GS//    $row->addYesNo('medical')->required()->placeholder(__('Please select...'));
     $form->addHiddenValue('medical', ''); //GS//
 
-    $form->toggleVisibilityByClass('medicalDetailsRow')->onSelect('medical')->when('Y');
+    $form->addHiddenValue('medical', ''); //GS//
+    $form->addHiddenValue('medicalInformation', ''); //GS//
+    //GS//$form->toggleVisibilityByClass('medicalDetailsRow')->onSelect('medical')->when('Y');
 
-    $col = $form->addRow()->setClass('medicalDetailsRow')->addColumn();
-        $col->addLabel('medicalInformation', __('Medical Information'))->description(__('Please indicate any medical conditions.'));
-        $col->addTextArea('medicalInformation')->setRows(5)->required()->setClass('fullWidth');
+    //GS//$col = $form->addRow()->setClass('medicalDetailsRow')->addColumn();
+    //GS//$col->addLabel('medicalInformation', __('Medical Information'))->description(__('Please indicate any medical conditions.'));
+    //GS//$col->addTextArea('medicalInformation')->setRows(5)->required()->setClass('fullWidth');
 
     // STUDENT EDUCATION
     //GS//$heading = $form->addRow()->addSubheading(__('Student Education'));
 
-    //GS//$row = $form->addRow();
+    //GS////GS//$row = $form->addRow();
     //GS//    $row->addLabel('gibbonSchoolYearIDEntry', __('Anticipated Year of Entry'))->description(__('What school year will the student join in?'));
 
     //GS//    $enableLimitedYearsOfEntry = getSettingByScope($connection2, 'Application Form', 'enableLimitedYearsOfEntry');
@@ -363,91 +484,150 @@ if ($proceed == false) {
     $resultSelect = $pdo->executeQuery(array(), $sqlSelect); //GS//
     $currentSchoolYear = ($resultSelect->rowCount() > 0)? $resultSelect->fetchAll() : array(); //GS//
 
-    $form->addHiddenValue('gibbonSchoolYearIDEntry', $currentSchoolYear[0]["value"]); //GS//
+    //GS//$form->addHiddenValue('gibbonSchoolYearIDEntry', $currentSchoolYear[0]["value"]); //GS//
+    $form->addHiddenValue('gibbonSchoolYearIDEntry', !empty($currentSchoolYear) ? $currentSchoolYear[0]["value"] : ''); //GS//
+    $form->addHiddenValue('gibbonYearGroupIDEntry', '001'); //GS//
 
-
-    $row = $form->addRow();
-        $row->addLabel('dateStart', __('Start Date - प्रवेश तिथि'))->description(__('Student\'s intended first day at school. - छात्र के शामिल होने की तिथि'))->append('<br/>'.__('Format - प्रारूप:'))->append(' '.$session->get('i18n')['dateFormat']);
-        $row->addDate('dateStart')->required();
-
-    $row = $form->addRow();
-        $row->addLabel('gibbonYearGroupIDEntry', __('Year Group at Entry - प्रवेश स्तर'))->description('Which year level will student enter. - छात्र किस वर्ष के स्तर पर प्रवेश करेगा');
-        $sql = "SELECT gibbonYearGroupID as value, name FROM gibbonYearGroup ORDER BY sequenceNumber";
-        $row->addSelect('gibbonYearGroupIDEntry')->fromQuery($pdo, $sql)->required()->placeholder(__('Please select...'));
-
-    // ROLL GROUP //GS//
-    $sqlSelect = "SELECT gibbonFormGroupID as value, name, gibbonSchoolYearID FROM gibbonFormGroup ORDER BY gibbonSchoolYearID, name"; //GS//
-    $resultSelect = $pdo->executeQuery(array(), $sqlSelect); //GS//
-
-    $rollGroups = ($resultSelect->rowCount() > 0)? $resultSelect->fetchAll() : array(); //GS//
-    $rollGroupsChained = array_combine(array_column($rollGroups, 'value'), array_column($rollGroups, 'gibbonSchoolYearID')); //GS//
-    $rollGroupsOptions = array_combine(array_column($rollGroups, 'value'), array_column($rollGroups, 'name')); //GS//
-
-    $row = $form->addRow(); //GS//
-        $row->addLabel('gibbonFormGroupID', __('Gyansetu Roll Group name - ज्ञानसेतु केंद्र का नाम')); //GS//
-        $row->addSelect('gibbonFormGroupID') //GS//
-        ->fromArray($rollGroupsOptions) //GS//
-        ->chainedTo('gibbonSchoolYearID', $rollGroupsChained) //GS//
-        ->required() //GS//
-        ->placeholder(); //GS//
-
-    // DAY TYPE
-    $dayTypeOptions = getSettingByScope($connection2, 'User Admin', 'dayTypeOptions');
-    if (!empty($dayTypeOptions)) {
-        $row = $form->addRow();
-            $row->addLabel('dayType', __('Day Type'))->description(getSettingByScope($connection2, 'User Admin', 'dayTypeText'));
-            $row->addSelect('dayType')->fromString($dayTypeOptions);
-    }
-
-    // REFEREE EMAIL
-    $applicationFormRefereeLink = getSettingByScope($connection2, 'Students', 'applicationFormRefereeLink');
-    if (!empty($applicationFormRefereeLink)) {
-        $applicationFormRefereeRequired = getSettingByScope($connection2, 'Students', 'applicationFormRefereeRequired', true);
-        $row = $form->addRow();
-            $row->addLabel('referenceEmail', __('Current School Reference Email'))->description(__('An email address for a referee at the applicant\'s current school.'));
-            if ($applicationFormRefereeRequired["value"] == "Y") {
-                $row->addEmail('referenceEmail')->required();
-            }
-            else {
-                $row->addEmail('referenceEmail');
-            }
-    }
 
     //GS//$row = $form->addRow();
-    //GS//    $row->addLabel('', __('Previous Schools'))->description(__('Please give information on the last two schools attended by the applicant.'));
+    //GS//$row->addLabel('dateStart', __('Start Date - प्रवेश तिथि'))->description(__('Student\'s intended first day at school. - छात्र के शामिल होने की तिथि'))->append('<br/>'.__('Format - प्रारूप:'))->append(' '.$session->get('i18n')['dateFormat']);
+    //GS//$row->addDate('dateStart')->required();
 
-    // PREVIOUS SCHOOLS TABLE
-    //GS//$table = $form->addRow()->addTable()->addClass('colorOddEven');
+    //GS//$row = $form->addRow();
+    //GS//$row->addLabel('gibbonYearGroupIDEntry', __('Year Group at Entry - प्रवेश स्तर'))->description('Which year level will student enter. - छात्र किस वर्ष के स्तर पर प्रवेश करेगा');
+    //GS//$sql = "SELECT gibbonYearGroupID as value, name FROM gibbonYearGroup ORDER BY sequenceNumber";
+    //GS//$row->addSelect('gibbonYearGroupIDEntry')->fromQuery($pdo, $sql)->required()->placeholder(__('Please select...'));
 
-    //GS//$header = $table->addHeaderRow();
-    //GS//$header->addContent(__('School Name'));
-    //GS//$header->addContent(__('Address'));
-    //GS//$header->addContent(sprintf(__('Grades%1$sAttended'), '<br/>'));
-    //GS//$header->addContent(sprintf(__('Language of%1$sInstruction'), '<br/>'));
-    //GS//$header->addContent(__('Joining Date'))->append('<br/><small>'.$session->get('i18n')['dateFormat'].'</small>');
+    // ROLL GROUP //GS//
+    //GS//$sqlSelect = "SELECT gibbonFormGroupID as value, name, gibbonSchoolYearID FROM gibbonFormGroup ORDER BY gibbonSchoolYearID, name"; //GS//
+    //GS//$resultSelect = $pdo->executeQuery(array(), $sqlSelect); //GS//
 
-    //GS//// Grab some languages, for auto-complete
-    //GS//$results = $pdo->executeQuery(array(), "SELECT name FROM gibbonLanguage ORDER BY name");
-    //GS//$languages = ($results && $results->rowCount() > 0)? $results->fetchAll(PDO::FETCH_COLUMN) : array();
+    //GS//$rollGroups = ($resultSelect->rowCount() > 0)? $resultSelect->fetchAll() : array(); //GS//
+    //GS//$rollGroupsChained = array_combine(array_column($rollGroups, 'value'), array_column($rollGroups, 'gibbonSchoolYearID')); //GS//
+    //GS//$rollGroupsOptions = array_combine(array_column($rollGroups, 'value'), array_column($rollGroups, 'name')); //GS//
 
-    //GS//for ($i = 1; $i < 3; ++$i) {
-    //GS//    $row = $table->addRow();
-    //GS//    $row->addTextField('schoolName'.$i)->maxLength(50)->setSize(18);
-    //GS//    $row->addTextField('schoolAddress'.$i)->maxLength(255)->setSize(20);
-    //GS//    $row->addTextField('schoolGrades'.$i)->maxLength(20)->setSize(8);
-    //GS//    $row->addTextField('schoolLanguage'.$i)->autocomplete($languages)->setSize(10);
-    //GS//    $row->addDate('schoolDate'.$i)->setSize(10);
+    //GS//$row = $form->addRow(); //GS//
+    //GS//$row->addLabel('gibbonFormGroupID', __('Gyansetu Roll Group name - ज्ञानसेतु केंद्र का नाम')); //GS//
+    //GS//$row->addSelect('gibbonFormGroupID') //GS//
+    //GS//->fromArray($rollGroupsOptions) //GS//
+    //GS//->chainedTo('gibbonSchoolYearID', $rollGroupsChained) //GS//
+    //GS//->required() //GS//
+    //GS//->placeholder(); //GS//
+
+    // DAY TYPE
+    //GS//$dayTypeOptions = getSettingByScope($connection2, 'User Admin', 'dayTypeOptions');
+    //GS//if (!empty($dayTypeOptions)) {
+    //GS//$row = $form->addRow();
+    //GS//$row->addLabel('dayType', __('Day Type'))->description(getSettingByScope($connection2, 'User Admin', 'dayTypeText'));
+    //GS//$row->addSelect('dayType')->fromString($dayTypeOptions);
     //GS//}
+    $form->addHiddenValue('dayType', 'Full Day'); //GS//
 
-    for ($i = 1; $i < 3; ++$i) {//GS//
-        $form->addHiddenValue('schoolName'.$i, ''); //GS//
-        $form->addHiddenValue('schoolAddress'.$i, '');//GS//
-        $form->addHiddenValue('schoolGrades'.$i, '');//GS//
-    }//GS//
+    // REFEREE EMAIL
+    //GS//$applicationFormRefereeLink = getSettingByScope($connection2, 'Students', 'applicationFormRefereeLink');
+    //GS//if (!empty($applicationFormRefereeLink)) {
+    //GS//$applicationFormRefereeRequired = getSettingByScope($connection2, 'Students', 'applicationFormRefereeRequired', true);
+    //GS//$row = $form->addRow();
+    //GS//$row->addLabel('referenceEmail', __('Current School Reference Email'))->description(__('An email address for a referee at the applicant\'s current school.'));
+    //GS//if ($applicationFormRefereeRequired["value"] == "Y") {
+    //GS//$row->addEmail('referenceEmail')->required();
+    //GS//}
+    //GS//else {
+    //GS//$row->addEmail('referenceEmail');
+    //GS//}
+    //GS//}
+    //GS//    //GS////GS//$row = $form->addRow();
+    //GS////GS//    $row->addLabel('', __('Previous Schools'))->description(__('Please give information on the last two schools attended by the applicant.'));
+    //GS//    //GS//// PREVIOUS SCHOOLS TABLE
+    //GS////GS//$table = $form->addRow()->addTable()->addClass('colorOddEven');
+    //GS//    //GS////GS//$header = $table->addHeaderRow();
+    //GS////GS//$header->addContent(__('School Name'));
+    //GS////GS//$header->addContent(__('Address'));
+    //GS////GS//$header->addContent(sprintf(__('Grades%1$sAttended'), '<br/>'));
+    //GS////GS//$header->addContent(sprintf(__('Language of%1$sInstruction'), '<br/>'));
+    //GS////GS//$header->addContent(__('Joining Date'))->append('<br/><small>'.$session->get('i18n')['dateFormat'].'</small>');
+    //GS//    //GS////GS//// Grab some languages, for auto-complete
+    //GS////GS//$results = $pdo->executeQuery(array(), "SELECT name FROM gibbonLanguage ORDER BY name");
+    //GS////GS//$languages = ($results && $results->rowCount() > 0)? $results->fetchAll(PDO::FETCH_COLUMN) : array();
+    //GS//    //GS////GS//for ($i = 1; $i < 3; ++$i) {
+    //GS////GS//    $row = $table->addRow();
+    //GS////GS//    $row->addTextField('schoolName'.$i)->maxLength(50)->setSize(18);
+    //GS////GS//    $row->addTextField('schoolAddress'.$i)->maxLength(255)->setSize(20);
+    //GS////GS//    $row->addTextField('schoolGrades'.$i)->maxLength(20)->setSize(8);
+    //GS////GS//    $row->addTextField('schoolLanguage'.$i)->autocomplete($languages)->setSize(10);
+    //GS////GS//    $row->addDate('schoolDate'.$i)->setSize(10);
+    //GS////GS//}
+    //GS//    //GS//for ($i = 1; $i < 3; ++$i) {//GS//
+    //GS//$form->addHiddenValue('schoolName'.$i, ''); //GS//
+    //GS//$form->addHiddenValue('schoolAddress'.$i, '');//GS//
+    //GS//$form->addHiddenValue('schoolGrades'.$i, '');//GS//
+    //GS//}//GS//
+    //GS//    //GS//// CUSTOM FIELDS FOR STUDENT
+    //GS//$params = ['student' => 1, 'applicationForm' => 1, 'headingLevel' => 'h4'];
+    //GS//$customFieldHandler->addCustomFieldsToForm($form, 'User', $params);
+    //GS//
+    // 13. Start Date - प्रवेश तिथि *
+    // Child's date of joining. - छात्र के शामिल होने की तिथि- Format - प्रारूप: dd/mm/yyyy
+    $row = $form->addRow();
+        $row->addLabel('dateStart', __('Start Date - प्रवेश तिथि'))->description(__('Child\'s date of joining. - छात्र के शामिल होने की तिथि'))->append('<br/>'.__('Format - प्रारूप:'))->append(' '.$session->get('i18n')['dateFormat']);
+        $row->addDate('dateStart')->required();
 
-    // CUSTOM FIELDS FOR STUDENT
-    $params = ['student' => 1, 'applicationForm' => 1, 'headingLevel' => 'h4'];
-    $customFieldHandler->addCustomFieldsToForm($form, 'User', $params);
+    // 14. Level at Entry - प्रवेश स्तर * Which entry level will Child enter. - छात्र किस वर्ष के स्तर पर प्रवेश करेगा
+    // Please select...ECD / Beginner / Advanced
+    $addCustomFieldRow($form, '0033', __('Level at Entry - प्रवेश स्तर'), __('Which entry level will Child enter. - छात्र किस वर्ष के स्तर पर प्रवेश करेगा'), true);
+
+    // 15. Commitment fee status* : dropdown(Paid/ Free seat)
+    $addCustomFieldRow($form, '0031', __('Commitment fee status'), '', true);
+
+    // 16. If free seat (give reasons) :__________________________
+    $addCustomFieldRow($form, '0032', __('If free seat (give reasons) :'), '', false, 'freeSeatReason');
+    $form->toggleVisibilityByClass('freeSeatReason')->onSelect('custom0031')->when('Free seat');
+
+    // 17. (change sequencing) Family members number - परिवार के सदस्यों की संख्य *- Number of people living at home. - घर में रहने वाले लोगों की संख्या।
+    $addCustomFieldRow($form, '0003', __('Family members number - परिवार के सदस्यों की संख्य'), __('Number of people living at home. - घर में रहने वाले लोगों की संख्या।'), true);
+
+    // 18. (change sequencing) Family income - पारिवारिक आय *-Total money that comes in the family monthly in rupees. - मासिक कुल आय (रूपये में)।
+    $addCustomFieldRow($form, '0004', __('Family income - पारिवारिक आय'), __('Total money that comes in the family monthly in rupees. - मासिक कुल आय (रूपये में)।'), true);
+
+    // 19. (change sequencing) Does the Child contribute towards family income?- क्या बच्चा पारिवारिक आय (कमाई) के लिए कही कोई कार्य करता है- हाँ या नही | - Yes/ No
+    $addCustomFieldRow($form, '0027', __('Does the Child contribute towards family income?'), __('क्या बच्चा पारिवारिक आय (कमाई) के लिए कही कोई कार्य करता है- हाँ या नही |'), false);
+
+    // 20. Child’s occupation / job - विद्यार्थी का व्यवसाय- If the Child is working, what is the job. - विद्यार्थी का व्यवसाय / नौकरी
+    $addCustomFieldRow($form, '0005', __('Child’s occupation / job - विद्यार्थी का व्यवसाय'), __('If the Child is working, what is the job. - विद्यार्थी का व्यवसाय / नौकरी'), false);
+
+    // 21. Child’s job start time - नौकरी शुरू होने का समय- Time when the Child starts the job - काम शुरू होने का समय
+    $addCustomFieldRow($form, '0007', __('Child’s  job start time - नौकरी शुरू होने का समय'), __('Time when the Child starts the job - काम शुरू होने का समय'), false);
+
+    // 22. Time at which the Child’s work gets over- बच्चे का काम से वापस आने का समय
+    $addCustomFieldRow($form, '0008', __('Time at which the Child’s work gets over'), __('बच्चे का काम से वापस आने का समय'), false);
+
+    // 23. Monthly salary - मासिक आय *- Monthly salary in rupees. - रुपये में मासिक आय
+    $addCustomFieldRow($form, '0006', __('Monthly salary - मासिक आय'), __('Monthly salary in rupees. - रुपये में मासिक आय'), true);
+
+    // 24. Is the Child in another school? *- क्या छात्र वर्तमान में दूसरे स्कूल में नामांकित है
+    // Child’s schooling status : not enrolled / Going to school / highly irregular / dropped out
+    $addCustomFieldRow($form, '0011', __('Is the Child in another school? - क्या छात्र वर्तमान में दूसरे स्कूल में नामांकित है'), __('not enrolled / Going to school / highly irregular / dropped out'), true);
+
+    // 25. Name of school - विद्यालय का नाम- In case the Child is going to a school, name of it. - यदि विद्यार्थी किसी विद्यालय में जा रहा है तो उसका नाम बताएं।
+    $addCustomFieldRow($form, '0012', __('Name of school - विद्यालय का नाम'), __('In case the Child is going to a school, name of it. - यदि विद्यार्थी किसी विद्यालय में जा रहा है तो उसका नाम बताएं।'), false);
+
+    // 26. Class in school - कक्षा- What class is he Child enrolled in? - वह किस कक्षा का छात्र है?
+    $addCustomFieldRow($form, '0014', __('Class in school - कक्षा'), __('What class is he Child enrolled in? - वह किस कक्षा का छात्र है?'), false);
+
+    // 27. Type of current school - वर्तमान स्कूल का प्रकार- If the Child is enrolled to another school, the type of it. - यदि छात्र किसी अन्य स्कूल में नामांकित है, तो उसका प्रकार।
+    $addCustomFieldRow($form, '0013', __('Type of current school - वर्तमान स्कूल का प्रकार'), __('If the Child is enrolled to another school, the type of it. - यदि छात्र किसी अन्य स्कूल में नामांकित है, तो उसका प्रकार।'), false);
+
+    // 28. Year started schooling- विद्यालय शुरू करने का वर्ष- What year did the Child start any school. - छात्र ने किस वर्ष स्कूल जाना शुरू किया।
+    $addCustomFieldRow($form, '0009', __('Year started schooling- विद्यालय शुरू करने का वर्ष'), __('What year did the Child start any school. - छात्र ने किस वर्ष स्कूल जाना शुरू किया।'), false);
+
+    // 29. Year in which the Child dropped out - स्कूल छोड़ने का वर्ष- What year did the Child leave the last school. - छात्र ने स्कूल किस वर्ष छोड़ा था।
+    $addCustomFieldRow($form, '0010', __('Year in which the Child dropped out - स्कूल छोड़ने का वर्ष'), __('What year did the Child leave the last school. - छात्र ने स्कूल किस वर्ष छोड़ा था।'), false);
+
+    // 30. Reason for not attending school- स्कूल न जाने का कारण
+    $addCustomFieldRow($form, '0016', __('Reason for not attending school'), __('स्कूल न जाने का कारण'), false);
+
+    // 31. Reason for coming to the Gyansetu center- ज्ञानसेतु पर आने का कारण
+    $addCustomFieldRow($form, '0015', __('Reason for coming to the Gyansetu center'), __('ज्ञानसेतु पर आने का कारण'), false);
 
     // FAMILY
     if (!empty($gibbonFamilyID)) {
@@ -464,27 +644,27 @@ if ($proceed == false) {
 
         $form->addHiddenValue('gibbonFamily', 'FALSE');
 
-        if ($siblingApplicationMode == true) {
-            $form->addHiddenValue('homeAddress', isset($application['homeAddress'])? $application['homeAddress'] : '');
-            $form->addHiddenValue('homeAddressDistrict', isset($application['homeAddressDistrict'])? $application['homeAddressDistrict'] : '');
-            $form->addHiddenValue('homeAddressCountry', isset($application['homeAddressCountry'])? $application['homeAddressCountry'] : '');
-        } else {
-            // HOME ADDRESS
-            $form->addRow()->addHeading(__('Gyansetu Center Address - मकान न.,गांव, ब्लॉक')); //GS//
-
-            $row = $form->addRow();
-                $row->addLabel('homeAddress', __('Gyansetu Center Address - ज्ञानसेतु केंद्र का पता'))->description(__('Unit, Building, Street - इकाई, भवन, गली'));
-                $row->addTextArea('homeAddress')->required()->maxLength(255)->setRows(2);
-
-            $row = $form->addRow();
-                $row->addLabel('homeAddressDistrict', __('Gyansetu Center Address (State) - ज्ञानसेतु केंद्र का पता (राज्य)'));
-                //GS//$row->addTextFieldDistrict('homeAddressDistrict')->required();
-                $row->addTextField('homeAddressDistrict')->setValue('Uttar Pradesh')->required(); //GS//
-
-            $row = $form->addRow();
-                $row->addLabel('homeAddressCountry', __('Gyansetu Center Address (Country) - ज्ञानसेतु केंद्र का पता (देश)'));
-                $row->addSelectCountry('homeAddressCountry')->required();
-        }
+        //GS//if ($siblingApplicationMode == true) {
+        //GS//$form->addHiddenValue('homeAddress', isset($application['homeAddress'])? $application['homeAddress'] : '');
+        //GS//$form->addHiddenValue('homeAddressDistrict', isset($application['homeAddressDistrict'])? $application['homeAddressDistrict'] : '');
+        //GS//$form->addHiddenValue('homeAddressCountry', isset($application['homeAddressCountry'])? $application['homeAddressCountry'] : '');
+        //GS//} else {
+        //GS//// HOME ADDRESS
+        //GS//$form->addRow()->addHeading(__('Gyansetu Center Address - मकान न.,गांव, ब्लॉक')); //GS//
+        //GS//        //GS//$row = $form->addRow();
+        //GS//$row->addLabel('homeAddress', __('Gyansetu Center Address - ज्ञानसेतु केंद्र का पता'))->description(__('Unit, Building, Street - इकाई, भवन, गली'));
+        //GS//$row->addTextArea('homeAddress')->required()->maxLength(255)->setRows(2);
+        //GS//        //GS//$row = $form->addRow();
+        //GS//$row->addLabel('homeAddressDistrict', __('Gyansetu Center Address (State) - ज्ञानसेतु केंद्र का पता (राज्य)'));
+        //GS////GS//$row->addTextFieldDistrict('homeAddressDistrict')->required();
+        //GS//$row->addTextField('homeAddressDistrict')->setValue('Uttar Pradesh')->required(); //GS//
+        //GS//        //GS//$row = $form->addRow();
+        //GS//$row->addLabel('homeAddressCountry', __('Gyansetu Center Address (Country) - ज्ञानसेतु केंद्र का पता (देश)'));
+        //GS//$row->addSelectCountry('homeAddressCountry')->required();
+        //GS//}
+        $form->addHiddenValue('homeAddress', isset($application['homeAddress']) && $application['homeAddress'] != '' ? $application['homeAddress'] : 'Gyansetu');
+        $form->addHiddenValue('homeAddressDistrict', isset($application['homeAddressDistrict']) && $application['homeAddressDistrict'] != '' ? $application['homeAddressDistrict'] : 'Uttar Pradesh');
+        $form->addHiddenValue('homeAddressCountry', isset($application['homeAddressCountry']) && $application['homeAddressCountry'] != '' ? $application['homeAddressCountry'] : 'India');
 
         // PARENT 1 - IF EXISTS
         if (!empty($gibbonPersonID) || !empty($application['parent1gibbonPersonID'])) {
@@ -628,11 +808,20 @@ if ($proceed == false) {
             $form->addHiddenValue('parent{$i}email', isset($application['parent{$i}email'])? $application['parent{$i}email'] : ''); //GS//
 
 
-            for ($y = 1; $y < 3; ++$y) { //GS//
-                $row = $form->addRow()->setClass("parentSection{$i}");
-                    $row->addLabel("parent{$i}phone{$y}", __('Phone - फोन').' '.$y)->description(__('Type, country code, number.'));
-                    $row->addPhoneNumber("parent{$i}phone{$y}")->setRequired($i == 1 && $y == 1)->loadFrom($application);
-            }
+            //GS//for ($y = 1; $y < 3; ++$y) { //GS//
+            //GS//$row = $form->addRow()->setClass("parentSection{$i}");
+            //GS//$row->addLabel("parent{$i}phone{$y}", __('Phone - फोन').' '.$y)->description(__('Type, country code, number.'));
+            //GS//$row->addPhoneNumber("parent{$i}phone{$y}")->setRequired($i == 1 && $y == 1)->loadFrom($application);
+            //GS//}
+            // Phone - फोन 1 * (only required for parent 1)
+            $row = $form->addRow()->setClass("parentSection{$i}");
+                $row->addLabel("parent{$i}phone1", __('Phone - फोन 1'));
+                $row->addPhoneNumber("parent{$i}phone1")->setRequired($i == 1)->loadFrom($application);
+
+            // Phone - फोन 2
+            $row = $form->addRow()->setClass("parentSection{$i}");
+                $row->addLabel("parent{$i}phone2", __('Phone - फोन 2'));
+                $row->addPhoneNumber("parent{$i}phone2")->loadFrom($application);
 
             // PARENT EMPLOYMENT
             //GS//$row = $form->addRow()->setClass("parentSection{$i}");
@@ -648,8 +837,30 @@ if ($proceed == false) {
             $form->addHiddenValue('parent{$i}employer', isset($application['parent{$i}employer'])? $application['parent{$i}employer'] : ''); //GS//
 
             // CUSTOM FIELDS FOR PARENTS
-            $params = ['parent' => 1, 'applicationForm' => 1, 'prefix' => "parent{$i}custom", 'headingPrefix' => __('Parent/Guardian - माता-पिता/अभिभावक')." $i", 'headingLevel' => 'h4', 'class' => "parentSection{$i}"];
-            $customFieldHandler->addCustomFieldsToForm($form, 'User', $params, $application["parent{$i}fields"] ?? '');
+            //GS//$params = ['parent' => 1, 'applicationForm' => 1, 'prefix' => "parent{$i}custom", 'headingPrefix' => __('Parent/Guardian - माता-पिता/अभिभावक')." $i", 'headingLevel' => 'h4', 'class' => "parentSection{$i}"];
+            //GS//$customFieldHandler->addCustomFieldsToForm($form, 'User', $params, $application["parent{$i}fields"] ?? '');
+
+            $parentExistingFields = !empty($application["parent{$i}fields"]) ? json_decode($application["parent{$i}fields"], true) : [];
+
+            // Education - शिक्षा *
+            $educationField = $allCustomFields['0023'] ?? null;
+            if (!empty($educationField)) {
+                $eduFieldCopy = $educationField;
+                $eduFieldCopy['required'] = 'Y';
+                $row = $form->addRow()->setClass("parentSection{$i}");
+                $row->addLabel("parent{$i}custom0023", __('Education - शिक्षा'))->description(__('Maximum degree obtained - प्राप्त की गई अधिकतम डिग्री'));
+                $row->addCustomField("parent{$i}custom0023", $eduFieldCopy)->setValue($parentExistingFields['0023'] ?? '');
+            }
+
+            // Monthly salary - मासिक आय *
+            $salaryField = $allCustomFields['0006'] ?? null;
+            if (!empty($salaryField)) {
+                $salFieldCopy = $salaryField;
+                $salFieldCopy['required'] = 'Y';
+                $row = $form->addRow()->setClass("parentSection{$i}");
+                $row->addLabel("parent{$i}custom0006", __('Monthly salary - मासिक आय'))->description(__('Monthly salary in rupees. - रुपये में मासिक आय'));
+                $row->addCustomField("parent{$i}custom0006", $salFieldCopy)->setValue($parentExistingFields['0006'] ?? '');
+            }
         }
     } else {
         // LOGGED IN PARENT WITH FAMILY

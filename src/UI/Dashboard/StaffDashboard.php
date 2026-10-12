@@ -455,7 +455,7 @@ class StaffDashboard implements OutputableInterface
 
             $myrole = getRoleName($this->session->get('gibbonRoleIDCurrent'), $this->db->getConnection()); //GS//
             //GS//if (isActionAccessible($guid, $connection2, '/modules/Students/student_view.php')) {
-            if (isActionAccessible($guid, $connection2, '/modules/Students/student_view.php' and $myrole != 'Teacher')) { //GS//
+            if (isActionAccessible($guid, $connection2, '/modules/Students/student_view.php') and $myrole != 'Teacher') { //GS//
                 $return .= "<li><a href='#tabs".$tabCount."'>".__('Enrolment').'</a></li>';
                 if ($staffDashboardDefaultTab == 'Enrolment') {
                     $staffDashboardDefaultTabCount = $tabCount;

@@ -225,6 +225,9 @@ class CustomFieldHandler
             }
 
             foreach ($customFields as $field) {
+                if (!empty($params['excludeIDs']) && in_array($field['gibbonCustomFieldID'], (array)$params['excludeIDs'])) {
+                    continue;
+                }
                 $fieldValue = $existingFields[$field['gibbonCustomFieldID']] ?? '';
                 if (!empty($fieldValue) && $field['type'] == 'date') {
                     $fieldValue = Format::date($fieldValue);

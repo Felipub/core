@@ -73,6 +73,12 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edi
 				$other = $other || ($roleCategory == 'Other');
             }
 
+            $currentRole = getRoleName($_SESSION[$guid]['gibbonRoleIDCurrent'], $connection2);
+            if ($currentRole == 'Teacher' && !$student) {
+                $page->addError(__('You do not have permission to edit this user.'));
+                return;
+            }
+
             $search = (isset($_GET['search']))? $_GET['search'] : '';
 
             if (!empty($search)) {

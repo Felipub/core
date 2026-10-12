@@ -93,6 +93,16 @@ class FormGroupTable extends DataTable
                 ->displayLabel();
         }
 
+        if (isActionAccessible($guid, $connection2, '/modules/Students/report_students_byFormGroup.php')) {
+            $this->addHeaderAction('studentsByCenter', __('Students by Center'))
+                ->setURL('/index.php')
+                ->addParam('q', '/modules/Students/report_students_byFormGroup.php')
+                ->addParam('gibbonFormGroupID', $gibbonFormGroupID)
+                ->setIcon('attendance')
+                ->directLink()
+                ->displayLabel();
+        }
+
         if ($canViewConfidential) {
             $checkbox = (new Checkbox('confidential'.$gibbonFormGroupID))
                 ->description(__('Show Confidential Data'))

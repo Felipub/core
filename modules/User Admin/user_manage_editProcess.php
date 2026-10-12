@@ -83,6 +83,13 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edi
                 }
             }
 
+            $currentRole = getRoleName($_SESSION[$guid]['gibbonRoleIDCurrent'], $connection2);
+            if ($currentRole == 'Teacher' && !$student) {
+                $URL .= '&return=error0';
+                header("Location: {$URL}");
+                exit();
+            }
+
             $attachment1 = $_POST['attachment1'] ?? '';
 
             //Proceed!
@@ -95,73 +102,83 @@ if (isActionAccessible($guid, $connection2, '/modules/User Admin/user_manage_edi
             $officialName = trim($firstName . ' ' . $surname); //GS//
             $nameInCharacters = $_POST['nameInCharacters'] ?? '';
             $gender = $_POST['gender'] ?? '';
-            $username = isset($_POST['username'])? $_POST['username'] : $values['username'];
-            $status = $_POST['status'] ?? '';
-            $canLogin = $_POST['canLogin'] ?? '';
-            $passwordForceReset = $_POST['passwordForceReset'] ?? '';
+            $username = isset($_POST['username'])? $_POST['username'] : $row['username'];
+            $status = $_POST['status'] ?? $row['status'];
+            $canLogin = $_POST['canLogin'] ?? $row['canLogin'];
+            $passwordForceReset = $_POST['passwordForceReset'] ?? $row['passwordForceReset'];
 
-            // Put together an array of this user's current roles
-            $currentUserRoles = (is_array($session->get('gibbonRoleIDAll'))) ? array_column($session->get('gibbonRoleIDAll'), 0) : array();
-            $currentUserRoles[] = $session->get('gibbonRoleIDPrimary');
+            if ($currentRole == 'Teacher') {
+                // Teachers cannot alter system status, credentials or roles
+                $status = $row['status'];
+                $canLogin = $row['canLogin'];
+                $passwordForceReset = $row['passwordForceReset'];
+                $username = $row['username'];
+                $gibbonRoleIDPrimary = $row['gibbonRoleIDPrimary'];
+                $gibbonRoleIDAll = $row['gibbonRoleIDAll'];
+            } else {
+                // Put together an array of this user's current roles
+                $currentUserRoles = (is_array($session->get('gibbonRoleIDAll'))) ? array_column($session->get('gibbonRoleIDAll'), 0) : array();
+                $currentUserRoles[] = $session->get('gibbonRoleIDPrimary');
 
-            $sqlRoles = 'SELECT gibbonRoleID, restriction, name FROM gibbonRole';
-            $resultRoles = $connection2->prepare($sqlRoles);
-            $resultRoles->execute();
+                $sqlRoles = 'SELECT gibbonRoleID, restriction, name FROM gibbonRole';
+                $resultRoles = $connection2->prepare($sqlRoles);
+                $resultRoles->execute();
 
-            $gibbonRoleIDAll = array();
-            $gibbonRoleIDPrimary = $row['gibbonRoleIDPrimary'];
+                $gibbonRoleIDAll = array();
+                $gibbonRoleIDPrimary = $row['gibbonRoleIDPrimary'];
 
-            $selectedRoleIDPrimary = (isset($_POST['gibbonRoleIDPrimary'])) ? $_POST['gibbonRoleIDPrimary'] : null;
-            $selectedRoleIDAll = (isset($_POST['gibbonRoleIDAll'])) ? $_POST['gibbonRoleIDAll'] : array();
+                $selectedRoleIDPrimary = (isset($_POST['gibbonRoleIDPrimary'])) ? $_POST['gibbonRoleIDPrimary'] : null;
+                $selectedRoleIDAll = (isset($_POST['gibbonRoleIDAll'])) ? $_POST['gibbonRoleIDAll'] : array();
 
-            if ($resultRoles && $resultRoles->rowCount() > 0) {
-                while ($rowRole = $resultRoles->fetch()) {
+                if ($resultRoles && $resultRoles->rowCount() > 0) {
+                    while ($rowRole = $resultRoles->fetch()) {
 
-                    if ($rowRole['restriction'] == 'Admin Only') {
-                        if (in_array('001', $currentUserRoles)) {
-                            // Add selected roles only if they meet the restriction
+                        if ($rowRole['restriction'] == 'Admin Only') {
+                            if (in_array('001', $currentUserRoles)) {
+                                // Add selected roles only if they meet the restriction
+                                if (in_array($rowRole['gibbonRoleID'], $selectedRoleIDAll)) {
+                                    $gibbonRoleIDAll[] = $rowRole['gibbonRoleID'];
+                                }
+
+                                if ($rowRole['gibbonRoleID'] == $selectedRoleIDPrimary) {
+                                    // Prevent primary role being changed to a restricted role (via modified POST)
+                                    $gibbonRoleIDPrimary = $selectedRoleIDPrimary;
+                                }
+                            } else if (in_array($rowRole['gibbonRoleID'], $roles)) {
+                                // Add existing restricted roles because they cannot be removed by this user
+                                $gibbonRoleIDAll[] = $rowRole['gibbonRoleID'];
+                            }
+                        } else if ($rowRole['restriction'] == 'Same Role') {
+                            if (in_array($rowRole['gibbonRoleID'], $currentUserRoles) || in_array('001', $currentUserRoles)) {
+                                if (in_array($rowRole['gibbonRoleID'], $selectedRoleIDAll)) {
+                                    $gibbonRoleIDAll[] = $rowRole['gibbonRoleID'];
+                                }
+
+                                if ($rowRole['gibbonRoleID'] == $selectedRoleIDPrimary) {
+                                    $gibbonRoleIDPrimary = $selectedRoleIDPrimary;
+                                }
+                            } else if (in_array($rowRole['gibbonRoleID'], $roles)) {
+                                $gibbonRoleIDAll[] = $rowRole['gibbonRoleID'];
+                            }
+                        } else {
                             if (in_array($rowRole['gibbonRoleID'], $selectedRoleIDAll)) {
                                 $gibbonRoleIDAll[] = $rowRole['gibbonRoleID'];
                             }
 
                             if ($rowRole['gibbonRoleID'] == $selectedRoleIDPrimary) {
-                                // Prevent primary role being changed to a restricted role (via modified POST)
                                 $gibbonRoleIDPrimary = $selectedRoleIDPrimary;
                             }
-                        } else if (in_array($rowRole['gibbonRoleID'], $roles)) {
-                            // Add existing restricted roles because they cannot be removed by this user
-                            $gibbonRoleIDAll[] = $rowRole['gibbonRoleID'];
-                        }
-                    } else if ($rowRole['restriction'] == 'Same Role') {
-                        if (in_array($rowRole['gibbonRoleID'], $currentUserRoles) || in_array('001', $currentUserRoles)) {
-                            if (in_array($rowRole['gibbonRoleID'], $selectedRoleIDAll)) {
-                                $gibbonRoleIDAll[] = $rowRole['gibbonRoleID'];
-                            }
-
-                            if ($rowRole['gibbonRoleID'] == $selectedRoleIDPrimary) {
-                                $gibbonRoleIDPrimary = $selectedRoleIDPrimary;
-                            }
-                        } else if (in_array($rowRole['gibbonRoleID'], $roles)) {
-                            $gibbonRoleIDAll[] = $rowRole['gibbonRoleID'];
-                        }
-                    } else {
-                        if (in_array($rowRole['gibbonRoleID'], $selectedRoleIDAll)) {
-                            $gibbonRoleIDAll[] = $rowRole['gibbonRoleID'];
-                        }
-
-                        if ($rowRole['gibbonRoleID'] == $selectedRoleIDPrimary) {
-                            $gibbonRoleIDPrimary = $selectedRoleIDPrimary;
                         }
                     }
                 }
-            }
 
-            // Ensure the primary role is always in the all roles list
-            if (!in_array($gibbonRoleIDPrimary, $gibbonRoleIDAll)) {
-                $gibbonRoleIDAll[] = $gibbonRoleIDPrimary;
-            }
+                // Ensure the primary role is always in the all roles list
+                if (!in_array($gibbonRoleIDPrimary, $gibbonRoleIDAll)) {
+                    $gibbonRoleIDAll[] = $gibbonRoleIDPrimary;
+                }
 
-            $gibbonRoleIDAll = (is_array($gibbonRoleIDAll))? implode(',', array_unique($gibbonRoleIDAll)) : $row['gibbonRoleIDAll'];
+                $gibbonRoleIDAll = (is_array($gibbonRoleIDAll))? implode(',', array_unique($gibbonRoleIDAll)) : $row['gibbonRoleIDAll'];
+            }
 
             $dob = !empty($_POST['dob']) ? Format::dateConvert($_POST['dob']) : null;
             $email = trim($_POST['email'] ?? '');
