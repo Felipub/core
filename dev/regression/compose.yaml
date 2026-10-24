@@ -51,7 +51,7 @@ services:
     networks: [master]
     depends_on:
       db-master: {condition: service_healthy}
-    volumes: ["./.runtime/master:/var/www/html", "./:/harness:ro"]
+    volumes: ["./.runtime/master:/var/www/html", "./:/harness:ro", "../../tests/regression:/regression-tests:ro"]
   manjeet:
     <<: *web
     environment:
@@ -61,7 +61,7 @@ services:
     networks: [manjeet]
     depends_on:
       db-manjeet: {condition: service_healthy}
-    volumes: ["./.runtime/manjeet:/var/www/html", "./:/harness:ro"]
+    volumes: ["./.runtime/manjeet:/var/www/html", "./:/harness:ro", "../../tests/regression:/regression-tests:ro"]
   gateway-master:
     image: nginx:1.26.3-alpine@sha256:1eadbb07820339e8bbfed18c771691970baee292ec4ab2558f1453d26153e22d
     ports: ["127.0.0.1:8081:8081"]
@@ -84,7 +84,7 @@ services:
     security_opt: [no-new-privileges:true]
     environment: {BASE_URL: "http://127.0.0.1:8081"}
     network_mode: service:master
-    volumes: ["./.runtime/tools:/tools", "./:/harness:ro"]
+    volumes: ["./.runtime/tools:/tools", "./:/harness:ro", "../../tests/regression/browser:/tools/tests:ro"]
     command: ["node", "-e", "console.log('Playwright ready; no functional tests defined')"]
   browser-manjeet:
     extends: browser-master

@@ -27,6 +27,16 @@ La CI existente usa ubuntu-20.04, acciones v2, una matriz 7.3/7.4/8.0/8.1 y un P
 
 Desde la raíz de este checkout:
 
+Para una instalación nueva, clonar el repositorio completo (sin `--depth` ni `--single-branch`) y seleccionar la rama de preparación mientras la PR no esté incorporada:
+
+```powershell
+git clone https://github.com/Felipub/core.git core-regression
+cd core-regression
+git switch dev/isolated-regression-environment-final
+```
+
+Después de integrar la PR, usar `master` en lugar de esa rama. El clon completo conserva los dos commits fijados. A continuación:
+
 ```powershell
 pwsh -File dev/regression/lab.ps1 prepare
 pwsh -File dev/regression/lab.ps1 install
@@ -54,22 +64,27 @@ pwsh -File dev/regression/lab.ps1 phpunit
 pwsh -File dev/regression/lab.ps1 codeception
 # Arranque de Chromium, recursos y accesos ficticios:
 pwsh -File dev/regression/lab.ps1 browser
+# Ejecutar futuros casos compartidos (actualmente vacíos):
+pwsh -File dev/regression/lab.ps1 browser-tests
+pwsh -File dev/regression/lab.ps1 codeception-tests
 ```
 
 Dentro de cada contenedor, `cd /var/www/html/tests && ../vendor/bin/codecept build` genera actores. Se conservan `tests/codeception.yml`, `tests/acceptance.suite.yml` y `tests/install.suite.yml`. No ejecutar `composer test` indiscriminadamente: la suite install y el dump de acceptance pueden reemplazar datos y configuración. Para ejecutar acceptance existente, preparar primero una DB de suite separada y revisar el dump; **esa ejecución no forma parte del check automático nuevo**. `tests/config/environment.php` admite las variables `TEST_ENV=codeception` y la configuración sintética que ya genera el harness.
 
-`lab.ps1 phpunit` utiliza `/harness/phpunit.xml`, una configuración de PHPUnit 9.5 para la suite unitaria existente; se conserva intacto el XML antiguo del proyecto. Para ver el runner del navegador: `docker compose -f dev/regression/compose.yaml run --rm browser-master npx playwright test --help`. Los futuros casos compartidos deberán montarse en ambos contenedores desde un directorio de pruebas común; no modificar sólo uno de los snapshots ni comparar suites diferentes.
+`lab.ps1 phpunit` utiliza `/harness/phpunit.xml`, una configuración de PHPUnit 9.5 para la suite unitaria existente y el directorio común `tests/regression/unit`; se conserva intacto el XML antiguo del proyecto. `browser-tests` usa `playwright.config.cjs` y `tests/regression/browser`; `codeception-tests` usa el config separado del harness y `tests/regression/codeception/acceptance.suite.yml`, sin importar dumps ni limpiar datos de forma implícita. Los tres directorios comunes están montados para ambas versiones: basta añadir casos en ellos, sin regenerar snapshots. `prepare` añade únicamente el actor de soporte `RegressionTester.php` a cada snapshot y `verify` genera sus métodos. No hay casos funcionales nuevos.
+
+Playwright guarda resultados separados en `.runtime/tools/results/master` y `manjeet`. El runner vacío sale correctamente con `--pass-with-no-tests`; no representa ninguna prueba funcional pasada. Reiniciar los datos antes de comparar ejecuciones de futuros casos. Para ver opciones del navegador: `docker compose -f dev/regression/compose.yaml run --rm browser-master npx playwright test --help`.
 
 Futuras ubicaciones (sin casos implementados):
 
 | Cobertura futura | Ubicación propuesta |
 |---|---|
-| Admisiones, fotos, vista previa y subida con JavaScript | `tests/browser/admissions/` |
-| Permisos por rol | `tests/browser/roles/` y `tests/acceptance/User Admin/` |
-| Passed Out y cierre de centros | `tests/browser/students/`, `tests/browser/centres/` |
-| Dashboard | `tests/browser/dashboard/` |
-| Matrícula, asistencia e informes | `tests/acceptance/Students/`, nuevas carpetas Attendance/Reports y `tests/browser/regressions/` |
-| Lógica sin navegador | `tests/unit/` |
+| Admisiones, fotos, vista previa y subida con JavaScript | `tests/regression/browser/admissions/` |
+| Permisos por rol | `tests/regression/browser/roles/`, `tests/regression/codeception/roles/` |
+| Passed Out y cierre de centros | `tests/regression/browser/students/`, `tests/regression/browser/centres/` |
+| Dashboard | `tests/regression/browser/dashboard/` |
+| Matrícula, asistencia e informes | `tests/regression/codeception/students/`, `attendance/`, `reports/` y `tests/regression/browser/regressions/` |
+| Lógica sin navegador | `tests/regression/unit/` (suite heredada: `tests/unit/`) |
 
 PhpBrowser hace peticiones HTTP pero **no ejecuta JavaScript**. No sirve para verificar el preview de fotos, campos condicionales, eventos de navegador o dashboard dinámico. Playwright está separado del Codeception heredado para evitar cambios de dependencias PHP. El archivo `browser-check.cjs` es sólo un check de instalación; no contiene assertions de funcionalidades de Manjeet.
 
@@ -109,4 +124,4 @@ El workflow nuevo ejecuta `prepare`, `install`, `start`, `reset` y `verify` en U
 
 `lab.ps1 stop` detiene sólo el proyecto Compose `core-regression`. Para desechar **todos** los datos sintéticos, desde este directorio ejecutar `docker compose down -v` (irreversible para esos volúmenes). Con los contenedores detenidos se puede renombrar `.runtime` para conservarlo o eliminar exclusivamente esa carpeta tras comprobar su ruta. Ninguna de estas operaciones debe apuntar a otro proyecto Compose.
 
-El cambio de repositorio es aditivo: si se incorporara, revertir su commit elimina el harness y workflow sin tocar código funcional. Antes de revertir detener contenedores. No hay rollback de producción porque no se despliega ni se modifica. No fusionar esta PR hasta completar las verificaciones pendientes.
+Antes de incorporar la PR, basta detener los contenedores y volver al commit base con `git switch --detach de2a6cb79e8391f229a0acb4eabfd7c48ce1049a`; los datos ignorados se conservan. Si se incorpora con squash, `git revert <commit de integración>` elimina el cambio aditivo; si se integra mediante merge, usar `git revert -m 1 <commit de merge>`. Revisar y tramitar ese rollback por PR según las reglas del repositorio. No hay rollback de producción porque no se despliega ni se modifica.

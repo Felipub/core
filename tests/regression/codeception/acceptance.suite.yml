@@ -1,0 +1,13 @@
+actor: RegressionTester
+modules:
+  enabled:
+    - PhpBrowser:
+        url: "%ABSOLUTE_URL%"
+    - Db:
+        dsn: "mysql:host=%DB_HOST%;dbname=%DB_NAME%"
+        user: "%DB_USERNAME%"
+        password: "%DB_PASSWORD%"
+        populate: false
+        cleanup: false
+    - Filesystem
+    - Asserts

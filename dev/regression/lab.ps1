@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('prepare','install','start','stop','reset','verify','phpunit','codeception','browser','status')][string]$Action='status',
+    [ValidateSet('prepare','install','start','stop','reset','verify','phpunit','codeception','browser','browser-tests','codeception-tests','status')][string]$Action='status',
     [ValidateSet('master','manjeet','both')][string]$Target='both'
 )
 $ErrorActionPreference='Stop'
@@ -29,6 +29,7 @@ if ($Action -eq 'prepare') {
         Run 'tar' @('-xf',$archive,'-C',$destination)
         Remove-Item -LiteralPath $archive
         Copy-Item -LiteralPath (Join-Path $labRoot 'config.php') -Destination (Join-Path $destination 'config.php')
+        Copy-Item -LiteralPath (Join-Path $labRoot 'RegressionTester.php') -Destination (Join-Path $destination 'tests/config/support/RegressionTester.php')
         foreach ($folder in @('var/sessions','var/tmp','uploads','resources/templates/cache','tests/log')) { New-Item -ItemType Directory -Force (Join-Path $destination $folder) | Out-Null }
         Set-Content -LiteralPath (Join-Path $destination 'SANDBOX_COMMIT') -Value $sha
     }
@@ -91,4 +92,6 @@ switch ($Action) {
     phpunit { foreach ($targetName in $targets) { Compose @('exec','-T','-w','/var/www/html/tests',$targetName,'../vendor/bin/phpunit','--configuration','/harness/phpunit.xml') } }
     codeception { foreach ($targetName in $targets) { Compose @('exec','-T','-w','/var/www/html/tests',$targetName,'../vendor/bin/codecept','--version') } }
     browser { foreach ($targetName in $targets) { Compose @('run','--rm',"browser-$targetName",'node','/harness/browser-check.cjs') } }
+    browser-tests { foreach ($targetName in $targets) { Compose @('run','--rm',"browser-$targetName",'npx','playwright','test','--config=/harness/playwright.config.cjs','--pass-with-no-tests') } }
+    codeception-tests { foreach ($targetName in $targets) { Compose @('exec','-T',$targetName,'vendor/bin/codecept','run','--config','/harness/codeception.yml') } }
 }

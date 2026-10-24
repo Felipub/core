@@ -5,10 +5,12 @@ on:
     branches: ['dev/isolated-regression-environment-*']
     paths:
       - 'dev/regression/**'
+      - 'tests/regression/**'
       - '.github/workflows/regression-environment.yml'
   pull_request:
     paths:
       - 'dev/regression/**'
+      - 'tests/regression/**'
       - '.github/workflows/regression-environment.yml'
 permissions:
   contents: read
@@ -38,6 +40,8 @@ jobs:
         run: |
           ./dev/regression/lab.ps1 reset
           ./dev/regression/lab.ps1 verify
+      - name: Verify empty future browser runner
+        run: ./dev/regression/lab.ps1 browser-tests
       - name: Capture container state
         if: always()
         run: |

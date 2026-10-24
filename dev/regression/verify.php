@@ -16,4 +16,5 @@ passthru('vendor/bin/phpunit --configuration /harness/phpunit.xml --list-suites'
 passthru('vendor/bin/codecept --version',$result); if ($result) exit($result);
 chdir('/var/www/html/tests');
 passthru('../vendor/bin/codecept build', $result); if ($result) exit($result);
+passthru('../vendor/bin/codecept build --config /harness/codeception.yml', $result); if ($result) exit($result);
 echo "Infrastructure checks passed; browser login still checked separately.\n";
