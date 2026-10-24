@@ -58,6 +58,8 @@ pwsh -File dev/regression/lab.ps1 browser
 
 Dentro de cada contenedor, `cd /var/www/html/tests && ../vendor/bin/codecept build` genera actores. Se conservan `tests/codeception.yml`, `tests/acceptance.suite.yml` y `tests/install.suite.yml`. No ejecutar `composer test` indiscriminadamente: la suite install y el dump de acceptance pueden reemplazar datos y configuración. Para ejecutar acceptance existente, preparar primero una DB de suite separada y revisar el dump; **esa ejecución no forma parte del check automático nuevo**. `tests/config/environment.php` admite las variables `TEST_ENV=codeception` y la configuración sintética que ya genera el harness.
 
+`lab.ps1 phpunit` utiliza `/harness/phpunit.xml`, una configuración de PHPUnit 9.5 para la suite unitaria existente; se conserva intacto el XML antiguo del proyecto. Para ver el runner del navegador: `docker compose -f dev/regression/compose.yaml run --rm browser-master npx playwright test --help`. Los futuros casos compartidos deberán montarse en ambos contenedores desde un directorio de pruebas común; no modificar sólo uno de los snapshots ni comparar suites diferentes.
+
 Futuras ubicaciones (sin casos implementados):
 
 | Cobertura futura | Ubicación propuesta |
@@ -74,6 +76,8 @@ PhpBrowser hace peticiones HTTP pero **no ejecuta JavaScript**. No sirve para ve
 ## Datos sintéticos y diferencias
 
 `reset.php` importa únicamente DDL y metadatos permitidos de `gibbon.sql.gz`; no importa `gibbon_demo.sql.gz`, dumps privados ni tablas de personas. Crea dos cursos 2025-2026 y 2026-2027, un nivel Beginner, cinco roles de acceso y una baja, una familia vinculada, matrículas actual/pasada, asistencia de ejemplo y centros activo, vacío, cerrado y pasado. El administrador, profesor y personal tienen entradas de staff. Se valida que IDs 001/002/003/004/006 significan Administrator/Teacher/Student/Parent/Support Staff.
+
+Las exportaciones omiten todos los demás archivos SQL/comprimidos, CSV y XLSX, incluso los versionados, para no llevar posibles datos históricos al laboratorio. El dump heredado de Codeception tampoco se copia: se debe preparar uno exclusivamente sintético antes de ejecutar acceptance existente.
 
 `custom-fields.json` define los IDs exactos observados en el formulario: 0001, 0003–0016, 0023 y 0027–0033 (sólo los presentes en el archivo). Son definiciones sintéticas explícitas, no una afirmación sobre los IDs o catálogos de producción. 0006 también se utiliza para salario de familiares; 0023 para educación. Las opciones que la rama compara literalmente, como `Free seat`, se conservan. El cargador comprueba ID/nombre después de insertar. Los catálogos restantes deben revisarse al diseñar casos funcionales.
 

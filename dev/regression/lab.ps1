@@ -23,7 +23,10 @@ if ($Action -eq 'prepare') {
         $archive=Join-Path $runtimeRoot "$targetName.tar"
         Run 'git' @('-C',$repoRoot,'archive','--format=tar',"--output=$archive",$sha)
         New-Item -ItemType Directory $destination | Out-Null
-        Run 'tar' @('-xf',$archive,'-C',$destination,'--exclude=.vscode','--exclude=*/error_log','--exclude=error_log','--exclude=mysqltosheets','--exclude=backup_script.sh')
+        Run 'tar' @('-xf',$archive,'-C',$destination,'--exclude=.vscode','--exclude=*/error_log','--exclude=error_log','--exclude=mysqltosheets','--exclude=backup_script.sh','--exclude=*.sql*','--exclude=*.csv','--exclude=*.xlsx')
+        # Only the reviewed empty application schema/metadata is permitted, never exported data.
+        Run 'git' @('-C',$repoRoot,'archive','--format=tar',"--output=$archive",$sha,'gibbon.sql.gz')
+        Run 'tar' @('-xf',$archive,'-C',$destination)
         Remove-Item -LiteralPath $archive
         Copy-Item -LiteralPath (Join-Path $labRoot 'config.php') -Destination (Join-Path $destination 'config.php')
         foreach ($folder in @('var/sessions','var/tmp','uploads','resources/templates/cache','tests/log')) { New-Item -ItemType Directory -Force (Join-Path $destination $folder) | Out-Null }
@@ -65,7 +68,7 @@ switch ($Action) {
             Compose @('run','--rm',"browser-$targetName",'node','/harness/browser-check.cjs')
         }
     }
-    phpunit { foreach ($targetName in $targets) { Compose @('exec','-T','-w','/var/www/html/tests',$targetName,'../vendor/bin/phpunit','--configuration','phpunit.xml') } }
+    phpunit { foreach ($targetName in $targets) { Compose @('exec','-T','-w','/var/www/html/tests',$targetName,'../vendor/bin/phpunit','--configuration','/harness/phpunit.xml') } }
     codeception { foreach ($targetName in $targets) { Compose @('exec','-T','-w','/var/www/html/tests',$targetName,'../vendor/bin/codecept','--version') } }
     browser { foreach ($targetName in $targets) { Compose @('run','--rm',"browser-$targetName",'node','/harness/browser-check.cjs') } }
 }

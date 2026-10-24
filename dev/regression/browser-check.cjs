@@ -20,12 +20,19 @@ const { chromium } = require('/tools/node_modules/playwright');
       });
       const page = await context.newPage();
       const failures=[];
+      const errors=[];
+      page.on('pageerror', error => errors.push(error.message));
       page.on('response', r => { if (r.status() >= 400) failures.push(`${r.status()} ${r.url()}`); });
       const response=await page.goto(publicBase, {waitUntil:'networkidle'});
       if (!response || response.status()!==200) throw Error('Application HTTP failed');
       await page.locator('input[name="username"]').fill(username);
       await page.locator('input[name="password"]').fill('Sandbox-Only-2026!');
-      await Promise.all([page.waitForNavigation({waitUntil:'networkidle'}), page.locator('input[type="submit"],button[type="submit"]').first().click()]);
+      try {
+        await Promise.all([page.waitForNavigation({waitUntil:'networkidle'}), page.locator('#loginForm').locator('input[type="submit"],button[type="submit"]').click()]);
+      } catch (error) {
+        console.error(JSON.stringify({username,url:page.url(),errors,failures,body:(await page.locator('body').innerText()).slice(0,2000)}));
+        throw error;
+      }
       if (await page.locator('input[name="password"]').count()) throw Error(`Login not confirmed: ${username}`);
       if (failures.length) throw Error(`Resource failures: ${failures.join(', ')}`);
       console.log(`${username}: browser login/resource infrastructure check OK`);

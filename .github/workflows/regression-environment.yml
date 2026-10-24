@@ -39,6 +39,8 @@ jobs:
         run: |
           docker compose -f dev/regression/compose.yaml ps --all
           docker compose -f dev/regression/compose.yaml logs --no-color --tail=100
+          docker compose -f dev/regression/compose.yaml exec -T master php -r 'if (is_file("var/php-error.log")) echo file_get_contents("var/php-error.log");'
+          docker compose -f dev/regression/compose.yaml exec -T manjeet php -r 'if (is_file("var/php-error.log")) echo file_get_contents("var/php-error.log");'
       - name: Stop containers
         if: always()
         run: ./dev/regression/lab.ps1 stop
