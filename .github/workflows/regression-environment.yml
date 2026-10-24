@@ -34,6 +34,10 @@ jobs:
         run: ./dev/regression/lab.ps1 reset
       - name: Verify infrastructure, tools and synthetic logins
         run: ./dev/regression/lab.ps1 verify
+      - name: Reset after use and verify repeatability
+        run: |
+          ./dev/regression/lab.ps1 reset
+          ./dev/regression/lab.ps1 verify
       - name: Capture container state
         if: always()
         run: |

@@ -17,7 +17,7 @@ x-web: &web
       condition: service_healthy
   networks: [sandbox]
 x-db: &db
-  image: mysql:5.7.44
+  image: mysql:5.7.44@sha256:4bc6bc963e6d8443453676cae56536f4b8156d78bae03c0145cbe47c2aad73bb
   command: ["--sql-mode=NO_ENGINE_SUBSTITUTION", "--character-set-server=utf8", "--collation-server=utf8_general_ci"]
   environment:
     MYSQL_DATABASE: regression
@@ -63,19 +63,19 @@ services:
       db-manjeet: {condition: service_healthy}
     volumes: ["./.runtime/manjeet:/var/www/html", "./:/harness:ro"]
   gateway-master:
-    image: nginx:1.26.3-alpine
+    image: nginx:1.26.3-alpine@sha256:1eadbb07820339e8bbfed18c771691970baee292ec4ab2558f1453d26153e22d
     ports: ["127.0.0.1:8081:8081"]
     networks: [edge-master, master]
     depends_on: [master]
     volumes: ["./nginx-master.conf:/etc/nginx/conf.d/default.conf:ro"]
   gateway-manjeet:
-    image: nginx:1.26.3-alpine
+    image: nginx:1.26.3-alpine@sha256:1eadbb07820339e8bbfed18c771691970baee292ec4ab2558f1453d26153e22d
     ports: ["127.0.0.1:8082:8082"]
     networks: [edge-manjeet, manjeet]
     depends_on: [manjeet]
     volumes: ["./nginx-manjeet.conf:/etc/nginx/conf.d/default.conf:ro"]
   browser-master:
-    image: mcr.microsoft.com/playwright:v1.56.1-noble
+    image: mcr.microsoft.com/playwright:v1.56.1-noble@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a
     profiles: [tools]
     working_dir: /tools
     user: pwuser

@@ -1,5 +1,5 @@
-FROM composer:2.2.25 AS composer
-FROM php:7.4.33-apache-bullseye
+FROM composer:2.2.25@sha256:be23a9c3f73293f966a981be03896f9aaaade6c2cc9415f4cf828d1f39c5005c AS composer
+FROM php:7.4.33-apache-bullseye@sha256:c9d7e608f73832673479770d66aacc8100011ec751d1905ff63fae3fe2e0ca6d
 RUN rm -f /etc/apt/sources.list.d/* \
     && printf 'deb [check-valid-until=no] https://snapshot.debian.org/archive/debian/20240601T000000Z bullseye main\ndeb [check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20240601T000000Z bullseye-security main\n' > /etc/apt/sources.list \
     && apt-get -o Acquire::Retries=3 update && apt-get install -y --no-install-recommends \

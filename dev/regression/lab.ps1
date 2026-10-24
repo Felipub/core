@@ -45,8 +45,8 @@ if ($Action -eq 'install') {
     }
     New-Item -ItemType Directory -Force (Join-Path $runtimeRoot 'tools') | Out-Null
     Copy-Item (Join-Path $labRoot 'package*.json') (Join-Path $runtimeRoot 'tools')
-    Run 'docker' @('run','--rm','-v',"${runtimeRoot}/tools:/tools",'-w','/tools','mcr.microsoft.com/playwright:v1.56.1-noble','npm','ci','--ignore-scripts')
-    Run 'docker' @('run','--rm','--network','none','-v',"${runtimeRoot}/tools:/tools",'mcr.microsoft.com/playwright:v1.56.1-noble','chmod','-R','a+rwX','/tools')
+    Run 'docker' @('run','--rm','-v',"${runtimeRoot}/tools:/tools",'-w','/tools',$refs.images.playwright,'npm','ci','--ignore-scripts')
+    Run 'docker' @('run','--rm','--network','none','-v',"${runtimeRoot}/tools:/tools",$refs.images.playwright,'chmod','-R','a+rwX','/tools')
     exit
 }
 switch ($Action) {
@@ -65,6 +65,16 @@ switch ($Action) {
     verify {
         $baselineManifest=$null
         foreach ($targetName in $targets) {
+            $privateNetwork="core-regression_$targetName"
+            $isInternal=(Run 'docker' @('network','inspect',$privateNetwork,'--format','{{.Internal}}')) -join ''
+            if ($isInternal -ne 'true') { throw "Network is not internal: $privateNetwork" }
+            $appId=(Compose @('ps','-q',$targetName)) -join ''
+            $appNetworks=(Run 'docker' @('inspect','--format','{{json .NetworkSettings.Networks}}',$appId)) | ConvertFrom-Json
+            $networkNames=@($appNetworks.PSObject.Properties.Name)
+            if ($networkNames.Count -ne 1 -or $networkNames[0] -ne $privateNetwork) { throw "Unexpected application network: $targetName" }
+            $dbId=(Compose @('ps','-q',"db-$targetName")) -join ''
+            $bindings=(Run 'docker' @('inspect','--format','{{json .HostConfig.PortBindings}}',$dbId)) -join ''
+            if ($bindings -notin @('null','{}')) { throw "Database ports published: $targetName" }
             $port=if ($targetName -eq 'master') {8081} else {8082}
             $response=$null
             foreach ($attempt in 1..15) {
