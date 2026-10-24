@@ -4,7 +4,7 @@ Fecha de preparación: 24-10-2026 (Europe/Madrid).
 
 - Consulta `git ls-remote` autenticada: ambos commits en `refs.json` confirmados.
 - Checkout nuevo `C:\GyansetuApp\core-test-environment`, rama `dev/isolated-regression-environment`; instalaciones anteriores preservadas.
-- Se leyó `.github/CONTRIBUTING.md`; no hay AGENTS.md versionado. Se aplica la instrucción expresa del usuario de dirigir la PR a master frente a la recomendación genérica upstream de development.
+- Se leyeron README.md, `.github/CONTRIBUTING.md` y el registro del baseline; no hay AGENTS.md versionado. El README de SHEF y la instrucción expresa del usuario establecen master como destino, frente a la recomendación genérica upstream de development.
 - `composer.json`, lock, esquema comprimido, tests y workflows son idénticos entre los commits de referencia.
 - Parser PowerShell: sin errores; `node --check browser-check.cjs`: correcto.
 - `prepare`: correcto para ambos snapshots; no se sobrescribió trabajo existente.
@@ -16,7 +16,9 @@ Fecha de preparación: 24-10-2026 (Europe/Madrid).
 - CI `40107412820`: mismos checks básicos correctos; Chromium arrancó y recibió HTTP 200, pero el acceso de admin no se completó. Diagnóstico: LiveValidation, jQuery y gibbonFormSubmitted no cargados durante la configuración con reescritura de orígenes. Se sustituye esa configuración por loopback compartido con la aplicación, sin tocar funcionalidades.
 - CI `40107814186` (`8b2fb840f`): build y reset correctos; el nuevo check HTTP del host detectó `Connection refused`. Docker no publicaba los puertos de la red interna. Se añaden gateways nginx de destino fijo sin habilitar salida externa a las aplicaciones. Ese intento no llegó a equivalencia de datos ni navegador.
 - CI `40108214648` (`6d44a42d4`): **correcto**. Build e instalación completos, arranque, reset de ambas DB, HTTP del anfitrión mediante gateways, hashes equivalentes de datos/esquema, DB Testing, cookies separadas y directorios escribibles correctos. En ambas versiones: `composer check-platform-reqs`, `phpunit --version`, `phpunit --configuration /harness/phpunit.xml --list-suites`, `codecept --version` y `codecept build` correctos. Chromium: admin, teacher, staff, student y parent con login y recursos correctos (10 accesos). Contenedores detenidos al terminar. Resultado: https://github.com/Felipub/core/actions/runs/40108214648.
-- **Comprobación final pendiente:** repetir el reset después de los accesos y validar la revisión que fija digests inmutables y comprueba las redes/puertos de los contenedores en ejecución.
+- CI `40108746090` (`dccd5142b`): **correcto**, incluidas las imágenes fijadas por digest, redes internas exclusivas de PHP, ausencia de puertos MySQL publicados y reset después de los accesos. Tras reset se volvieron a comprobar datos equivalentes, herramientas y diez accesos. Resultado: https://github.com/Felipub/core/actions/runs/40108746090.
+- CI `40109029414` (`d3b92ede1`): el nuevo config de Codeception falló por concatenar sus rutas absolutas con `/harness`. Es un fallo de configuración de herramientas; se cambia a rutas relativas al config, conforme al comportamiento de Codeception 4.1.14. Las imágenes, reset y comprobaciones previas de infraestructura continuaron correctas.
+- **Comprobación final pendiente:** verificar las configuraciones/directorios compartidos vacíos tras corregir esas rutas.
 - Suites funcionales existentes ejecutadas: ninguna. Suite unitaria existente ejecutada: ninguna. No hay veredicto funcional de la rama.
 - Producción, clasp, Supabase, FTP y mysqltosheets reales: no conectados ni modificados.
 
