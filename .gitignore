@@ -56,3 +56,81 @@ error_log
 core_gyansetu_bak_2022-05-17.zip
 dist/GibbonEduCore-InstallBundle.tar.gz
 shefng1z_gibb752_2022-05-17.sql
+
+
+
+@@ -1,76 +1,59 @@
+# ignore all modules
+*
+# whitelist .gitignore file
+!.gitignore
+# whitelist all core modules
+!/Activities
+!/Activities/**
+!/Attendance
+!/Attendance/**
+!/Behaviour
+!/Behaviour/**
+!/Crowd Assessment
+!/Crowd Assessment/**
+!/Data Updater
+!/Data Updater/**
+!/Departments
+!/Departments/**
+!/Finance
+!/Finance/**
+!/Formal Assessment
+!/Formal Assessment/**
+!/Individual Needs
+!/Individual Needs/**
+!/Library
+!/Library/**
+!/Markbook
+!/Markbook/**
+!/Messenger
+!/Messenger/**
+!/Planner
+!/Planner/**
+!/Reports
+!/Reports/**
+!/Roll Groups
+!/Roll Groups/**
+!/Rubrics
+!/Rubrics/**
+!/School Admin
+!/School Admin/**
+!/Staff
+!/Staff/**
+!/Students
+!/Students/**
+!/System Admin
+!/System Admin/**
+!/Timetable
+!/Timetable/**
+!/Timetable Admin
+!/Timetable Admin/**
+!/Tracking
+!/Tracking/**
+!/User Admin
+!/User Admin/**
+
+# deployed custom modules
+!/Data Admin
+!/Data Admin/**
+!/Reporting
+!/Reporting/**
+!/Query Builder
+!/Query Builder/**
+
+# black list some files and folders
+# in the module folders
+**/.DS_Store
+
+# Runtime logs must stay local even in whitelisted core modules.
+**/error_log
+**/*.log
+
+# Dependency trees and editor/server artifacts
+**/vendor/
+**/_notes/
+**/logfile.txt
