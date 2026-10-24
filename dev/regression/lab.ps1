@@ -63,7 +63,13 @@ switch ($Action) {
         }
     }
     verify {
+        $baselineManifest=$null
         foreach ($targetName in $targets) {
+            $port=if ($targetName -eq 'master') {8081} else {8082}
+            $response=Invoke-WebRequest -Uri "http://127.0.0.1:$port/" -UseBasicParsing -TimeoutSec 30
+            if ($response.StatusCode -ne 200) { throw "Host HTTP failed: $targetName" }
+            $manifest=(Compose @('exec','-T',$targetName,'php','/harness/fixture-manifest.php')) -join "`n"
+            if ($null -eq $baselineManifest) { $baselineManifest=$manifest } elseif ($baselineManifest -ne $manifest) { throw 'Fixture/schema mismatch between branches. Reset both before verifying.' }
             Compose @('exec','-T',$targetName,'php','/harness/verify.php')
             Compose @('run','--rm',"browser-$targetName",'node','/harness/browser-check.cjs')
         }

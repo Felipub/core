@@ -70,14 +70,14 @@ services:
     ipc: private
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
-    environment: {BASE_URL: "http://master:8081"}
-    networks: [master]
+    environment: {BASE_URL: "http://127.0.0.1:8081"}
+    network_mode: service:master
     volumes: ["./.runtime/tools:/tools", "./:/harness:ro"]
     command: ["node", "-e", "console.log('Playwright ready; no functional tests defined')"]
   browser-manjeet:
     extends: browser-master
-    environment: {BASE_URL: "http://manjeet:8082"}
-    networks: !override [manjeet]
+    environment: {BASE_URL: "http://127.0.0.1:8082"}
+    network_mode: service:manjeet
 networks:
   sandbox: {internal: true}
   master: {internal: true}

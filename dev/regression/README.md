@@ -15,7 +15,7 @@ No se siguen ramas móviles durante la preparación. Para otra comparación, rev
 
 ## Requisitos y elección
 
-Docker Engine/Desktop con contenedores Linux, Compose >=2.24.4 (por `!override`), Git, tar y PowerShell >=5.1 (PowerShell 7 en Linux). Internet se necesita para clonar, construir y descargar dependencias; la aplicación ejecutada queda en redes internas. No hacen falta PHP, Composer ni Node locales.
+Docker Engine/Desktop con contenedores Linux, Compose >=2.24.4, Git, tar y PowerShell >=5.1 (PowerShell 7 en Linux). Internet se necesita para clonar, construir y descargar dependencias; la aplicación ejecutada queda en redes internas. No hacen falta PHP, Composer ni Node locales.
 
 Se eligen PHP 7.4.33, Composer 2.2.25 y MySQL 5.7.44: `composer.json` exige `^7.3`, la plataforma Composer es 7.3 y CI ya contemplaba PHP 7.4 y MySQL 5.7. No se cambia `composer.lock` ni se hace `composer update`. Las herramientas bloqueadas son PHPUnit 9.5.1 y Codeception 4.1.14, con PhpBrowser 1.0.2. Se añaden Playwright 1.56.1, su lock independiente y la imagen correspondiente con Chromium real. PHP 8 no satisface el requisito PHP raíz.
 
@@ -84,6 +84,8 @@ Las exportaciones omiten todos los demás archivos SQL/comprimidos, CSV y XLSX, 
 No hay diferencias entre los commits fijados en `composer.json`, `composer.lock`, `gibbon.sql.gz`, tests o `.github`. No se añade migración de esquema. La rama usa el sufijo `Closed` y `attendance=N` para centros cerrados; se reproduce esa representación en ambas DB, sin añadir columnas ni corregir el código. El comportamiento Passed Out se verificará después con sus propios casos.
 
 El servidor de laboratorio ignora los `.htaccess` de cPanel en ambas copias (`AllowOverride None`), porque incluyen un handler `ea-php74` y sesiones en `/var/cpanel/...` inexistentes en Docker. Se conserva el código exportado, se fija la sesión en `var/sessions` y se reproduce en Apache el bloqueo de ejecutables en uploads. Ésta es una diferencia de configuración explícita y común a ambas versiones.
+
+Chromium comparte el espacio de red aislado de su aplicación, de modo que usa las mismas URLs de loopback sin reescribir orígenes, cookies ni formularios. `verify` debe ejecutarse tras `reset`: compara hashes de los datos y del esquema de las tablas de fixtures antes de los accesos. Si se han editado datos desde la UI, reiniciarlos para volver a comparar.
 
 ## Aislamiento y servicios
 

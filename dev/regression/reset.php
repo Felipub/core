@@ -50,7 +50,7 @@ foreach ([1=>['admin',1],2=>['teacher',2],3=>['staff',6],4=>['student',3],5=>['p
     insertRow($pdo,'gibbonPerson',['gibbonPersonID'=>$id,'username'=>$person[0], 'firstName'=>ucfirst($person[0]),'preferredName'=>ucfirst($person[0]),'surname'=>'Synthetic','officialName'=>ucfirst($person[0]).' Synthetic','passwordStrongSalt'=>$salt,'passwordStrong'=>hash('sha256',$salt.'Sandbox-Only-2026!'),'status'=>$id===6?'Left':'Full','canLogin'=>$id===6?'N':'Y','gibbonRoleIDPrimary'=>$person[1],'gibbonRoleIDAll'=>str_pad($person[1],3,'0',STR_PAD_LEFT),'email'=>$person[0].'@example.invalid','dob'=>$person[1]===3?'2015-01-15':'1985-01-15','dateStart'=>'2025-04-01','dateEnd'=>$id===6?'2026-06-30':null,'receiveNotificationEmails'=>'N','fields'=>'{}']);
     if (in_array($id,[1,2,3])) insertRow($pdo,'gibbonStaff',['gibbonPersonID'=>$id,'type'=>$id===3?'Support':'Teaching']);
 }
-foreach ([1=>['Open Active','Y'],2=>['Open Empty','Y'],3=>['Example Closed','N'],4=>['Past Centre','N']] as $id=>$centre) {
+foreach ([1=>['Open Active','Y'],2=>['Open Empty','Y'],3=>['Example Closed','N'],4=>['Past Centre','N'],5=>['Other Closed','N']] as $id=>$centre) {
     insertRow($pdo,'gibbonFormGroup',['gibbonFormGroupID'=>$id,'gibbonSchoolYearID'=>$id===4?1:2,'name'=>$centre[0],'nameShort'=>'C'.$id,'attendance'=>$centre[1],'gibbonPersonIDTutor'=>2]);
 }
 foreach ([[4,2,1],[6,2,3],[4,1,4]] as $enrolment) insertRow($pdo,'gibbonStudentEnrolment',['gibbonPersonID'=>$enrolment[0],'gibbonSchoolYearID'=>$enrolment[1],'gibbonYearGroupID'=>1,'gibbonFormGroupID'=>$enrolment[2]]);

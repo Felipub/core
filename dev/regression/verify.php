@@ -11,6 +11,7 @@ foreach (['admin','teacher','staff','student','parent'] as $username) {
 }
 passthru('composer check-platform-reqs', $result); if ($result) exit($result);
 passthru('vendor/bin/phpunit --version',$result); if ($result) exit($result);
+passthru('vendor/bin/phpunit --configuration /harness/phpunit.xml --list-suites',$result); if ($result) exit($result);
 passthru('vendor/bin/codecept --version',$result); if ($result) exit($result);
 chdir('/var/www/html/tests');
 passthru('../vendor/bin/codecept build', $result); if ($result) exit($result);
