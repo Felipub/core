@@ -10,5 +10,5 @@ foreach (['uploads','var','resources/templates/cache','tests/log'] as $relative)
         else unlink($file->getPathname());
     }
 }
-foreach (['var/sessions','var/tmp'] as $dir) { mkdir('/var/www/html/'.$dir,0770,true); chown('/var/www/html/'.$dir,33); chgrp('/var/www/html/'.$dir,33); }
+foreach (['var/sessions','var/tmp'] as $dir) { mkdir('/var/www/html/'.$dir,0770,true); }
 echo "Sandbox storage cleared\n";

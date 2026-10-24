@@ -53,7 +53,7 @@ switch ($Action) {
     reset {
         foreach ($targetName in $targets) {
             Compose @('stop',$targetName)
-            Compose @('run','--rm','--no-deps','--user','root',$targetName,'php','/harness/reset-storage.php')
+            Compose @('run','--rm','--no-deps',$targetName,'php','/harness/reset-storage.php')
             Compose @('up','-d',"db-$targetName")
             Compose @('run','--rm',$targetName,'php','/harness/reset.php')
             Compose @('up','-d',$targetName)

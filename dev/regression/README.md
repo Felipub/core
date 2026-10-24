@@ -79,6 +79,8 @@ PhpBrowser hace peticiones HTTP pero **no ejecuta JavaScript**. No sirve para ve
 
 No hay diferencias entre los commits fijados en `composer.json`, `composer.lock`, `gibbon.sql.gz`, tests o `.github`. No se añade migración de esquema. La rama usa el sufijo `Closed` y `attendance=N` para centros cerrados; se reproduce esa representación en ambas DB, sin añadir columnas ni corregir el código. El comportamiento Passed Out se verificará después con sus propios casos.
 
+El servidor de laboratorio ignora los `.htaccess` de cPanel en ambas copias (`AllowOverride None`), porque incluyen un handler `ea-php74` y sesiones en `/var/cpanel/...` inexistentes en Docker. Se conserva el código exportado, se fija la sesión en `var/sessions` y se reproduce en Apache el bloqueo de ejecutables en uploads. Ésta es una diferencia de configuración explícita y común a ambas versiones.
+
 ## Aislamiento y servicios
 
 Cada versión tiene red interna, volumen MySQL y árbol de archivos propios: fotos/adjuntos en uploads, sesiones, temporales y logs en var, caché de plantillas y logs de tests. Sólo se publican los dos puertos web en loopback. No se monta una configuración de conexión real. PHP mail usa `/bin/false`; SMTP, SMS, OAuth y claves se vacían en la DB. **No se envía correo**, tampoco se configura un capturador que pudiera reenviarlo. Los contactos usan example.invalid.

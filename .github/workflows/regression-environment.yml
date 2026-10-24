@@ -1,6 +1,11 @@
 name: Isolated regression environment
 on:
   workflow_dispatch:
+  push:
+    branches: ['dev/isolated-regression-environment-*']
+    paths:
+      - 'dev/regression/**'
+      - '.github/workflows/regression-environment.yml'
   pull_request:
     paths:
       - 'dev/regression/**'
