@@ -19,6 +19,8 @@ Docker Engine/Desktop con contenedores Linux, Compose >=2.24.4, Git, tar y Power
 
 Se eligen PHP 7.4.33, Composer 2.2.25 y MySQL 5.7.44: `composer.json` exige `^7.3`, la plataforma Composer es 7.3 y CI ya contemplaba PHP 7.4 y MySQL 5.7. No se cambia `composer.lock` ni se hace `composer update`. Las herramientas bloqueadas son PHPUnit 9.5.1 y Codeception 4.1.14, con PhpBrowser 1.0.2. Se añaden Playwright 1.56.1, su lock independiente y la imagen correspondiente con Chromium real. PHP 8 no satisface el requisito PHP raíz.
 
+MySQL usa explícitamente `SQL_MODE=NO_ENGINE_SUBSTITUTION` para el esquema heredado. Es común a las dos versiones; no se ha consultado ni se presupone el modo SQL de producción. Una futura comparación con modo estricto debe habilitarlo deliberadamente en ambas DB y revisar los fixtures.
+
 El Dockerfile incluye curl, mbstring, gettext, PDO/MySQL, mysqli, GD/JPEG/Freetype, zip, intl, SOAP, bcmath, y las extensiones XML, JSON, fileinfo y OpenSSL del PHP base. `composer check-platform-reqs` valida la instalación real; su resultado prevalece sobre esta inspección. Debian se fija al snapshot 20240601T000000Z para evitar repositorios retirados; PHP, Composer, MySQL, nginx y Playwright se fijan por versión y digest inmutable. Estas versiones antiguas se limitan a este laboratorio. La plataforma verificada es Linux amd64; otras arquitecturas necesitan una comprobación adicional.
 
 La CI existente usa ubuntu-20.04, acciones v2, una matriz 7.3/7.4/8.0/8.1 y un PHPUnit XML con opciones antiguas. Puede fallar por plataforma/acciones o configuración; no se moderniza como parte de este cambio. El workflow nuevo verifica solamente la infraestructura aislada.
@@ -71,7 +73,7 @@ pwsh -File dev/regression/lab.ps1 codeception-tests
 
 Dentro de cada contenedor, `cd /var/www/html/tests && ../vendor/bin/codecept build` genera actores. Se conservan `tests/codeception.yml`, `tests/acceptance.suite.yml` y `tests/install.suite.yml`. No ejecutar `composer test` indiscriminadamente: la suite install y el dump de acceptance pueden reemplazar datos y configuración. Para ejecutar acceptance existente, preparar primero una DB de suite separada y revisar el dump; **esa ejecución no forma parte del check automático nuevo**. `tests/config/environment.php` admite las variables `TEST_ENV=codeception` y la configuración sintética que ya genera el harness.
 
-`lab.ps1 phpunit` utiliza `/harness/phpunit.xml`, una configuración de PHPUnit 9.5 para la suite unitaria existente y el directorio común `tests/regression/unit`; se conserva intacto el XML antiguo del proyecto. `browser-tests` usa `playwright.config.cjs` y `tests/regression/browser`; `codeception-tests` usa el config separado del harness y `tests/regression/codeception/acceptance.suite.yml`, sin importar dumps ni limpiar datos de forma implícita. Los tres directorios comunes están montados para ambas versiones: basta añadir casos en ellos, sin regenerar snapshots. `prepare` añade únicamente el actor de soporte `RegressionTester.php` a cada snapshot y `verify` genera sus métodos. No hay casos funcionales nuevos.
+`lab.ps1 phpunit` utiliza `/harness/phpunit.xml`, una configuración de PHPUnit 9.5 para la suite unitaria existente y el directorio común `tests/regression/unit`; se conserva intacto el XML antiguo del proyecto. `browser-tests` usa `playwright.config.cjs` y `tests/regression/browser`; `codeception-tests` usa el config separado del harness y `tests/regression/codeception/acceptance.suite.yml`, con los casos en su subdirectorio `acceptance`, sin importar dumps ni limpiar datos de forma implícita. Los tres directorios comunes están montados para ambas versiones: basta añadir casos en ellos, sin regenerar snapshots. `prepare` añade únicamente el actor de soporte `RegressionTester.php` a cada snapshot y `verify` genera sus métodos. No hay casos funcionales nuevos. CI reinicia explícitamente los datos antes de cada runner para no heredar los cambios de los accesos de infraestructura ni del otro runner.
 
 Playwright guarda resultados separados en `.runtime/tools/results/master` y `manjeet`. El runner vacío sale correctamente con `--pass-with-no-tests`; no representa ninguna prueba funcional pasada. Reiniciar los datos antes de comparar ejecuciones de futuros casos. Para ver opciones del navegador: `docker compose -f dev/regression/compose.yaml run --rm browser-master npx playwright test --help`.
 
@@ -80,10 +82,10 @@ Futuras ubicaciones (sin casos implementados):
 | Cobertura futura | Ubicación propuesta |
 |---|---|
 | Admisiones, fotos, vista previa y subida con JavaScript | `tests/regression/browser/admissions/` |
-| Permisos por rol | `tests/regression/browser/roles/`, `tests/regression/codeception/roles/` |
+| Permisos por rol | `tests/regression/browser/roles/`, `tests/regression/codeception/acceptance/roles/` |
 | Passed Out y cierre de centros | `tests/regression/browser/students/`, `tests/regression/browser/centres/` |
 | Dashboard | `tests/regression/browser/dashboard/` |
-| Matrícula, asistencia e informes | `tests/regression/codeception/students/`, `attendance/`, `reports/` y `tests/regression/browser/regressions/` |
+| Matrícula, asistencia e informes | `tests/regression/codeception/acceptance/students/`, `attendance/`, `reports/` y `tests/regression/browser/regressions/` |
 | Lógica sin navegador | `tests/regression/unit/` (suite heredada: `tests/unit/`) |
 
 PhpBrowser hace peticiones HTTP pero **no ejecuta JavaScript**. No sirve para verificar el preview de fotos, campos condicionales, eventos de navegador o dashboard dinámico. Playwright está separado del Codeception heredado para evitar cambios de dependencias PHP. El archivo `browser-check.cjs` es sólo un check de instalación; no contiene assertions de funcionalidades de Manjeet.
@@ -97,6 +99,8 @@ Las exportaciones omiten todos los demás archivos SQL/comprimidos, CSV y XLSX, 
 `custom-fields.json` define los IDs exactos observados en el formulario: 0001, 0003–0016, 0023 y 0027–0033 (sólo los presentes en el archivo). Son definiciones sintéticas explícitas, no una afirmación sobre los IDs o catálogos de producción. 0006 también se utiliza para salario de familiares; 0023 para educación. Las opciones que la rama compara literalmente, como `Free seat`, se conservan. El cargador comprueba ID/nombre después de insertar. Los catálogos restantes deben revisarse al diseñar casos funcionales.
 
 No hay diferencias entre los commits fijados en `composer.json`, `composer.lock`, `gibbon.sql.gz`, tests o `.github`. No se añade migración de esquema. La rama usa el sufijo `Closed` y `attendance=N` para centros cerrados; se reproduce esa representación en ambas DB, sin añadir columnas ni corregir el código. El comportamiento Passed Out se verificará después con sus propios casos.
+
+Los fixtures utilizan el tema Default del esquema base en ambas versiones. El código del tema Gyansetu se conserva, pero su activación y las comprobaciones específicas de ese tema no forman parte de esta configuración mínima. No se ha copiado la configuración visual privada del servidor.
 
 El servidor de laboratorio ignora los `.htaccess` de cPanel en ambas copias (`AllowOverride None`), porque incluyen un handler `ea-php74` y sesiones en `/var/cpanel/...` inexistentes en Docker. Se conserva el código exportado, se fija la sesión en `var/sessions` y se reproduce en Apache el bloqueo de ejecutables en uploads. Ésta es una diferencia de configuración explícita y común a ambas versiones.
 

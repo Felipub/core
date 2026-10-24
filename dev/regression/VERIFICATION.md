@@ -19,7 +19,8 @@ Fecha de preparación: 24-10-2026 (Europe/Madrid).
 - CI `40108746090` (`dccd5142b`): **correcto**, incluidas las imágenes fijadas por digest, redes internas exclusivas de PHP, ausencia de puertos MySQL publicados y reset después de los accesos. Tras reset se volvieron a comprobar datos equivalentes, herramientas y diez accesos. Resultado: https://github.com/Felipub/core/actions/runs/40108746090.
 - CI `40109029414` (`d3b92ede1`): el nuevo config de Codeception falló por concatenar sus rutas absolutas con `/harness`. Es un fallo de configuración de herramientas; se cambia a rutas relativas al config, conforme al comportamiento de Codeception 4.1.14. Las imágenes, reset y comprobaciones previas de infraestructura continuaron correctas.
 - CI `40109418128` (`fa9467459`): **correcto**. Generación del actor compartido, dos configuraciones PHPUnit, directorios montados, runner vacío de Playwright en las dos versiones, y repetición completa de reset/verificación correctos. No se ejecutaron casos funcionales. Resultado: https://github.com/Felipub/core/actions/runs/40109418128.
-- **Comprobación final pendiente:** verificar los límites PHP trasladados del cPanel público y el comando de ejecución de la suite Codeception vacía.
+- CI `40109843417` (`6c70c4f34`): límites PHP, infraestructura, reset después del uso, veinte accesos y runner vacío de Playwright correctos. La ejecución vacía de Codeception detectó que faltaba su subdirectorio convencional `acceptance/`; se añade sin casos funcionales. No fue un fallo de aplicación.
+- **Comprobación final pendiente:** ejecutar la suite vacía de Codeception con ese directorio y repetir el pipeline final.
 - Suites funcionales existentes ejecutadas: ninguna. Suite unitaria existente ejecutada: ninguna. No hay veredicto funcional de la rama.
 - Producción, clasp, Supabase, FTP y mysqltosheets reales: no conectados ni modificados.
 
