@@ -1,0 +1,68 @@
+# Gyansetu backups
+
+`backup_script.sh` is the credential-free source for the production backup job.
+The live root `backup_script.sh` remains ignored by Git. Deployment preserves its
+five-line private header, then appends this source without its shebang. Do not
+commit the deployed file or private header.
+
+SQL files are written through gzip into a private temporary file, checked, and
+renamed into place. Source ZIPs are also built and checked before replacement.
+Failures stop the job before retention cleanup. A lock prevents overlapping runs.
+The database export options otherwise retain the existing mysqldump behavior.
+
+Retention applies to the configured database's `.sql` and `.sql.gz` files and
+the configured source prefix's `.zip` files:
+
+- Keep every current-month copy.
+- Keep days 04, 08, 12, 16, 20, 24 and 28 of the previous month.
+- Keep day 28 of all older months without an age limit.
+- Ignore unrelated filenames and malformed dates.
+
+January correctly treats December of the previous year as the previous month.
+Existing SQL files are not recompressed or deleted merely because a gzip version
+exists. No historical recovery or off-server replication is included.
+
+Configuration: `BACKUPS_PATH`, `SQL_PREFIX` (database), `SQL_USER` (defaults to
+the database name), `SQL_PASSWD`, `ZIP_PREFIX`, `SOURCE_PATH`. `MYSQLDUMP_BIN` and
+`ZIP_BIN` allow isolated failure tests. Output directory must already exist.
+Requires GNU bash/date, gzip, zip/unzip, flock, mktemp and mysqldump.
+
+## Local validation
+
+The test image extends the already available local PHP image; it creates no
+connections to the running regression containers or the hosting account.
+
+```powershell
+docker build -t gyansetu-backup-check:local -f ops/Dockerfile.test ops
+docker run --rm --network none --cpus 1 --memory 256m --mount "type=bind,source=$($PWD.Path)\ops,target=/checks,readonly" gyansetu-backup-check:local
+```
+
+Seven scenarios cover gzip round-trip, real ZIP creation, all retention tiers
+for SQL/gzip/ZIP, the year boundary, failed exports, failed ZIP creation,
+temporary cleanup, preservation of existing backups on failure, and locking.
+Database exports in these local tests use a fixture; no live database is read.
+
+## Deployment record — 2026-10-24
+
+- Branch based on verified `Felipub/core` master `de2a6cb79`.
+- Isolated local tests: seven scenarios passed. Exact deployment file passed
+  `bash -n` locally before upload.
+- The initial hosting dev experiment was interrupted at the user's request;
+  its SQL export had completed, but the full source ZIP test did not complete.
+  No test processes remained. Private artifacts are in
+  `/home1/shefng1z/backup_gzip_dev_20261024`; they are not an active scheduled job.
+- Uploaded only the live script through FTP; downloaded it again and verified
+  exact byte equality. Live permissions restored to 0744.
+- Production syntax check passed. Its credential-free body SHA-256 matches
+  `80bbe3ee62b1c30ecab10c27b92d14751c265e87f48ebf7858f291a1bca27d04`.
+- Cron unchanged: `24 3 * * *` in server time (India, UTC+05:30).
+- No manual full production backup was run, per the user's revised scope.
+  First scheduled execution and end-to-end restore remain unverified.
+- Existing regression containers and checkout were not modified. No Apps Script,
+  Supabase, application deployment, or database changes are involved.
+
+Rollback: the exact prior production script is held privately at
+`C:\GyansetuApp\.backup-gzip-work\original-production.sh`. Restore it via FTP
+using the private helper `ftp-transfer.ps1 -Action rollback`, retaining mode 0744.
+This reverts code only; gzip files already created remain valid and preserved,
+but the old script does not apply retention to `.sql.gz` files.
