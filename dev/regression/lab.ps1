@@ -37,7 +37,7 @@ if ($Action -eq 'prepare') {
 }
 if ($Action -eq 'install') {
     Compose @('build','master')
-    Compose @('pull','db-master','db-manjeet','browser-master','browser-manjeet')
+    Compose @('pull','db-master','db-manjeet','browser-master','browser-manjeet','gateway-master','gateway-manjeet')
     foreach ($targetName in $targets) {
         # Dependency download is a separate networked job. No application scripts, no private config.
         Run 'docker' @('run','--rm','--entrypoint','composer','-e','COMPOSER_ALLOW_SUPERUSER=1','-v',"${runtimeRoot}/${targetName}:/var/www/html",'core-regression-php:7.4.33','install','--no-interaction','--prefer-dist','--no-scripts','--no-plugins')
@@ -50,7 +50,7 @@ if ($Action -eq 'install') {
     exit
 }
 switch ($Action) {
-    start { Compose (@('up','-d')+$targets) }
+    start { Compose (@('up','-d')+@($targets|ForEach-Object {"gateway-$_"})) }
     stop { Compose @('down') } # Volumes retained. Never use down -v for ordinary stop.
     status { Compose @('ps') }
     reset {
@@ -59,14 +59,18 @@ switch ($Action) {
             Compose @('run','--rm','--no-deps',$targetName,'php','/harness/reset-storage.php')
             Compose @('up','-d',"db-$targetName")
             Compose @('run','--rm',$targetName,'php','/harness/reset.php')
-            Compose @('up','-d',$targetName)
+            Compose @('up','-d',$targetName,"gateway-$targetName")
         }
     }
     verify {
         $baselineManifest=$null
         foreach ($targetName in $targets) {
             $port=if ($targetName -eq 'master') {8081} else {8082}
-            $response=Invoke-WebRequest -Uri "http://127.0.0.1:$port/" -UseBasicParsing -TimeoutSec 30
+            $response=$null
+            foreach ($attempt in 1..15) {
+                try { $response=Invoke-WebRequest -Uri "http://127.0.0.1:$port/" -UseBasicParsing -TimeoutSec 10; break }
+                catch { if ($attempt -eq 15) { throw }; Start-Sleep -Seconds 1 }
+            }
             if ($response.StatusCode -ne 200) { throw "Host HTTP failed: $targetName" }
             $manifest=(Compose @('exec','-T',$targetName,'php','/harness/fixture-manifest.php')) -join "`n"
             if ($null -eq $baselineManifest) { $baselineManifest=$manifest } elseif ($baselineManifest -ne $manifest) { throw 'Fixture/schema mismatch between branches. Reset both before verifying.' }
