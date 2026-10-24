@@ -3,8 +3,8 @@
 const { chromium } = require('/tools/node_modules/playwright');
 (async () => {
   const base = process.env.BASE_URL;
-  if (!['http://master','http://manjeet'].includes(base)) throw Error('Sandbox only');
-  const publicBase = base === 'http://master' ? 'http://127.0.0.1:8081' : 'http://127.0.0.1:8082';
+  if (!['http://master:8081','http://manjeet:8082'].includes(base)) throw Error('Sandbox only');
+  const publicBase = base === 'http://master:8081' ? 'http://127.0.0.1:8081' : 'http://127.0.0.1:8082';
   const browser = await chromium.launch({ headless: true });
   try {
     for (const username of ['admin','teacher','staff','student','parent']) {

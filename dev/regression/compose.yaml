@@ -44,7 +44,7 @@ services:
     volumes: ["db-manjeet:/var/lib/mysql"]
   master:
     <<: *web
-    ports: ["127.0.0.1:8081:80"]
+    ports: ["127.0.0.1:8081:8081"]
     environment:
       <<: *environment
       ABSOLUTE_URL: http://127.0.0.1:8081
@@ -54,7 +54,7 @@ services:
     volumes: ["./.runtime/master:/var/www/html", "./:/harness:ro"]
   manjeet:
     <<: *web
-    ports: ["127.0.0.1:8082:80"]
+    ports: ["127.0.0.1:8082:8082"]
     environment:
       <<: *environment
       ABSOLUTE_URL: http://127.0.0.1:8082
@@ -70,13 +70,13 @@ services:
     ipc: private
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
-    environment: {BASE_URL: "http://master"}
+    environment: {BASE_URL: "http://master:8081"}
     networks: [master]
     volumes: ["./.runtime/tools:/tools", "./:/harness:ro"]
     command: ["node", "-e", "console.log('Playwright ready; no functional tests defined')"]
   browser-manjeet:
     extends: browser-master
-    environment: {BASE_URL: "http://manjeet"}
+    environment: {BASE_URL: "http://manjeet:8082"}
     networks: !override [manjeet]
 networks:
   sandbox: {internal: true}
