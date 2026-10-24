@@ -1,0 +1,87 @@
+name: core-regression
+x-web: &web
+  image: core-regression-php:7.4.33
+  build: .
+  user: "33:33"
+  cap_drop: [ALL]
+  cap_add: [NET_BIND_SERVICE]
+  security_opt: [no-new-privileges:true]
+  environment: &environment
+    TEST_ENV: codeception
+    DB_HOST: db
+    DB_NAME: regression
+    DB_USERNAME: regression
+    DB_PASSWORD: synthetic-local-only
+  depends_on:
+    db:
+      condition: service_healthy
+  networks: [sandbox]
+x-db: &db
+  image: mysql:5.7.44
+  command: ["--sql-mode=NO_ENGINE_SUBSTITUTION", "--character-set-server=utf8", "--collation-server=utf8_general_ci"]
+  environment:
+    MYSQL_DATABASE: regression
+    MYSQL_USER: regression
+    MYSQL_PASSWORD: synthetic-local-only
+    MYSQL_ROOT_PASSWORD: synthetic-root-only
+  healthcheck:
+    test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -psynthetic-root-only --silent"]
+    interval: 3s
+    timeout: 3s
+    retries: 40
+services:
+  db-master:
+    <<: *db
+    networks:
+      master:
+        aliases: [db]
+    volumes: ["db-master:/var/lib/mysql"]
+  db-manjeet:
+    <<: *db
+    networks:
+      manjeet:
+        aliases: [db]
+    volumes: ["db-manjeet:/var/lib/mysql"]
+  master:
+    <<: *web
+    ports: ["127.0.0.1:8081:80"]
+    environment:
+      <<: *environment
+      ABSOLUTE_URL: http://127.0.0.1:8081
+    networks: [master]
+    depends_on:
+      db-master: {condition: service_healthy}
+    volumes: ["./.runtime/master:/var/www/html", "./:/harness:ro"]
+  manjeet:
+    <<: *web
+    ports: ["127.0.0.1:8082:80"]
+    environment:
+      <<: *environment
+      ABSOLUTE_URL: http://127.0.0.1:8082
+    networks: [manjeet]
+    depends_on:
+      db-manjeet: {condition: service_healthy}
+    volumes: ["./.runtime/manjeet:/var/www/html", "./:/harness:ro"]
+  browser-master:
+    image: mcr.microsoft.com/playwright:v1.56.1-noble
+    profiles: [tools]
+    working_dir: /tools
+    user: pwuser
+    ipc: private
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment: {BASE_URL: "http://master"}
+    networks: [master]
+    volumes: ["./.runtime/tools:/tools", "./:/harness:ro"]
+    command: ["node", "-e", "console.log('Playwright ready; no functional tests defined')"]
+  browser-manjeet:
+    extends: browser-master
+    environment: {BASE_URL: "http://manjeet"}
+    networks: !override [manjeet]
+networks:
+  sandbox: {internal: true}
+  master: {internal: true}
+  manjeet: {internal: true}
+volumes:
+  db-master:
+  db-manjeet:

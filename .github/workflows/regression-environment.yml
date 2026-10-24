@@ -1,0 +1,39 @@
+name: Isolated regression environment
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'dev/regression/**'
+      - '.github/workflows/regression-environment.yml'
+permissions:
+  contents: read
+jobs:
+  infrastructure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prepare pinned clean snapshots
+        run: ./dev/regression/lab.ps1 prepare
+      - name: Install locked dependencies and images
+        run: ./dev/regression/lab.ps1 install
+      - name: Start isolated applications
+        run: ./dev/regression/lab.ps1 start
+      - name: Reset synthetic fixtures
+        run: ./dev/regression/lab.ps1 reset
+      - name: Verify infrastructure, tools and synthetic logins
+        run: ./dev/regression/lab.ps1 verify
+      - name: Capture container state
+        if: always()
+        run: |
+          docker compose -f dev/regression/compose.yaml ps --all
+          docker compose -f dev/regression/compose.yaml logs --no-color --tail=100
+      - name: Stop containers
+        if: always()
+        run: ./dev/regression/lab.ps1 stop
