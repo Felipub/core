@@ -40,8 +40,10 @@ jobs:
         run: |
           ./dev/regression/lab.ps1 reset
           ./dev/regression/lab.ps1 verify
-      - name: Verify empty future browser runner
-        run: ./dev/regression/lab.ps1 browser-tests
+      - name: Verify empty future runners
+        run: |
+          ./dev/regression/lab.ps1 browser-tests
+          ./dev/regression/lab.ps1 codeception-tests
       - name: Capture container state
         if: always()
         run: |

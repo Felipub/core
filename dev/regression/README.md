@@ -100,6 +100,8 @@ No hay diferencias entre los commits fijados en `composer.json`, `composer.lock`
 
 El servidor de laboratorio ignora los `.htaccess` de cPanel en ambas copias (`AllowOverride None`), porque incluyen un handler `ea-php74` y sesiones en `/var/cpanel/...` inexistentes en Docker. Se conserva el código exportado, se fija la sesión en `var/sessions` y se reproduce en Apache el bloqueo de ejecutables en uploads. Ésta es una diferencia de configuración explícita y común a ambas versiones.
 
+Se reproducen en `php.ini` los límites públicos del cPanel versionado: memoria 256M, 6000 variables, POST 260M, archivos 256M y tiempos 60/90 segundos. Así no se introducen los límites pequeños por defecto de PHP al preparar futuras pruebas de formulario y fotos. Las rutas de sesión, temporales y logs y el bloqueo de correo son propios del sandbox.
+
 Chromium comparte el espacio de red aislado de su aplicación, de modo que usa las mismas URLs de loopback sin reescribir orígenes, cookies ni formularios. `verify` debe ejecutarse tras `reset`: compara hashes de los datos y del esquema de las tablas de fixtures antes de los accesos. Si se han editado datos desde la UI, reiniciarlos para volver a comparar.
 
 ## Aislamiento y servicios
@@ -113,6 +115,8 @@ Docker no publicó los puertos de contenedores conectados exclusivamente a redes
 No se inicia cron, FTP ni scripts de respaldo. Las exportaciones omiten `.vscode`, `mysqltosheets`, `backup_script.sh` y error_log; la PR conserva `.gitignore` y `modules/.gitignore` de master. No se copian credenciales locales. La red interna impide que PHP/SDKs alcancen servicios externos; una CSP y el navegador del check bloquean conexiones externas del cliente. No desactivar estas barreras para resolver errores de aplicación.
 
 `mysqltosheets` es una integración local excluida por master; la documentación previa indica DB y tokens OAuth. Se desactiva omitiéndola por completo y no se inspeccionan sus secretos. Google API, OneWaySMS/Twilio/Nexmo y SMTP aparecen en código/dependencias: sin credenciales y sin salida externa. No se encontraron archivos de clasp/Apps Script ni Supabase en los archivos versionados de los commits revisados; esto no prueba que no existan servicios fuera del repo. No se ha conectado ni modificado ningún servicio real. Para ensayar integraciones posteriormente hacen falta mocks locales y contratos explícitos; no bastará con poner credenciales reales.
+
+Finance y admisiones contienen integración PayPal. En el esquema fijado se comprobó `enablePayments=N`, `financeOnlinePaymentEnabled=N` y las tres credenciales PayPal vacías: se conservan desactivados. No se realizan pagos ni llamadas a PayPal. Una futura prueba de pagos requerirá un mock local.
 
 Los módulos personalizados Data Admin, Reporting y Query Builder están en el código del baseline, pero el esquema mínimo no los registra como módulos instalados. Permanecen desactivados en los fixtures de ambas versiones; los módulos core Students, Attendance y Reports sí están registrados. Data Admin tiene un Composer/lock propio que fija `symfony/yaml v2.8.34` y requiere su vendor local, que no se instala en este laboratorio al no activar ese módulo. Una futura cobertura de esos módulos requerirá instalar sus dependencias bloqueadas y registrar sus metadatos/esquema sólo en el sandbox. Los informes de alumnos afectados por la rama sí tienen acciones en el esquema core. No se presupone paridad con la configuración de módulos del servidor real.
 
