@@ -27,6 +27,22 @@ the database name), `SQL_PASSWD`, `ZIP_PREFIX`, `SOURCE_PATH`. `MYSQLDUMP_BIN` a
 `ZIP_BIN` allow isolated failure tests. Output directory must already exist.
 Requires GNU bash/date, gzip, zip/unzip, flock, mktemp and mysqldump.
 
+## Monthly uploads policy — deployed 2026-10-25
+
+Source ZIPs dated day 28 include the complete application, including root
+`uploads/` and `dist/GibbonEduCore-InstallBundle.tar.gz`. These are the monthly
+snapshots retained indefinitely by the existing policy. All other daily ZIPs
+exclude only those two paths. Other `dist` assets and nested folders named
+`uploads` remain included. SQL gzip backups and retention are unchanged.
+
+Restoring a daily ZIP now requires the latest day-28 full snapshot for uploaded
+files. Files uploaded after that snapshot have no newer daily backup under this
+proposal; up to roughly a month of new or modified uploads could be lost. Daily
+ZIPs are code snapshots, not complete standalone application restores. There is
+no automatic merge/restore procedure or incremental uploads backup in this change.
+Existing historical ZIPs are not rewritten. The user reviewed the local diff and
+authorized FTP deployment, commit and PR on 2026-10-25.
+
 ## Local validation
 
 The test image extends the already available local PHP image; it creates no
@@ -66,3 +82,15 @@ Rollback: the exact prior production script is held privately at
 using the private helper `ftp-transfer.ps1 -Action rollback`, retaining mode 0744.
 This reverts code only; gzip files already created remain valid and preserved,
 but the old script does not apply retention to `.sql.gz` files.
+
+Monthly policy validation: 13 local scenarios passed in the independent, offline
+container. The exact production candidate passed local syntax validation, was
+uploaded by FTP and downloaded again with matching SHA-256. Production syntax
+passed and mode 0744 and the existing cron were verified without running a backup.
+Credential-free deployed body SHA-256:
+d3ae17048f69a69d3712fc3f32ff13cc0fc01cb1677c86543b48b7a41e36ef9e.
+Rollback for this change: restore the private snapshot at
+C:\GyansetuApp\.backup-monthly-work\original-production.sh through the sibling
+ftp-transfer.ps1 helper with -Action rollback, keeping mode 0744. This restores
+the previous gzip script, which includes uploads and installer every day.
+First scheduled daily/monthly execution of this policy remains unverified.

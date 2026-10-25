@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import zipfile
 
 script = Path(sys.argv[1] if len(sys.argv) > 1 else Path(__file__).with_name('backup_script.sh')).resolve()
 checks = 0
@@ -21,10 +22,18 @@ with tempfile.TemporaryDirectory(prefix='backup-tests-') as root:
         target = binaries / name
         target.write_text(body)
         target.chmod(0o700)
-    source = root / 'source'
+    source = root / 'source with spaces'
     source.mkdir()
     (source / 'index.php').write_text('<?php echo "fixture";')
-    for today in ('2026-10-24', '2027-01-02'):
+    for folder in ('uploads/2026/10', 'dist', 'modules/example/uploads'):
+        (source / folder).mkdir(parents=True)
+    (source / 'uploads/2026/10/photo.jpg').write_bytes(os.urandom(8192))
+    (source / 'uploads/document.pdf').write_bytes(os.urandom(8192))
+    (source / 'dist/GibbonEduCore-InstallBundle.tar.gz').write_bytes(os.urandom(8192))
+    (source / 'dist/required.js').write_text('runtime asset')
+    (source / 'modules/example/uploads/required.js').write_text('nested runtime asset')
+    sizes = {}
+    for today in ('2026-10-24', '2026-10-28', '2027-01-02', '2027-01-28'):
         dest = root / today
         dest.mkdir()
         month = today[:7]
@@ -46,6 +55,17 @@ with tempfile.TemporaryDirectory(prefix='backup-tests-') as root:
         keep |= {'testdb_'+today+'.sql.gz', 'testcode_'+today+'.zip', '.backup.lock'}
         assert {p.name for p in dest.iterdir()} == keep
         assert 'CREATE TABLE fixture' in gzip.open(dest/('testdb_'+today+'.sql.gz'), 'rt').read()
+        with zipfile.ZipFile(dest/('testcode_'+today+'.zip')) as archive:
+            assert archive.testzip() is None
+            names = {name.split(source.name+'/', 1)[1] for name in archive.namelist() if source.name+'/' in name}
+            assert 'index.php' in names
+            assert 'dist/required.js' in names
+            assert 'modules/example/uploads/required.js' in names
+            for optional in ('uploads/2026/10/photo.jpg', 'uploads/document.pdf', 'dist/GibbonEduCore-InstallBundle.tar.gz'):
+                assert (optional in names) == today.endswith('-28'), (today, optional)
+            if today.endswith('-28'):
+                assert archive.read(next(name for name in archive.namelist() if name.endswith('/uploads/document.pdf'))) == (source/'uploads/document.pdf').read_bytes()
+        sizes[today] = (dest/('testcode_'+today+'.zip')).stat().st_size
         checks += 1
         for failure in ({'DUMP_FAIL':'7'}, {'ZIP_BIN':str(binaries/'zip-fail')}):
             expired = dest / ('testdb_'+previous+'-05.sql.gz')
@@ -67,4 +87,6 @@ with tempfile.TemporaryDirectory(prefix='backup-tests-') as root:
         result = subprocess.run(['bash', str(script)], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         assert result.returncode != 0 and b'Another backup' in result.stderr
         checks += 1
-print('PASS: retention (SQL/gzip/ZIP), year boundary, dump/ZIP failures, temporary cleanup, concurrent lock; %d scenarios' % checks)
+assert sizes['2026-10-24'] < sizes['2026-10-28']
+print('PASS: daily exclusions, monthly full contents/readback, root-only matching, paths with spaces, retention, year boundary, failure safety and locking; %d scenarios' % checks)
+print('Fixture ZIP bytes: '+str(sizes))
