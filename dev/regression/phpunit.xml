@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         bootstrap="/var/www/html/tests/bootstrap.php"
+         cacheResultFile="/var/www/html/tests/log/.phpunit.result.cache"
+         backupGlobals="false" colors="true" verbose="true">
+  <testsuites>
+    <testsuite name="Existing unit tests">
+      <directory suffix=".php">/var/www/html/tests/unit</directory>
+    </testsuite>
+    <testsuite name="Shared regression units">
+      <directory suffix="Test.php">/regression-tests/unit</directory>
+    </testsuite>
+  </testsuites>
+  <logging><junit outputFile="/var/www/html/tests/log/unit.xml"/></logging>
+</phpunit>

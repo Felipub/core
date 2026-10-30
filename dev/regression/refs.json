@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/Felipub/core.git",
+  "checkedOn": "2026-10-24",
+  "master": "de2a6cb79e8391f229a0acb4eabfd7c48ce1049a",
+  "manjeet": "9a6ac054ac76c658e571887fff6431801751b2b1",
+  "images": {
+    "playwright": "mcr.microsoft.com/playwright:v1.56.1-noble@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a"
+  }
+}

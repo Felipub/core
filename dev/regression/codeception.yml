@@ -1,0 +1,8 @@
+actor: RegressionTester
+paths:
+  tests: ../regression-tests/codeception
+  output: ../var/www/html/tests/log/regression
+  data: ../regression-tests/data
+  support: ../var/www/html/tests/config/support
+params:
+  - env

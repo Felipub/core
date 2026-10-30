@@ -1,0 +1,7 @@
+{
+  "name": "core-regression-tools",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": { "browser": "node /harness/browser-check.cjs" },
+  "devDependencies": { "@playwright/test": "1.56.1" }
+}

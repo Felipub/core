@@ -1,0 +1,38 @@
+// Infrastructure-only browser launch, HTTP/resource and synthetic login checks.
+// Deliberately no feature assertions; future cases belong in tests/browser.
+const { chromium } = require('/tools/node_modules/playwright');
+(async () => {
+  const base = process.env.BASE_URL;
+  if (!['http://127.0.0.1:8081','http://127.0.0.1:8082'].includes(base)) throw Error('Sandbox only');
+  const browser = await chromium.launch({ headless: true });
+  try {
+    for (const username of ['admin','teacher','staff']) {
+      const context = await browser.newContext();
+      // Share the application's isolated network namespace: identical origins/cookies, no URL rewriting.
+      await context.route('**/*', async route => {
+        const url = new URL(route.request().url());
+        if (url.origin !== base && !['data:','blob:'].includes(url.protocol)) return route.abort();
+        return route.continue();
+      });
+      const page = await context.newPage();
+      const failures=[];
+      const errors=[];
+      page.on('pageerror', error => errors.push(error.message));
+      page.on('response', r => { if (r.status() >= 400) failures.push(`${r.status()} ${r.url()}`); });
+      const response=await page.goto(base, {waitUntil:'networkidle'});
+      if (!response || response.status()!==200) throw Error('Application HTTP failed');
+      await page.locator('input[name="username"]').fill(username);
+      await page.locator('input[name="password"]').fill('Sandbox-Only-2026!');
+      try {
+        await Promise.all([page.waitForNavigation({waitUntil:'networkidle'}), page.locator('#loginForm').locator('input[type="submit"],button[type="submit"]').click()]);
+      } catch (error) {
+        console.error(JSON.stringify({username,url:page.url(),errors,failures,body:(await page.locator('body').innerText()).slice(0,2000)}));
+        throw error;
+      }
+      if (await page.locator('input[name="password"]').count()) throw Error(`Login not confirmed: ${username}`);
+      if (failures.length) throw Error(`Resource failures: ${failures.join(', ')}`);
+      console.log(`${username}: browser login/resource infrastructure check OK`);
+      await context.close();
+    }
+  } finally { await browser.close(); }
+})().catch(e => { console.error(e); process.exitCode=1; });

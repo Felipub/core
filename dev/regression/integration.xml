@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="/regression-tests/integration/bootstrap.php" cacheResult="false" colors="true" verbose="true">
+  <testsuites><testsuite name="Database integration"><directory suffix="Test.php">/regression-tests/integration</directory></testsuite></testsuites>
+  <logging><junit outputFile="/var/www/html/tests/log/integration.xml"/></logging>
+</phpunit>

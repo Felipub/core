@@ -1,0 +1,37 @@
+name: Regression suites (manual mirror)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  infrastructure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prepare pinned clean snapshots
+        run: ./dev/regression/lab.ps1 prepare -Target master -Functional
+      - name: Install locked dependencies and images
+        run: ./dev/regression/lab.ps1 install -Target master -Functional
+      - name: Run unit, integration and browser suites
+        run: ./dev/regression/run-tests.ps1 -Target master
+      - name: Preserve results including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: master-regression-results
+          path: |
+            dev/regression/.runtime-tests/results-summary.json
+            dev/regression/.runtime-tests/test-results.json
+            dev/regression/.runtime-tests/master/tests/log/*.xml
+            dev/regression/.runtime-tests/browser-results/master/
+          if-no-files-found: warn
+      - name: Stop containers
+        if: always()
+        run: ./dev/regression/lab.ps1 stop -Functional
