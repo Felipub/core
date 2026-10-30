@@ -1,6 +1,6 @@
 <?php
-// Infrastructure fixture loader, not a functional test. CLI only, local DB only.
-if (PHP_SAPI !== 'cli' || getenv('DB_HOST') !== 'db' || getenv('DB_NAME') !== 'regression' || getenv('TEST_ENV') !== 'codeception') {
+// Fixture loader for CLI/private fixture server; disposable local DB only.
+if (!in_array(PHP_SAPI, ['cli','cli-server'], true) || getenv('REGRESSION_DISPOSABLE') !== 'functional-tests' || getenv('DB_HOST') !== 'db' || getenv('DB_NAME') !== 'regression' || getenv('TEST_ENV') !== 'codeception') {
     throw new RuntimeException('Refusing reset outside sandbox');
 }
 $pdo = new PDO('mysql:host=db;dbname=regression;charset=utf8', 'regression', 'synthetic-local-only', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);

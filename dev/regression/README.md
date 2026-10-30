@@ -1,5 +1,15 @@
 # Entorno de comparación aislado
 
+## Pruebas funcionales: fase actual
+
+La implementación y ejecución local de pruebas ya está autorizada. Usar la
+[guía de pruebas](../../tests/regression/README.md) y `-Functional`: proyecto
+`core-functional-tests`, volúmenes independientes y `.runtime-tests`.
+No ejecutar reset ni pruebas contra las restauraciones de `core-regression`.
+Esta guía conserva debajo el registro histórico de preparación; sus referencias
+a suites vacías o pruebas pospuestas han quedado sustituidas por la guía nueva.
+Resultados y límites actuales: [FUNCTIONAL-RESULTS.md](FUNCTIONAL-RESULTS.md).
+
 ## Alcance y estado
 
 Preparar infraestructura para añadir pruebas posteriormente. No se implementan casos funcionales, no se corrige ni fusiona la rama y no se despliega a producción. Los checks de acceso son comprobaciones de instalación, no validación funcional. **La preparación no está aprobada hasta que el workflow `Isolated regression environment` termine correctamente y se revisen sus resultados.**

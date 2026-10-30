@@ -1,5 +1,5 @@
 <?php
-if (PHP_SAPI !== 'cli' || getenv('TEST_ENV') !== 'codeception' || getenv('DB_HOST') !== 'db' || !is_file('/var/www/html/SANDBOX_COMMIT')) throw new RuntimeException('Not sandbox');
+if (PHP_SAPI !== 'cli' || getenv('REGRESSION_DISPOSABLE') !== 'functional-tests' || getenv('TEST_ENV') !== 'codeception' || getenv('DB_HOST') !== 'db' || !is_file('/var/www/html/SANDBOX_COMMIT')) throw new RuntimeException('Not disposable sandbox');
 foreach (['uploads','var','resources/templates/cache','tests/log'] as $relative) {
     $root='/var/www/html/'.$relative;
     $it=new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS),RecursiveIteratorIterator::CHILD_FIRST);

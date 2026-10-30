@@ -25,3 +25,8 @@ Fecha de preparación: 24-10-2026 (Europe/Madrid).
 - Producción, clasp, Supabase, FTP y mysqltosheets reales: no conectados ni modificados.
 
 Veredicto actual: preparación implementada, aceptación del entorno pendiente de ejecución. No declarar completo el alcance mientras existan pendientes de infraestructura.
+# Fase funcional local
+
+La evidencia vigente de las suites se registra en [FUNCTIONAL-RESULTS.md](FUNCTIONAL-RESULTS.md).
+La ejecución se hace en `core-functional-tests`; el registro anterior se conserva
+como evidencia histórica de infraestructura, sin acreditar funcionalidad por sí solo.

@@ -1,4 +1,5 @@
 .runtime/
+.runtime-tests/
 .env
 test-results/
 playwright-report/

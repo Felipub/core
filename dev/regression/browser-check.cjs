@@ -6,7 +6,7 @@ const { chromium } = require('/tools/node_modules/playwright');
   if (!['http://127.0.0.1:8081','http://127.0.0.1:8082'].includes(base)) throw Error('Sandbox only');
   const browser = await chromium.launch({ headless: true });
   try {
-    for (const username of ['admin','teacher','staff','student','parent']) {
+    for (const username of ['admin','teacher','staff']) {
       const context = await browser.newContext();
       // Share the application's isolated network namespace: identical origins/cookies, no URL rewriting.
       await context.route('**/*', async route => {

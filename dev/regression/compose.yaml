@@ -51,7 +51,7 @@ services:
     networks: [master]
     depends_on:
       db-master: {condition: service_healthy}
-    volumes: ["./.runtime/master:/var/www/html", "./:/harness:ro", "../../tests/regression:/regression-tests:ro"]
+    volumes: ["./.runtime/master:/var/www/html", "./.runtime/harness:/harness:ro", "../../tests/regression:/regression-tests:ro", "./.runtime/master/tests/log:/var/www/html/tests/log"]
   manjeet:
     <<: *web
     environment:
@@ -61,7 +61,7 @@ services:
     networks: [manjeet]
     depends_on:
       db-manjeet: {condition: service_healthy}
-    volumes: ["./.runtime/manjeet:/var/www/html", "./:/harness:ro", "../../tests/regression:/regression-tests:ro"]
+    volumes: ["./.runtime/manjeet:/var/www/html", "./.runtime/harness:/harness:ro", "../../tests/regression:/regression-tests:ro", "./.runtime/manjeet/tests/log:/var/www/html/tests/log"]
   gateway-master:
     image: nginx:1.26.3-alpine@sha256:1eadbb07820339e8bbfed18c771691970baee292ec4ab2558f1453d26153e22d
     ports: ["127.0.0.1:8081:8081"]
@@ -82,14 +82,23 @@ services:
     ipc: private
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
-    environment: {BASE_URL: "http://127.0.0.1:8081"}
+    environment: {BASE_URL: "http://127.0.0.1:8081", FIXTURE_URL: "http://fixture-master:8090"}
     network_mode: service:master
-    volumes: ["./.runtime/tools:/tools", "./:/harness:ro", "../../tests/regression/browser:/tools/tests:ro"]
+    volumes: ["./.runtime/tools:/tools:ro", "./.runtime/harness:/harness:ro", "../../tests/regression/browser:/tools/tests:ro", "./.runtime/browser-results/master:/results"]
     command: ["node", "-e", "console.log('Playwright ready; no functional tests defined')"]
   browser-manjeet:
     extends: browser-master
-    environment: {BASE_URL: "http://127.0.0.1:8082"}
+    environment: {BASE_URL: "http://127.0.0.1:8082", FIXTURE_URL: "http://fixture-manjeet:8090"}
     network_mode: service:manjeet
+    volumes: !override ["./.runtime/tools:/tools:ro", "./.runtime/harness:/harness:ro", "../../tests/regression/browser:/tools/tests:ro", "./.runtime/browser-results/manjeet:/results"]
+  fixture-master:
+    extends: master
+    profiles: [tools]
+    command: ["php", "-S", "0.0.0.0:8090", "/regression-tests/support/api.php"]
+  fixture-manjeet:
+    extends: manjeet
+    profiles: [tools]
+    command: ["php", "-S", "0.0.0.0:8090", "/regression-tests/support/api.php"]
 networks:
   sandbox: {internal: true}
   master: {internal: true}
@@ -99,3 +108,9 @@ networks:
 volumes:
   db-master:
   db-manjeet:
+  app-master:
+    external: true
+    name: core-functional-tests_app-master
+  app-manjeet:
+    external: true
+    name: core-functional-tests_app-manjeet

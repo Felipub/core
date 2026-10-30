@@ -8,8 +8,9 @@
     <testsuite name="Existing unit tests">
       <directory suffix=".php">/var/www/html/tests/unit</directory>
     </testsuite>
-    <testsuite name="Future shared regression units">
+    <testsuite name="Shared regression units">
       <directory suffix="Test.php">/regression-tests/unit</directory>
     </testsuite>
   </testsuites>
+  <logging><junit outputFile="/var/www/html/tests/log/unit.xml"/></logging>
 </phpunit>

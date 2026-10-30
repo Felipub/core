@@ -1,17 +1,6 @@
-name: Isolated regression environment
+name: Regression suites (manual mirror)
 on:
   workflow_dispatch:
-  push:
-    branches: ['dev/isolated-regression-environment-*']
-    paths:
-      - 'dev/regression/**'
-      - 'tests/regression/**'
-      - '.github/workflows/regression-environment.yml'
-  pull_request:
-    paths:
-      - 'dev/regression/**'
-      - 'tests/regression/**'
-      - '.github/workflows/regression-environment.yml'
 permissions:
   contents: read
 jobs:
@@ -27,32 +16,22 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Prepare pinned clean snapshots
-        run: ./dev/regression/lab.ps1 prepare
+        run: ./dev/regression/lab.ps1 prepare -Target master -Functional
       - name: Install locked dependencies and images
-        run: ./dev/regression/lab.ps1 install
-      - name: Start isolated applications
-        run: ./dev/regression/lab.ps1 start
-      - name: Reset synthetic fixtures
-        run: ./dev/regression/lab.ps1 reset
-      - name: Verify infrastructure, tools and synthetic logins
-        run: ./dev/regression/lab.ps1 verify
-      - name: Reset after use and verify repeatability
-        run: |
-          ./dev/regression/lab.ps1 reset
-          ./dev/regression/lab.ps1 verify
-      - name: Verify empty future runners
-        run: |
-          ./dev/regression/lab.ps1 reset
-          ./dev/regression/lab.ps1 browser-tests
-          ./dev/regression/lab.ps1 reset
-          ./dev/regression/lab.ps1 codeception-tests
-      - name: Capture container state
+        run: ./dev/regression/lab.ps1 install -Target master -Functional
+      - name: Run unit, integration and browser suites
+        run: ./dev/regression/run-tests.ps1 -Target master
+      - name: Preserve results including failures
         if: always()
-        run: |
-          docker compose -f dev/regression/compose.yaml ps --all
-          docker compose -f dev/regression/compose.yaml logs --no-color --tail=100
-          docker compose -f dev/regression/compose.yaml exec -T master php -r 'if (is_file("var/php-error.log")) echo file_get_contents("var/php-error.log");'
-          docker compose -f dev/regression/compose.yaml exec -T manjeet php -r 'if (is_file("var/php-error.log")) echo file_get_contents("var/php-error.log");'
+        uses: actions/upload-artifact@v4
+        with:
+          name: master-regression-results
+          path: |
+            dev/regression/.runtime-tests/results-summary.json
+            dev/regression/.runtime-tests/test-results.json
+            dev/regression/.runtime-tests/master/tests/log/*.xml
+            dev/regression/.runtime-tests/browser-results/master/
+          if-no-files-found: warn
       - name: Stop containers
         if: always()
-        run: ./dev/regression/lab.ps1 stop
+        run: ./dev/regression/lab.ps1 stop -Functional
