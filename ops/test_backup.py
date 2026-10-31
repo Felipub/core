@@ -52,7 +52,7 @@ with tempfile.TemporaryDirectory(prefix='backup-tests-') as root:
         env = dict(os.environ, BACKUPS_PATH=str(dest), SOURCE_PATH=str(source), SQL_PREFIX='testdb', ZIP_PREFIX='testcode', SQL_PASSWD='fixture', MYSQLDUMP_BIN=str(binaries/'dump'), TEST_DATE=today, PATH=str(binaries)+':'+os.environ['PATH'])
         result = subprocess.run(['bash', str(script)], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
         assert result.returncode == 0, result.stderr
-        keep |= {'testdb_'+today+'.sql.gz', 'testcode_'+today+'.zip', '.backup.lock'}
+        keep |= {'testdb_'+today+'.sql.gz', 'testcode_'+today+'.zip', '.backup.lock', '.source-backup-last.log'}
         assert {p.name for p in dest.iterdir()} == keep
         assert 'CREATE TABLE fixture' in gzip.open(dest/('testdb_'+today+'.sql.gz'), 'rt').read()
         with zipfile.ZipFile(dest/('testcode_'+today+'.zip')) as archive:

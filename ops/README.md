@@ -1,5 +1,40 @@
 # Gyansetu backups
 
+## ZIP failure correction — deployed 2026-10-31
+
+Read-only FTP inspection confirmed that the live source contains
+`mysqltosheets/.htaccess.cpmh3129` with mode 0000. The old July source archive
+does not contain this disabled cPanel copy. Running the previous script locally
+as UID 1000 against that fixture reproduces zip exit 18: the SQL is published,
+but strict error handling removes the temporary ZIP before final publication.
+No hosting cron failure trace was accessible to establish direct attribution;
+the matching failure mechanism has been reproduced locally.
+
+The local correction excludes only that exact root-relative disabled cPanel
+copy, on daily and monthly runs. Active `.htaccess`, integration configuration,
+and all other files keep their original treatment. Any unrelated unreadable file
+still fails the run and preserves previous backups. Last ZIP diagnostics are
+saved privately to `.source-backup-last.log` in the backup directory.
+
+Validation: the original failure was reproduced on daily and day-28 fixtures.
+The corrected script passed the existing 13 scenarios plus two daily/monthly
+unprivileged regression runs, including active configuration readback and
+unrelated unreadable file failures. Tests used an independent offline local
+container limited to one CPU and 256 MB.
+
+The first deployment attempt was rejected before execution; work remained local
+until the user explicitly authorized FTP deployment, commit and PR on 2026-10-31.
+The exact private deployment candidate passed local syntax validation and was
+uploaded by FTP, downloaded again and verified byte-for-byte. FTP confirmed mode
+0744. Credential-free deployed body SHA-256:
+3341a21b563e99c5a7a33d347e6ec697daa487d14d9690b0b3488167c0e8b386.
+No manual production backup was run; the next scheduled run and a complete
+restore remain unverified. Existing tests and services were not modified.
+Rollback: restore the private snapshot at
+`C:\GyansetuApp\.backup-zip-fix-work\original-production.sh` through the sibling
+`ftp-transfer.ps1 -Action rollback`, preserving mode 0744. That snapshot is the
+previous monthly-policy script and retains the unreadable-file failure.
+
 `backup_script.sh` is the credential-free source for the production backup job.
 The live root `backup_script.sh` remains ignored by Git. Deployment preserves its
 five-line private header, then appends this source without its shebang. Do not
