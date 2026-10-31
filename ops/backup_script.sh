@@ -36,18 +36,27 @@ echo "Database backup OK: ${SQL_PREFIX}_${today}.sql.gz"
 # A new archive avoids retaining entries deleted from the source on same-day reruns.
 temporary_zip=$(mktemp "$BACKUPS_PATH/.source-backup.XXXXXX.zip")
 rm -f -- "$temporary_zip"
+archive_root=${SOURCE_PATH#/}
+archive_root=${archive_root%/}
+# Disabled cPanel backup, mode 0000 on the hosting; not the active .htaccess.
+zip_exclusions=("$archive_root/mysqltosheets/.htaccess.cpmh3129")
 if [[ "${today:8:2}" == 28 ]]; then
     # The retained monthly snapshot includes all uploaded documents and installer.
-    "$ZIP_BIN" -qr "$temporary_zip" "$SOURCE_PATH"
     echo 'Source scope: monthly full snapshot (includes uploads and installer)'
 else
     # Match only these paths at the application root, not nested runtime assets.
-    archive_root=${SOURCE_PATH#/}
-    archive_root=${archive_root%/}
-    "$ZIP_BIN" -qr "$temporary_zip" "$SOURCE_PATH" -x \
-        "$archive_root/uploads/*" \
-        "$archive_root/dist/GibbonEduCore-InstallBundle.tar.gz"
+    zip_exclusions+=("$archive_root/uploads/*"
+        "$archive_root/dist/GibbonEduCore-InstallBundle.tar.gz")
     echo 'Source scope: daily code snapshot (excludes uploads and installer)'
+fi
+if "$ZIP_BIN" -qr "$temporary_zip" "$SOURCE_PATH" -x "${zip_exclusions[@]}" \
+        > "$BACKUPS_PATH/.source-backup-last.log" 2>&1; then
+    :
+else
+    zip_status=$?
+    echo "Source ZIP failed (exit $zip_status); retained copies are unchanged. Details:" >&2
+    cat -- "$BACKUPS_PATH/.source-backup-last.log" >&2
+    exit "$zip_status"
 fi
 unzip -tq "$temporary_zip" > /dev/null
 mv -f -- "$temporary_zip" "$BACKUPS_PATH/${ZIP_PREFIX}_${today}.zip"
